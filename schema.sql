@@ -20,6 +20,7 @@ CREATE TABLE phpbb_topic_prefixes_used (
 	topic int(11) UNSIGNED DEFAULT '0' NOT NULL,
 	token_data text NOT NULL, # Serialized array of data for tokens
 	applied_time int(11) UNSIGNED DEFAULT 0 NOT NULL,
+	ordered int(11) UNSIGNED DEFAULT 0 NOT NULL
 	PRIMARY KEY (id),
 	KEY prefix (prefix_id),
 	KEY topic (topic_id),

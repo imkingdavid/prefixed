@@ -10,39 +10,86 @@ abstract class phpbb_ext_imkingdavid_prefixed_core_base
 	 * @var dbal Database object instance
 	 */
 	protected dbal $db = null;
-
 	/**
-	 * Constructor method
+	 * @var acm Cache object instance
 	 */
-	public function __construct(dbal $db, $id = 0)
+	private acm $cache;
+	/**
+	 * @var array Prefix instances
+	 */
+	private $all_used;
+	/**
+	 * @var array Prefixes
+	 */
+	private $all;
+
+	public function __construct(dbal $db, $cache)
 	{
-		$this->set('id', $id);
-		$this->set('db', $db);
+		$this->db = $db;
+		$this->cache = $cache;
 	}
 
-	/**
-	 * Set properties
-	 *
-	 * @param string $property Which property to modify
-	 * @param mixed $value What value to assign to the property
-	 * @return null
-	 */
-	public function set($property, $value)
+	public function load_all()
 	{
-		// If the property exists let's set it
-		if (isset($this->$property))
-			$this->$property = $value;
+		if (!empty($this->all))
+		{
+			return $this->all;
 		}
+
+		if (($this->all = $this->get('_prefixes')) === false)
+		{
+			$sql = 'SELECT id, title, short, color, users, forums
+				FROM ' . PREFIXES_TABLE . '
+				WHERE topic = ' . (int) $topicrow['TOPIC_ID'];
+			$result = $this->db->sql_query($sql);
+			while ($row = $this->db->sql_fetchrow($result))
+			{
+				$this->all[$row['id']] = array(
+					'id'			=> $row['id'],
+					'title'			=> $row['title'],
+					'short'			=> $row['short'],
+					'color'			=> $row['color'],
+					'users'			=> $row['users'],
+					'forums'		=> $row['forums'],
+				);
+			}
+			$this->db->sql_freeresult($result);
+
+			$this->put('_prefixes', $this->all);
+		}
+
+		return $this->all;
 	}
 
-	/**
-	 * Get a property's value
-	 *
-	 * @param string $property The property to get
-	 * @return mixed Value of the property, null if !isset($property)
-	 */
-	public function get($property)
+	public function load_all_used()
 	{
-		return (isset($this->$property)) ? $this->property : null;
+		if (!empty($this->all_used))
+		{
+			return $this->all_used;
+		}
+
+		if (($this->all_used = $this->get('_prefixes_used')) === false)
+		{
+			$sql = 'SELECT id, prefix, topic, token_data
+				FROM ' . PREFIXES_USED_TABLE . '
+				WHERE topic = ' . (int) $topicrow['TOPIC_ID'];
+			$result = $this->db->sql_query($sql);
+			while ($row = $this->db->sql_fetchrow($result))
+			{
+				$this->all_used[$row['id']] = array(
+					'id'			=> $row['id'],
+					'prefix'		=> $row['prefix'],
+					'topic'			=> $row['topic'],
+					'token_data'	=> $row['token_data'],
+					'applied_time'	=> $row['applied_time'],
+					'ordered'		=> $row['ordered'],
+				);
+			}
+			$this->db->sql_freeresult($result);
+
+			$this->put('_prefixes_used', $this->all_used);
+		}
+
+		return $this->all_used;
 	}
 }
