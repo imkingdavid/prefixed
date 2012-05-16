@@ -42,25 +42,59 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 	{
 		$this->set('id', $id);
 		$this->set('db', $db);
+		$this->set('cache', $cache);
 	}
 
+	/**
+	 * Load a prefix instance's data
+	 *
+	 * @return bool True if the instance exists, false if it doesn't
+	 */
 	public function load()
 	{
 		if ($this->id)
 		{
-			$sql = 'SELECT prefix, topic, token_data, ordered
-				FROM ' . PREFIXES_USED_TABLE . '
-				WHERE id = ' . (int) $this->id;
-			$result = $this->db->sql_query($sql);
-			$row = $this->db->sql_fetchrow($result);
+			// If this particular prefix instance is in the cache, we can grab it there
+			// Otherwise, we just query for it
+			if ((($prefix = $this->cache->get('_prefixes_used')) === false) || empty($prefix[$this->id]))
+			{
+				$sql = 'SELECT prefix, topic, token_data, ordered
+					FROM ' . PREFIXES_USED_TABLE . '
+					WHERE id = ' . (int) $this->id;
+				$result = $this->db->sql_query($sql);
+				$row = $this->db->sql_fetchrow($result);
+				$this->db->sql_freeresult($result);
+				
+				// since the cache is either completely empty
+				// or else we dont' have this prefix instance cached, we need to cache it
+				$prefix[$this->id] = $row;
+				$this->cache->put('_prefixes_used', $prefix);
+			}
+			else
+			{
+				// if we have the prefix instance cached, we can grab it.
+				$row = $prefix[$this->id];
+			}
 
+			// If after checking the cache and the database we come up empty,
+			// we should stop here
+			if (empty($row))
+			{
+				return false;
+			}
+
+			// And now we set our class properties
 			$this->set('prefix', (int) $row['prefix']);
 			$this->set('topic', $row['topic']);
 			$this->set('token_data', $row['token_data']);
 			$this->set('tokens', unserialize($this->token_data));
 			$this->set('applied_time', $row['applied_time']);
 			$this->set('ordered', $row['ordered']);
+
+			return true;
 		}
+
+		return false;
 	}
 
 	/**
