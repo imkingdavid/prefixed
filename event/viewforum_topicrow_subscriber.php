@@ -25,10 +25,10 @@ class phpbb_ext_imkingdavid_prefixed_event_viewforum_topicrow_subscriber impleme
 			{
 				if ($data['topic'] == $topicrow['TOPIC_ID'])
 				{
-					$prefix = new phpbb_ext_imkingdavid_prefixed_core_instance($db, $id);
-					$prefixes[] = 
+					$prefix = new phpbb_ext_imkingdavid_prefixed_core_instance($db, $cache, $id);
+					$prefix->load();
+					$prefixes[$prefix->ordered] = $prefix->parse();
 				}
-
 			}
 		}
 

@@ -23,9 +23,9 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix
 	 */
 	private $short;
 	/**
-	 * @var string Color
+	 * @var string Style (Serialized)
 	 */
-	private $color;
+	private $style;
 	/**
 	 * @var string Users
 	 */
@@ -80,7 +80,7 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix
 			// And now we set our class properties
 			$this->set('title', $row['title']);
 			$this->set('short', $row['short']);
-			$this->set('color', $row['color']);
+			$this->set('style', $row['style']);
 			$this->set('users', $row['users']);
 			$this->set('forums', $row['forums']);
 

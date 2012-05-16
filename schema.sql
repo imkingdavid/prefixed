@@ -3,7 +3,7 @@ CREATE TABLE phpbb_topic_prefixes (
 	id mediumint(8) UNSIGNED NOT NULL auto_increment,
 	title varchar(255) DEFAULT '' NOT NULL,
 	short varchar(255) DEFAULT '' NOT NULL,
-	color varchar(6) DEFAULT '000000' NOT NULL,
+	style varchar(255) DEFAULT '' NOT NULL,
 	forums varchar(255) DEFAULT '' NOT NULL,
 	users varchar(255) DEFAULT '' NOT NULL,
 	PRIMARY KEY (id)

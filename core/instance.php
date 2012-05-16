@@ -14,6 +14,11 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 	 * @var int Prefix ID
 	 */
 	private $prefix;
+
+	/**
+	 * @var phpbb_ext_imkingdavid_prefixed_core_instance Prefix object instance
+	 */
+	private $prefix_obj;
 	/**
 	 * @var string Topic ID
 	 */
@@ -43,6 +48,46 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 		$this->set('id', $id);
 		$this->set('db', $db);
 		$this->set('cache', $cache);
+	}
+
+	/**
+	 * Parse a prefix instance
+	 *
+	 * @return mixed False upon failure, otherwise, string containing HTML of parsed prefix
+	 */
+	public function parse()
+	{
+		if (!$this->id)
+		{
+			return false;
+		}
+
+		$this->set('prefix_obj', new phpbb_ext_imkingdavid_prefixed_core_prefix($this->db, $this->cache, $this->prefix));
+		$this->prefix_obj->load();
+		if (!$this->prefix_obj->id)
+		{
+			return false;
+		}
+
+		$return_string = '<span';
+		// Don't worry, I will only allow a certain few style things to be used
+		// And I will validate the user input so there isn't some wacky injection or anything
+		if ($this->prefix_obj->style)
+		{
+			$style = unserialize($this->prefix_obj->style);
+			$return_string .= ' style="'
+			foreach ($style as $attr => $value)
+			{
+				$return_string .= "$attr:'$value';";
+			}
+			$return_string .= '"';
+		}
+
+		$return_string .= '>';
+		$return_string .= $this->prefix_obj->title;
+		$return_string .= '</span>';
+
+		return $return_string;
 	}
 
 	/**
