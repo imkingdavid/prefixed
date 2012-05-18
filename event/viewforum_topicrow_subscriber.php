@@ -11,7 +11,7 @@ class phpbb_ext_imkingdavid_prefixed_event_viewforum_topicrow_subscriber impleme
 		);
 	}
 
-	public function apply_prefix($topicrow)
+	public function apply_prefix(&$topicrow)
 	{
 		global $db, $cache;
 		$core = new phpbb_ext_imkingdavid_prefixed_core_base($db, $cache);
