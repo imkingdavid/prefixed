@@ -1,4 +1,5 @@
-#[pre]fixed
+![[pre]fixed](http://www.thedavidking.com/mods/prefixed/prefixed_logo_small.png "[pre]fixed")
+
 © 2012 - David King (imkingdavid)
 
 This is an extension for phpBB 3.1 that will add a topic prefix functionality to your board.
