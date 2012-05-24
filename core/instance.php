@@ -3,40 +3,56 @@
 class phpbb_ext_imkingdavid_prefixed_core_instance
 {
 	/**
-	 * @var dbal Database
+	 * Database
+	 * @var dbal
 	 */
 	private $db;
+
 	/**
-	 * @var acm Cache
+	 * Cache
+	 * @var acm
 	 */
 	private $cache;
+
 	/**
-	 * @var int Prefix ID
+	 * Prefix ID
+	 * @var int
 	 */
 	private $prefix;
 
 	/**
-	 * @var phpbb_ext_imkingdavid_prefixed_core_instance Prefix object instance
+	 * Prefix object instance
+	 * @var phpbb_ext_imkingdavid_prefixed_core_instance
 	 */
 	private $prefix_obj;
+
 	/**
-	 * @var string Topic ID
+	 * Topic ID
+	 * @var string
 	 */
 	private $topic;
+
 	/**
-	 * @var string Serialized token array
+	 * Serialized token array
+	 * @var string
 	 */
 	private $token_data;
+
 	/**
-	 * @var array Token array
+	 * Token array
+	 * @var array
 	 */
 	private $tokens;
+
 	/**
-	 * @var int Time when the prefix instance was created
+	 * Time when the prefix instance was created
+	 * @var int
 	 */
 	private $applied_time;
+	
 	/**
-	 * @var int Order of the prefix
+	 * Order of the prefix
+	 * @var int
 	 */
 	private $ordered;
 

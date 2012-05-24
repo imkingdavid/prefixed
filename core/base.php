@@ -3,32 +3,52 @@
 abstract class phpbb_ext_imkingdavid_prefixed_core_base
 {
 	/**
-	 * @var int ID for the prefix
+	 * Prefix ID
+	 * @var int
 	 */
 	protected $id = 0;
+
 	/**
-	 * @var dbal Database object instance
+	 * Database object instance
+	 * @var dbal
 	 */
-	protected dbal $db = null;
+	protected $db = null;
+
 	/**
-	 * @var acm Cache object instance
+	 * Cache object instance
+	 * @var phpbb_cache_drive_base
 	 */
-	private acm $cache;
+	private $cache;
+
 	/**
-	 * @var array Prefix instances
+	 * Prefix instances
+	 * @var array
 	 */
 	private $all_used;
+
 	/**
-	 * @var array Prefixes
+	 * Prefixes
+	 * @var array
 	 */
 	private $all;
 
-	public function __construct(dbal $db, $cache)
+	/**
+	 * Constructor method
+	 *
+	 * @param dbal $db Database object
+	 * @param phpbb_cache_driver_base $cache Cache object
+	 */
+	public function __construct(dbal $db, phpbb_cache_driver_base $cache)
 	{
 		$this->db = $db;
 		$this->cache = $cache;
 	}
 
+	/**
+	 * Load all prefixes
+	 *
+	 * @return array Prefixes
+	 */
 	public function load_all()
 	{
 		if (!empty($this->all))
@@ -61,6 +81,11 @@ abstract class phpbb_ext_imkingdavid_prefixed_core_base
 		return $this->all;
 	}
 
+	/**
+	 * Load all prefix instances
+	 *
+	 * @return array Prefix instances
+	 */
 	public function load_all_used()
 	{
 		if (!empty($this->all_used))
@@ -91,5 +116,65 @@ abstract class phpbb_ext_imkingdavid_prefixed_core_base
 		}
 
 		return $this->all_used;
+	}
+
+	/**
+	 * Load a topic's prefix instances
+	 *
+	 * @param int $topic_id ID of the topic
+	 * @return string Parsed (HTML) prefixes
+	 */
+	public load_topic_prefixes($topic_id)
+	{
+		if (!$this->all_used = $this->load_all_used())
+		{
+			return '';
+		}
+
+		$topic_prefixes = array();
+		foreach ($this->all_used as $used)
+		{
+			if ($used['topic'] == (int) $topic_id)
+			{
+				$instance = new phpbb_ext_imkingdavid_prefixed_core_instance($used['id']);
+				$topic_prefixes[] = $instance;
+			}
+		}
+
+		if (empty($topic_prefixes))
+		{
+			return '';
+		}
+
+		// We want to sort the prefixes by the 'ordered' property, and we can do that with our custom sort function
+		usort($topic_prefixes, array('phpbb_ext_imkingdavid_prefixed_core_base', 'sort_topic_prefixes'));
+
+		$return_string = '';
+		foreach ($topic_prefixes as $prefix)
+		{
+			$return_string .= $prefix->parse();
+		}
+
+		return $return_string;
+	}
+
+	/**
+	 * Custom sort function used by usort() to order a topic's prefixes by their "ordered" property
+	 *
+	 * @param phpbb_ext_imkingdavid_prefixed_core_instance $a First comparison argument
+	 * @param phpbb_ext_imkingdavid_prefixed_core_instance $b Second comparison argument
+	 * @return int 0 for equal, 1 for a greater than b, -1 for b greater than a
+	 */
+	static public sort_topic_prefixes($a, $b)
+	{
+		$a_order = $a->get('ordered');
+		$b_order = $b->get('ordered');
+
+		if ($a_order == $b_order)
+		{
+			return 0;
+		}
+
+		return ($a_order > $b_order) ? 1 : -1;
 	}
 }
