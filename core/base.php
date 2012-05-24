@@ -165,7 +165,7 @@ abstract class phpbb_ext_imkingdavid_prefixed_core_base
 	 * @param phpbb_ext_imkingdavid_prefixed_core_instance $b Second comparison argument
 	 * @return int 0 for equal, 1 for a greater than b, -1 for b greater than a
 	 */
-	static public sort_topic_prefixes($a, $b)
+	static public function sort_topic_prefixes(phpbb_ext_imkingdavid_prefixed_core_instance $a, phpbb_ext_imkingdavid_prefixed_core_instance $b)
 	{
 		$a_order = $a->get('ordered');
 		$b_order = $b->get('ordered');
