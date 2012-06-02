@@ -36,6 +36,12 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix
 	private $forums;
 
 	/**
+	 * Serialized token array
+	 * @var string
+	 */
+	private $token_data;
+
+	/**
 	 * Constructor method
 	 */
 	public function __construct(dbal $db, acm $cache, $id = 0)

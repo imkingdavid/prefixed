@@ -124,7 +124,7 @@ abstract class phpbb_ext_imkingdavid_prefixed_core_base
 	 * @param int $topic_id ID of the topic
 	 * @return string Parsed (HTML) prefixes
 	 */
-	public load_topic_prefixes($topic_id)
+	public function load_topic_prefixes($topic_id)
 	{
 		if (!$this->all_used = $this->load_all_used())
 		{

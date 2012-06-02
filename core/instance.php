@@ -33,18 +33,6 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 	private $topic;
 
 	/**
-	 * Serialized token array
-	 * @var string
-	 */
-	private $token_data;
-
-	/**
-	 * Token array
-	 * @var array
-	 */
-	private $tokens;
-
-	/**
 	 * Time when the prefix instance was created
 	 * @var int
 	 */

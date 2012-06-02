@@ -6,6 +6,7 @@ CREATE TABLE phpbb_topic_prefixes (
 	style varchar(255) DEFAULT '' NOT NULL,
 	forums varchar(255) DEFAULT '' NOT NULL,
 	users varchar(255) DEFAULT '' NOT NULL,
+	token_data text NOT NULL,
 	PRIMARY KEY (id)
 ) CHARACTER SET `utf8` COLLATE `utf8_bin`;
 
@@ -16,10 +17,10 @@ CREATE TABLE phpbb_topic_prefixes (
 # for tokens to be used
 CREATE TABLE phpbb_topic_prefixes_used (
 	id mediumint(8) UNSIGNED NOT NULL auto_increment,
-	prefix int(11) UNSIGNED DEFAULT '0' NOT NULL,
-	topic int(11) UNSIGNED DEFAULT '0' NOT NULL,
-	token_data text NOT NULL, # Serialized array of data for tokens
-	applied_time int(11) UNSIGNED DEFAULT 0 NOT NULL,
+	prefix int(11) UNSIGNED DEFAULT 0 NOT NULL,
+	topic int(11) UNSIGNED DEFAULT 0 NOT NULL,
+	applied_time int(11) UNSIGNED DEFAULT 0 NOT NULL, # Time when the prefix was applied
+	applied_user int(11) UNSIGNED DEFAULT 0 NOT NULL, # User who applied the prefix
 	ordered int(11) UNSIGNED DEFAULT 0 NOT NULL
 	PRIMARY KEY (id),
 	KEY prefix (prefix_id),
