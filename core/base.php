@@ -56,7 +56,7 @@ abstract class phpbb_ext_imkingdavid_prefixed_core_base
 			return $this->all;
 		}
 
-		if (($this->all = $this->get('_prefixes')) === false)
+		if (($this->all = $this->cache->get('_prefixes')) === false)
 		{
 			$sql = 'SELECT id, title, short, color, users, forums
 				FROM ' . PREFIXES_TABLE . '
@@ -93,7 +93,7 @@ abstract class phpbb_ext_imkingdavid_prefixed_core_base
 			return $this->all_used;
 		}
 
-		if (($this->all_used = $this->get('_prefixes_used')) === false)
+		if (($this->all_used = $this->cache->get('_prefixes_used')) === false)
 		{
 			$sql = 'SELECT id, prefix, topic, token_data
 				FROM ' . PREFIXES_USED_TABLE . '
