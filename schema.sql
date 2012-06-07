@@ -21,9 +21,9 @@ CREATE TABLE phpbb_topic_prefixes_used (
 	topic int(11) UNSIGNED DEFAULT 0 NOT NULL,
 	applied_time int(11) UNSIGNED DEFAULT 0 NOT NULL, # Time when the prefix was applied
 	applied_user int(11) UNSIGNED DEFAULT 0 NOT NULL, # User who applied the prefix
-	ordered int(11) UNSIGNED DEFAULT 0 NOT NULL
+	ordered int(11) UNSIGNED DEFAULT 0 NOT NULL,
 	PRIMARY KEY (id),
-	KEY prefix (prefix_id),
-	KEY topic (topic_id),
+	KEY prefix (prefix),
+	KEY topic (topic),
 	KEY applied_time (applied_time)
 ) CHARACTER SET `utf8` COLLATE `utf8_bin`;

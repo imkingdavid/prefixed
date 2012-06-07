@@ -10,7 +10,7 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 
 	/**
 	 * Cache
-	 * @var acm
+	 * @var phpbb_cache_service
 	 */
 	private $cache;
 
@@ -47,11 +47,12 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 	/**
 	 * Constructor method
 	 */
-	public function __construct(dbal $db, acm $cache, $id = 0)
+	public function __construct(dbal $db, phpbb_cache_service $cache, $id = 0)
 	{
-		$this->set('id', $id);
-		$this->set('db', $db);
-		$this->set('cache', $cache);
+		$this->id = $id;
+		$this->db = $db;
+		$this->cache = $cache;
+
 		if ($this->id)
 		{
 			$this->load();
@@ -70,29 +71,18 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 			return false;
 		}
 
-		$this->set('prefix_obj', new phpbb_ext_imkingdavid_prefixed_core_prefix($this->db, $this->cache, $this->prefix));
+
+
+		$this->prefix_obj = new phpbb_ext_imkingdavid_prefixed_core_prefix($this->db, $this->cache, $this->prefix);
 		$this->prefix_obj->load();
-		if (!$this->prefix_obj->id)
+		if (!$this->prefix_obj->get('id'))
 		{
 			return false;
 		}
 
 		$return_string = '<span';
-		// Don't worry, I will only allow a certain few style things to be used
-		// And I will validate the user input so there isn't some wacky injection or anything
-		if ($this->prefix_obj->style)
-		{
-			$style = unserialize($this->prefix_obj->style);
-			$return_string .= ' style="'
-			foreach ($style as $attr => $value)
-			{
-				$return_string .= "$attr:'$value';";
-			}
-			$return_string .= '"';
-		}
-
 		$return_string .= '>';
-		$return_string .= $this->prefix_obj->title;
+		$return_string .= $this->prefix_obj->get('title');
 		$return_string .= '</span>';
 
 		return $return_string;
@@ -140,12 +130,12 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 		}
 
 		// And now we set our class properties
-		$this->set('prefix', (int) $row['prefix']);
-		$this->set('topic', $row['topic']);
-		$this->set('token_data', $row['token_data']);
-		$this->set('tokens', unserialize($this->token_data));
-		$this->set('applied_time', $row['applied_time']);
-		$this->set('ordered', $row['ordered']);
+		$this->prefix = (int) $row['prefix'];
+		$this->topic = $row['topic'];
+		$this->token_data = $row['token_data'];
+		$this->tokens = unserialize($this->token_data);
+		$this->applied_time = $row['applied_time'];
+		$this->ordered = $row['ordered'];
 
 		return true;
 	
@@ -160,11 +150,7 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 	 */
 	public function set($property, $value)
 	{
-		// If the property exists let's set it
-		if (isset($this->$property))
-		{
-			$this->$property = $value;
-		}
+		$this->$property = $value;
 	}
 
 	/**
@@ -175,6 +161,6 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 	 */
 	public function get($property)
 	{
-		return (isset($this->$property)) ? $this->$property : null;
+		return $this->$property;
 	}
 }

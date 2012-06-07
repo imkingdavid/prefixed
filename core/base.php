@@ -1,6 +1,6 @@
 <?php
 
-abstract class phpbb_ext_imkingdavid_prefixed_core_base
+class phpbb_ext_imkingdavid_prefixed_core_base
 {
 	/**
 	 * Prefix ID
@@ -38,8 +38,9 @@ abstract class phpbb_ext_imkingdavid_prefixed_core_base
 	 * @param dbal $db Database object
 	 * @param phpbb_cache_driver_base $cache Cache object
 	 */
-	public function __construct(dbal $db, phpbb_cache_driver_base $cache)
+	public function __construct(dbal $db, phpbb_cache_service $cache)
 	{
+		global $phpbb_root_path, $phpEx;
 		$this->db = $db;
 		$this->cache = $cache;
 	}
@@ -58,9 +59,8 @@ abstract class phpbb_ext_imkingdavid_prefixed_core_base
 
 		if (($this->all = $this->cache->get('_prefixes')) === false)
 		{
-			$sql = 'SELECT id, title, short, color, users, forums
-				FROM ' . PREFIXES_TABLE . '
-				WHERE topic = ' . (int) $topicrow['TOPIC_ID'];
+			$sql = 'SELECT id, title, short, style, users, forums, token_data
+				FROM ' . PREFIXES_TABLE;
 			$result = $this->db->sql_query($sql);
 			while ($row = $this->db->sql_fetchrow($result))
 			{
@@ -68,14 +68,15 @@ abstract class phpbb_ext_imkingdavid_prefixed_core_base
 					'id'			=> $row['id'],
 					'title'			=> $row['title'],
 					'short'			=> $row['short'],
-					'color'			=> $row['color'],
+					'style'			=> $row['style'],
 					'users'			=> $row['users'],
 					'forums'		=> $row['forums'],
+					'token_data'	=> $row['token_data'],
 				);
 			}
 			$this->db->sql_freeresult($result);
 
-			$this->put('_prefixes', $this->all);
+			$this->cache->put('_prefixes', $this->all);
 		}
 
 		return $this->all;
@@ -95,9 +96,8 @@ abstract class phpbb_ext_imkingdavid_prefixed_core_base
 
 		if (($this->all_used = $this->cache->get('_prefixes_used')) === false)
 		{
-			$sql = 'SELECT id, prefix, topic, token_data
-				FROM ' . PREFIXES_USED_TABLE . '
-				WHERE topic = ' . (int) $topicrow['TOPIC_ID'];
+			$sql = 'SELECT id, prefix, topic, applied_time, applied_user, ordered
+				FROM ' . PREFIXES_USED_TABLE;
 			$result = $this->db->sql_query($sql);
 			while ($row = $this->db->sql_fetchrow($result))
 			{
@@ -105,14 +105,14 @@ abstract class phpbb_ext_imkingdavid_prefixed_core_base
 					'id'			=> $row['id'],
 					'prefix'		=> $row['prefix'],
 					'topic'			=> $row['topic'],
-					'token_data'	=> $row['token_data'],
 					'applied_time'	=> $row['applied_time'],
+					'applied_user'	=> $row['applied_user'],
 					'ordered'		=> $row['ordered'],
 				);
 			}
 			$this->db->sql_freeresult($result);
 
-			$this->put('_prefixes_used', $this->all_used);
+			$this->cache->put('_prefixes_used', $this->all_used);
 		}
 
 		return $this->all_used;
@@ -136,7 +136,7 @@ abstract class phpbb_ext_imkingdavid_prefixed_core_base
 		{
 			if ($used['topic'] == (int) $topic_id)
 			{
-				$instance = new phpbb_ext_imkingdavid_prefixed_core_instance($used['id']);
+				$instance = new phpbb_ext_imkingdavid_prefixed_core_instance($this->db, $this->cache, $used['id']);
 				$topic_prefixes[] = $instance;
 			}
 		}

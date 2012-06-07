@@ -3,35 +3,50 @@
 class phpbb_ext_imkingdavid_prefixed_core_prefix
 {
 	/**
-	 * @var dbal Database
+	 * Database
+	 * @var dbal
 	 */
 	private $db;
+
 	/**
-	 * @var acm Cache
+	 * Cache
+	 * @var phpbb_cache_service
 	 */
 	private $cache;
+
 	/**
-	 * @var int ID
+	 * Prefix ID
+	 * @var int
 	 */
 	private $id;
+
 	/**
-	 * @var string Title
+	 * Prefix Title
+	 * @var string
 	 */
 	private $title;
+
 	/**
-	 * @var string Short name
+	 * Prefix Short name
+	 * @var string
 	 */
 	private $short;
+
 	/**
-	 * @var string Style (Serialized)
+	 * Prefix style (serialized)
+	 * @var string
 	 */
 	private $style;
+
 	/**
-	 * @var string Users
+	 * Prefix allowed users
+	 * @var string
 	 */
-	private $users;	
+	private $users;
+
 	/**
-	 * @var string Forums
+	 * Prefix allowed forums
+	 * @var string
 	 */
 	private $forums;
 
@@ -44,10 +59,12 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix
 	/**
 	 * Constructor method
 	 */
-	public function __construct(dbal $db, acm $cache, $id = 0)
+	public function __construct(dbal $db, phpbb_cache_service $cache, $id = 0)
 	{
-		$this->set('id', $id);
-		$this->set('db', $db);
+		$this->id = $id;
+		$this->db = $db;
+		$this->cache = $cache;
+
 		if ($this->id)
 		{
 			$this->load();
@@ -91,11 +108,11 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix
 		}
 
 		// And now we set our class properties
-		$this->set('title', $row['title']);
-		$this->set('short', $row['short']);
-		$this->set('style', $row['style']);
-		$this->set('users', $row['users']);
-		$this->set('forums', $row['forums']);
+		$this->title = $row['title'];
+		$this->short = $row['short'];
+		$this->style = $row['style'];
+		$this->users = $row['users'];
+		$this->forums = $row['forums'];
 
 		return true;
 	}
@@ -109,11 +126,7 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix
 	 */
 	public function set($property, $value)
 	{
-		// If the property exists let's set it
-		if (isset($this->$property))
-		{
-			$this->$property = $value;
-		}
+		$this->$property = $value;
 	}
 
 	/**
@@ -124,6 +137,6 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix
 	 */
 	public function get($property)
 	{
-		return (isset($this->$property)) ? $this->$property : null;
+		return $this->$property;
 	}
 }
