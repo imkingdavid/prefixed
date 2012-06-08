@@ -104,7 +104,7 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 		// Otherwise, we just query for it
 		if ((($prefix = $this->cache->get('_prefixes_used')) === false) || empty($prefix[$this->id]))
 		{
-			$sql = 'SELECT prefix, topic, token_data, ordered
+			$sql = 'SELECT id, prefix, topic, applied_time, applied_user, ordered
 				FROM ' . PREFIXES_USED_TABLE . '
 				WHERE id = ' . (int) $this->id;
 			$result = $this->db->sql_query($sql);
