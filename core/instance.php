@@ -132,8 +132,7 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 		// And now we set our class properties
 		$this->prefix = (int) $row['prefix'];
 		$this->topic = $row['topic'];
-		$this->token_data = $row['token_data'];
-		$this->tokens = unserialize($this->token_data);
+		$this->applied_user = $row['applied_user'];
 		$this->applied_time = $row['applied_time'];
 		$this->ordered = $row['ordered'];
 
