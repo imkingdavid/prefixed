@@ -122,9 +122,10 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	 * Load a topic's prefix instances
 	 *
 	 * @param int $topic_id ID of the topic
-	 * @return string Parsed (HTML) prefixes
+	 * @param bool $html Whether or not to use HTML (i.e. for the page title, we don't want it)
+	 * @return string Prefixes all in one string
 	 */
-	public function load_topic_prefixes($topic_id)
+	public function load_topic_prefixes($topic_id, $html = true)
 	{
 		if (!$this->all_used = $this->load_all_used())
 		{
@@ -152,7 +153,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 		$return_string = '';
 		foreach ($topic_prefixes as $prefix)
 		{
-			$return_string .= $prefix->parse();
+			$return_string .= $prefix->parse($html);
 		}
 
 		return $return_string;

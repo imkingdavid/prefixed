@@ -64,14 +64,12 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 	 *
 	 * @return mixed False upon failure, otherwise, string containing HTML of parsed prefix
 	 */
-	public function parse()
+	public function parse($html = true)
 	{
 		if (!$this->id)
 		{
 			return false;
 		}
-
-
 
 		$this->prefix_obj = new phpbb_ext_imkingdavid_prefixed_core_prefix($this->db, $this->cache, $this->prefix);
 		$this->prefix_obj->load();
@@ -80,10 +78,13 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 			return false;
 		}
 
-		$return_string = '<span';
-		$return_string .= '>';
-		$return_string .= $this->prefix_obj->get('title');
-		$return_string .= '</span>';
+		$return_string = $this->prefix_obj->get('title');
+		if ($html)
+		{
+			$return_string = $return_string . '<span';
+			$return_string .= '>';
+			$return_string .= '</span>';
+		}
 
 		return $return_string;
 	}

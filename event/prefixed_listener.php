@@ -11,15 +11,16 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_listener implements EventSub
 
 	public function __construct()
 	{
-		global $db, $cache, $template;
+		global $db, $cache, $template, $table_prefix;
+
+		// Let's get our table constants out of the way
+		define('PREFIXES_TABLE', $table_prefix . 'topic_prefixes');
+		define('PREFIXES_USED_TABLE', $table_prefix . 'topic_prefixes_used');
 
 		$this->db = $db;
 		$this->cache = $cache;
 		$this->template = $template;
 		$this->base = new phpbb_ext_imkingdavid_prefixed_core_base($db, $cache);
-
-		define('PREFIXES_TABLE', 'phpbb_topic_prefixes');
-		define('PREFIXES_USED_TABLE', 'phpbb_topic_prefixes_used');
 	}
 
 	static public function getSubscribedEvents()
@@ -39,6 +40,7 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_listener implements EventSub
 			$this->template->assign_vars(array(
 				'TOPIC_PREFIX' => $this->base->load_topic_prefixes($data['topic_data']['topic_id']),
 			));
+			$data['page_title'] = $this->base->load_topic_prefixes($data['topic_data']['topic_id'], false) . '&nbsp;' . $data['page_title'];
 		}
 
 		$event->set_data($data);
