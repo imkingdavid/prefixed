@@ -12,7 +12,7 @@
             "email": "imkingdavid@gmail.com",
             "homepage": "http://www.thedavidking.com",
             "role": "Developer"
-        },
+        }
     ],
     "require": {
         "phpbb": "3.1.0"
