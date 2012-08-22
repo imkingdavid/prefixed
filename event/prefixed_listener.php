@@ -26,8 +26,8 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_listener implements EventSub
 	static public function getSubscribedEvents()
 	{
 		return array(
-			'core.viewtopic_page_header' => 'get_viewtopic_topic_prefix',
-			'core.viewforum_topicrow' => 'get_viewforum_topic_prefixes',
+			'core.viewtopic_modify_page_title' => 'get_viewtopic_topic_prefix',
+			'core.viewforum_modify_topicrow' => 'get_viewforum_topic_prefixes',
 		);
 	}
 
