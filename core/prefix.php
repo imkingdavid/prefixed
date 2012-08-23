@@ -18,7 +18,7 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix
 	 * Prefix ID
 	 * @var int
 	 */
-	private $id;
+	private $prefix_id;
 
 	/**
 	 * Prefix Title
@@ -61,11 +61,11 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix
 	 */
 	public function __construct(dbal $db, phpbb_cache_service $cache, $id = 0)
 	{
-		$this->id = $id;
+		$this->prefix_id = $id;
 		$this->db = $db;
 		$this->cache = $cache;
 
-		if ($this->id)
+		if ($this->prefix_id)
 		{
 			$this->load();
 		}
@@ -73,31 +73,31 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix
 
 	public function load()
 	{
-		if (!$this->id)
+		if (!$this->prefix_id)
 		{
 			return false;
 		}
 		
 		// If this particular prefix is in the cache, we can grab it there
 		// Otherwise, we just query for it
-		if ((($prefix = $this->cache->get('_prefixes')) === false) || empty($prefix[$this->id]))
+		if ((($prefix = $this->cache->get('_prefixes')) === false) || empty($prefix[$this->prefix_id]))
 		{
 			$sql = 'SELECT title, short, color, users, forums
 				FROM ' . PREFIXES_TABLE . '
-				WHERE id = ' . (int) $this->id;
+				WHERE id = ' . (int) $this->prefix_id;
 			$result = $this->db->sql_query($sql);
 			$row = $this->db->sql_fetchrow($result);
 			$this->db->sql_freeresult($result);
 			
 			// since the cache is either completely empty
 			// or else we dont' have this prefix cached, we need to cache it
-			$prefix[$this->id] = $row;
+			$prefix[$this->prefix_id] = $row;
 			$this->cache->put('_prefixes', $prefix);
 		}
 		else
 		{
 			// if we have the prefix  cached, we can grab it.
-			$row = $prefix[$this->id];
+			$row = $prefix[$this->prefix_id];
 		}
 
 		// If after checking the cache and the database we come up empty,

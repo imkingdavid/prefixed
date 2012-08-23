@@ -15,10 +15,16 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 	private $cache;
 
 	/**
+	 * Instance ID
+	 * @var int
+	 */
+	private $instance_id;
+
+	/**
 	 * Prefix ID
 	 * @var int
 	 */
-	private $prefix;
+	private $prefix_id;
 
 	/**
 	 * Prefix object instance
@@ -49,11 +55,11 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 	 */
 	public function __construct(dbal $db, phpbb_cache_service $cache, $id = 0)
 	{
-		$this->id = $id;
+		$this->instance_id = $id;
 		$this->db = $db;
 		$this->cache = $cache;
 
-		if ($this->id)
+		if ($this->instance_id)
 		{
 			$this->load();
 		}
@@ -66,7 +72,7 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 	 */
 	public function parse($html = true)
 	{
-		if (!$this->id)
+		if (!$this->instance_id)
 		{
 			return false;
 		}
@@ -96,31 +102,31 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 	 */
 	public function load()
 	{
-		if (!$this->id)
+		if (!$this->instance_id)
 		{
 			return false;
 		}
 		
 		// If this particular prefix instance is in the cache, we can grab it there
 		// Otherwise, we just query for it
-		if ((($prefix = $this->cache->get('_prefixes_used')) === false) || empty($prefix[$this->id]))
+		if ((($prefix = $this->cache->get('_prefixes_used')) === false) || empty($prefix[$this->instance_id]))
 		{
 			$sql = 'SELECT id, prefix, topic, applied_time, applied_user, ordered
 				FROM ' . PREFIXES_USED_TABLE . '
-				WHERE id = ' . (int) $this->id;
+				WHERE id = ' . (int) $this->instance_id;
 			$result = $this->db->sql_query($sql);
 			$row = $this->db->sql_fetchrow($result);
 			$this->db->sql_freeresult($result);
 			
 			// since the cache is either completely empty
 			// or else we dont' have this prefix instance cached, we need to cache it
-			$prefix[$this->id] = $row;
+			$prefix[$this->instance_id] = $row;
 			$this->cache->put('_prefixes_used', $prefix);
 		}
 		else
 		{
 			// if we have the prefix instance cached, we can grab it.
-			$row = $prefix[$this->id];
+			$row = $prefix[$this->instance_id];
 		}
 
 		// If after checking the cache and the database we come up empty,
@@ -131,7 +137,7 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 		}
 
 		// And now we set our class properties
-		$this->prefix = (int) $row['prefix'];
+		$this->prefix_id = (int) $row['prefix'];
 		$this->topic = $row['topic'];
 		$this->applied_user = $row['applied_user'];
 		$this->applied_time = $row['applied_time'];

@@ -3,12 +3,6 @@
 class phpbb_ext_imkingdavid_prefixed_core_base
 {
 	/**
-	 * Prefix ID
-	 * @var int
-	 */
-	protected $id = 0;
-
-	/**
 	 * Database object instance
 	 * @var dbal
 	 */
