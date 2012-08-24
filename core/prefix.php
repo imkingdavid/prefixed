@@ -82,7 +82,7 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix
 		// Otherwise, we just query for it
 		if ((($prefix = $this->cache->get('_prefixes')) === false) || empty($prefix[$this->prefix_id]))
 		{
-			$sql = 'SELECT title, short, color, users, forums
+			$sql = 'SELECT title, short, style, users, forums
 				FROM ' . PREFIXES_TABLE . '
 				WHERE id = ' . (int) $this->prefix_id;
 			$result = $this->db->sql_query($sql);

@@ -15,16 +15,27 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	private $cache;
 
 	/**
+	 * Template object
+	 * @var phpbb_template
+	 */
+	private $template;
+
+	/**
+	 * Request object
+	 * @var phpbb_request
+	 */
+
+	/**
 	 * Prefix instances
 	 * @var array
 	 */
-	private $all_used;
+	private $prefix_instances;
 
 	/**
 	 * Prefixes
 	 * @var array
 	 */
-	private $all;
+	private $prefixes;
 
 	/**
 	 * Constructor method
@@ -32,11 +43,13 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	 * @param dbal $db Database object
 	 * @param phpbb_cache_driver_base $cache Cache object
 	 */
-	public function __construct(dbal $db, phpbb_cache_service $cache)
+	public function __construct(dbal $db, phpbb_cache_service $cache, phpbb_template $template, phpbb_request $request)
 	{
 		global $phpbb_root_path, $phpEx;
 		$this->db = $db;
 		$this->cache = $cache;
+		$this->template = $template;
+		$this->request = $request;
 	}
 
 	/**
@@ -46,19 +59,19 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	 */
 	public function load_all()
 	{
-		if (!empty($this->all))
+		if (!empty($this->prefixes))
 		{
-			return $this->all;
+			return $this->prefixes;
 		}
 
-		if (($this->all = $this->cache->get('_prefixes')) === false)
+		if (($this->prefixes = $this->cache->get('_prefixes')) === false)
 		{
 			$sql = 'SELECT id, title, short, style, users, forums, token_data
 				FROM ' . PREFIXES_TABLE;
 			$result = $this->db->sql_query($sql);
 			while ($row = $this->db->sql_fetchrow($result))
 			{
-				$this->all[$row['id']] = array(
+				$this->prefixes[$row['id']] = array(
 					'id'			=> $row['id'],
 					'title'			=> $row['title'],
 					'short'			=> $row['short'],
@@ -70,10 +83,10 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 			}
 			$this->db->sql_freeresult($result);
 
-			$this->cache->put('_prefixes', $this->all);
+			$this->cache->put('_prefixes', $this->prefixes);
 		}
 
-		return $this->all;
+		return $this->prefixes;
 	}
 
 	/**
@@ -83,19 +96,19 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	 */
 	public function load_all_used()
 	{
-		if (!empty($this->all_used))
+		if (!empty($this->prefix_instances))
 		{
-			return $this->all_used;
+			return $this->prefix_instances;
 		}
 
-		if (($this->all_used = $this->cache->get('_prefixes_used')) === false)
+		if (($this->prefix_instances = $this->cache->get('_prefixes_used')) === false)
 		{
 			$sql = 'SELECT id, prefix, topic, applied_time, applied_user, ordered
 				FROM ' . PREFIXES_USED_TABLE;
 			$result = $this->db->sql_query($sql);
 			while ($row = $this->db->sql_fetchrow($result))
 			{
-				$this->all_used[$row['id']] = array(
+				$this->prefix_instances[$row['id']] = array(
 					'id'			=> $row['id'],
 					'prefix'		=> $row['prefix'],
 					'topic'			=> $row['topic'],
@@ -106,10 +119,10 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 			}
 			$this->db->sql_freeresult($result);
 
-			$this->cache->put('_prefixes_used', $this->all_used);
+			$this->cache->put('_prefixes_used', $this->prefix_instances);
 		}
 
-		return $this->all_used;
+		return $this->prefix_instances;
 	}
 
 	/**
@@ -121,13 +134,13 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	 */
 	public function load_topic_prefixes($topic_id, $html = true)
 	{
-		if (!$this->all_used = $this->load_all_used())
+		if (!$this->prefix_instances = $this->load_all_used())
 		{
 			return '';
 		}
 
 		$topic_prefixes = array();
-		foreach ($this->all_used as $used)
+		foreach ($this->prefix_instances as $used)
 		{
 			if ($used['topic'] == (int) $topic_id)
 			{
@@ -171,5 +184,63 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 		}
 
 		return ($a_order > $b_order) ? 1 : -1;
+	}
+
+	/**
+	 * Perform prefix-related actions during posting
+	 *
+	 * @var string	$action			add|remove|remove_all
+	 * @var int		$prefix			The prefix ID (if no topic_id) or instance
+	 *								ID (if topic_id provided)
+	 * @var int		$topic_id		ID of the topic
+	 * @return null
+	 */
+	static public function perform_posting_action($action, $prefix = 0, $topic_id = 0)
+	{
+		$prefix_cache = $this->request->variable('prefixes_cache', array());
+
+		if ($action == 'add')
+		{
+			
+		}
+	}
+
+	/**
+	 * Output template for the posting form
+	 *
+	 * @var int		$forum_id		ID of the forum
+	 * @var int		$topic_id		ID of the topic
+	 * @return null
+	 */
+	static public function output_posting_form($forum_id, $topic_id = 0)
+	{
+		$topic_prefixes_used = array();
+		if ($topic_id)
+		{
+			foreach ($this->prefix_instances as $instance)
+			{
+				if ($instance['topic_id'] == $topic_id)
+				{
+					$topic_prefixes_used[] = $instance['prefix'];
+				}
+			}
+		}
+
+		foreach ($this->prefixes as $prefix)
+		{
+			if (in_array($prefix['id'], $topic_prefixes_used))
+			{
+				continue;
+			}
+
+			$this->template->assign_block_vars('prefix_option', array(
+				'ID'		=> $prefix['id'],
+				'TITLE'		=> $prefix['title'],
+				'SHORT'		=> $prefix['short'],
+				'STYLE'		=> $prefix['style'],
+				'USERS'		=> $prefix['users'],
+				'FORUMS'	=> $prefix['forums'],
+			));
+		}
 	}
 }
