@@ -194,6 +194,21 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 		{
 			return false;
 		}
+
+		$prefix_data = $this->prefixes[$prefix_id];
+		$prefix_title = $prefix_data['title'];
+
+		/**
+		 * This is where tokens get applied to a prefix
+		 * Other extensions can add tokens using this, or can otherwise modify
+		 * the prefix title as they see fit
+		 *
+		 * @event prefixed.modify_prefix_title
+		 * @var	string	prefix_title	Prefix title
+		 * @since 1.0.0-A1
+		 */
+		$vars = array('prefix_title');
+		extract($phpbb_dispatcher->trigger_event('prefixed.modify_prefix_title', compact($vars)));
 	}
 
 	/**
