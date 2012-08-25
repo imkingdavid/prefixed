@@ -6,7 +6,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	 * Database object instance
 	 * @var dbal
 	 */
-	protected $db = null;
+	protected $db;
 
 	/**
 	 * Cache object instance
@@ -179,22 +179,75 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	}
 
 	/**
-	 * Perform prefix-related actions during posting
+	 * Add a prefix to a topic
 	 *
-	 * @var string	$action			add|remove|remove_all
-	 * @var int		$prefix			The prefix ID (if no topic_id) or instance
-	 *								ID (if topic_id provided)
-	 * @var int		$topic_id		ID of the topic
-	 * @return null
+	 * @param int $topic_id Topic ID
+	 * @param int $prefix_id Prefix ID
+	 * @param int $forum_id Forum ID
+	 *
 	 */
-	static public function perform_posting_action($action, $prefix = 0, $topic_id = 0)
+	public function add_topic_prefix($topic_id, $prefix_id, $forum_id)
 	{
-		$prefix_cache = $this->request->variable('prefixes_cache', array());
+		$allowed_prefixes = $this->get_allowed_prefixes($this->user->data['user_id'], $forum_id);
 
-		if ($action == 'add')
+		if (count($allowed_prefixes) === count($this->load_prefixes_topic()) || !in_array($prefix_id, $allowed_prefixes) || !in_array($prefix_id, array_keys($this->prefixes)))
 		{
-			
+			return false;
 		}
+	}
+
+	/**
+	 * Obtain the prefixes allowed to be used by this user in this forum
+	 *
+	 * @param int $user_id The user to check
+	 * @param int $forum_id The forum to check
+	 *
+	 */
+	public function get_allowed_prefixes($user_id, $forum_id = 0)
+	{
+		if (empty($this->prefixes))
+		{
+			return array();
+		}
+
+		if (!function_exists('group_memberships'))
+		{
+			include("{$phpbb_root_path}includes/functions_user.$phpEx");
+		}
+		$groups = group_memberships(false, $user_id);
+
+		$prefixes = $this->prefixes;
+		$allowed_prefixes = array();
+
+		foreach ($prefixes as $prefix)
+		{
+			// If we are given a forum ID to filter by, only allow use of the
+			// prefix if it is allowed in this forum
+			if ($forum_id && !in_array($forum_id, explode(',', $prefix['forums'])))
+			{
+				continue;
+			}
+
+			// If any groups the user is a part of match any allowed groups,
+			// we allow use of the prefix
+			foreach ($groups as $group)
+			{
+				if (in_array($group['group_id'], explode(',', $prefix['groups'])))
+				{
+					$allowed_prefixes[] = $prefix['id'];
+					continue 2;
+				}
+			}
+
+			// Lastly, if we are not in allowed group, check allowed users
+			if (in_array($user_id, explode(',', $prefix['users'])))
+			{
+				$allowed_prefixes[] = $prefix['id'];
+				continue;
+			}
+		}
+
+		return $allowed_prefixes;
 	}
 
 	/**
@@ -204,7 +257,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	 * @var int		$topic_id		ID of the topic
 	 * @return null
 	 */
-	static public function output_posting_form($forum_id, $topic_id = 0)
+	public function output_posting_form($forum_id, $topic_id = 0)
 	{
 		$topic_prefixes_used = array();
 		if ($topic_id)

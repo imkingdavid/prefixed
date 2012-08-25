@@ -38,7 +38,7 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_listener implements EventSub
 	public function manage_prefixes_on_posting($event)
 	{
 		$action = $this->request->variable('action', '');
-		$id = $this->request->variable('prefix_id', '');
+		$id = $this->request->variable('prefix_id', 0);
 
 		if (!in_array($action, array('add', 'remove', 'remove_all')))
 		{
@@ -67,7 +67,13 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_listener implements EventSub
 
 		if ($perform_action)
 		{
-			$this->base->perform_posting_action($action, $event['topic_id'], $id);
+			switch ($action)
+			{
+				case 'add':
+					$base->add_topic_prefix($event['topic_id'], $id, $event['forum_id']);
+				break;
+			}
+
 		}
 
 		$this->base->generate_posting_form($event['forum_id'], $event['topic_id']);
