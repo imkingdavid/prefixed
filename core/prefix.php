@@ -51,13 +51,11 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix
 	private $forums;
 
 	/**
-	 * Serialized token array
-	 * @var string
-	 */
-	private $token_data;
-
-	/**
 	 * Constructor method
+	 *
+	 * @param dbal $db Database object
+	 * @param phpbb_cache_service $cache Cache object
+	 * @param int $id Prefix ID
 	 */
 	public function __construct(dbal $db, phpbb_cache_service $cache, $id = 0)
 	{
@@ -71,6 +69,11 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix
 		}
 	}
 
+	/**
+	 * Load the data about this prefix
+	 *
+	 * @return bool
+	 */
 	public function load()
 	{
 		if (!$this->prefix_id)
@@ -126,6 +129,7 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix
 	 */
 	public function set($property, $value)
 	{
+		$property = strtolower($property);
 		$this->$property = $value;
 	}
 
@@ -137,6 +141,7 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix
 	 */
 	public function get($property)
 	{
+		$property = strtolower($property);
 		return $this->$property;
 	}
 }

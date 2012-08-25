@@ -31,7 +31,7 @@ class phpbb_ext_imkingdavid_prefixed_acp_prefixed_module
 		global $cache;
 
 		$user->add_lang('acp/prefixed');
-		$submit = $request->is_set_post('submit') || $request->is_set_post('allow_quick_reply_enable');
+		$submit = $request->is_set_post('submit');
 
 		$form_key = 'acp_prefixed';
 		add_form_key($form_key);
@@ -202,6 +202,18 @@ class phpbb_ext_imkingdavid_prefixed_acp_prefixed_module
 
 					default:
 					case 'list':
+						$base = new phpbb_ext_imkingdavid_prefixed_core_base($db, $cache, $template, $request);
+
+						$prefixes = $base->load_prefixes();
+						foreach ($prefixes as $prefix)
+						{
+							$this->template->assign_block_vars('prefix', array(
+								'ID'		=> $prefix['id'],
+								'TITLE'		=> $prefix['title'],
+								'SHORT'		=> $prefix['short'],
+								'STYLE'		=> $prefix['style'],
+							));
+						}
 					break;
 				}
 			break;

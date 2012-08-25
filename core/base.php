@@ -24,6 +24,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	 * Request object
 	 * @var phpbb_request
 	 */
+	private $request;
 
 	/**
 	 * Prefix instances
@@ -57,14 +58,14 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	 *
 	 * @return array Prefixes
 	 */
-	public function load_all()
+	public function load_prefixes($refresh = false)
 	{
-		if (!empty($this->prefixes))
+		if (!empty($this->prefixes) && !$refresh)
 		{
 			return $this->prefixes;
 		}
 
-		if (($this->prefixes = $this->cache->get('_prefixes')) === false)
+		if (($this->prefixes = $this->cache->get('_prefixes')) === false || $refresh)
 		{
 			$sql = 'SELECT id, title, short, style, users, forums, token_data
 				FROM ' . PREFIXES_TABLE;
@@ -94,14 +95,14 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	 *
 	 * @return array Prefix instances
 	 */
-	public function load_all_used()
+	public function load_prefix_instances($refresh = false)
 	{
-		if (!empty($this->prefix_instances))
+		if (!empty($this->prefix_instances) && !$refesh)
 		{
 			return $this->prefix_instances;
 		}
 
-		if (($this->prefix_instances = $this->cache->get('_prefixes_used')) === false)
+		if (($this->prefix_instances = $this->cache->get('_prefixes_used')) === false || $refresh)
 		{
 			$sql = 'SELECT id, prefix, topic, applied_time, applied_user, ordered
 				FROM ' . PREFIXES_USED_TABLE;
@@ -128,24 +129,23 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	/**
 	 * Load a topic's prefix instances
 	 *
-	 * @param int $topic_id ID of the topic
-	 * @param bool $html Whether or not to use HTML (i.e. for the page title, we don't want it)
-	 * @return string Prefixes all in one string
+	 * @param	int		$topic_id	ID of the topic
+	 * @param	string	$block		Name of the block to send to the 
+	 * @return	string	Prefixes all in one string
 	 */
-	public function load_topic_prefixes($topic_id, $html = true)
+	public function load_prefixes_topic($topic_id, $block = '')
 	{
-		if (!$this->prefix_instances = $this->load_all_used())
+		if (!$this->load_prefix_instances())
 		{
 			return '';
 		}
 
 		$topic_prefixes = array();
-		foreach ($this->prefix_instances as $used)
+		foreach ($this->prefix_instances as $instance)
 		{
-			if ($used['topic'] == (int) $topic_id)
+			if ($instance['topic'] == $topic_id)
 			{
-				$instance = new phpbb_ext_imkingdavid_prefixed_core_instance($this->db, $this->cache, $used['id']);
-				$topic_prefixes[] = $instance;
+				$topic_prefixes[] = new phpbb_ext_imkingdavid_prefixed_core_instance($this->db, $this->cache, $instance['id']);
 			}
 		}
 
@@ -160,7 +160,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 		$return_string = '';
 		foreach ($topic_prefixes as $prefix)
 		{
-			$return_string .= $prefix->parse($html);
+			$return_string .= $prefix->parse($block, true);
 		}
 
 		return $return_string;
@@ -175,15 +175,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	 */
 	static public function sort_topic_prefixes(phpbb_ext_imkingdavid_prefixed_core_instance $a, phpbb_ext_imkingdavid_prefixed_core_instance $b)
 	{
-		$a_order = $a->get('ordered');
-		$b_order = $b->get('ordered');
-
-		if ($a_order == $b_order)
-		{
-			return 0;
-		}
-
-		return ($a_order > $b_order) ? 1 : -1;
+		return $a->get('ordered') == $b->get('ordered') ? 0 : ($a->get('ordered') > $b->get('ordered') ? 1 : -1);
 	}
 
 	/**

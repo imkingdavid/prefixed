@@ -55,8 +55,9 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_listener implements EventSub
 			$sql = 'SELECT topic_first_post_id
 				FROM ' . TOPICS_TABLE . '
 				WHERE topic_id = ' . (int) $event['topic_id'];
-			$result = $db->sql_query($sql);
-			$first_post_id = $db->sql_fetchrow('topic_first_post_id');
+			$result = $this->db->sql_query($sql);
+			$first_post_id = $this->db->sql_fetchrow('topic_first_post_id');
+			$this->db->sql_freeresult($result);
 
 			if ($first_post_id != $event['post_id'])
 			{
@@ -74,27 +75,17 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_listener implements EventSub
 
 	public function get_viewtopic_topic_prefix($event)
 	{
-		$data = $event->get_data();
-
-		if ($this->base->load_all() && $this->base->load_all_used())
+		if ($this->base->load_prefixes() && $this->base->load_prefix_instances())
 		{
-			$this->template->assign_vars(array(
-				'TOPIC_PREFIX' => $this->base->load_topic_prefixes($data['topic_data']['topic_id']),
-			));
-			$data['page_title'] = $this->base->load_topic_prefixes($data['topic_data']['topic_id'], false) . '&nbsp;' . $data['page_title'];
+			$event['page_title'] = $this->base->load_prefixes_topic($event['topic_data']['topic_id'], 'prefix') . '&nbsp;' . $event['page_title'];
 		}
-
-		$event->set_data($data);
 	}
 
 	public function get_viewforum_topic_prefixes($event)
 	{
-		$data = $event->get_data();
 		if ($this->base->load_all() && $this->base->load_all_used())
 		{
-			$data['topicrow']['TOPIC_PREFIX'] = $this->base->load_topic_prefixes($data['topicrow']['TOPIC_ID']);
+			$this->base->load_prefixes_topic($event['topicrow']['TOPIC_ID'], 'topicrow.prefix');
 		}
-
-		$event->set_data($data);
 	}
 }

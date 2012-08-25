@@ -6,24 +6,22 @@ CREATE TABLE phpbb_topic_prefixes (
 	style varchar(255) DEFAULT '' NOT NULL,
 	forums varchar(255) DEFAULT '' NOT NULL,
 	users varchar(255) DEFAULT '' NOT NULL,
-	token_data text NOT NULL,
 	PRIMARY KEY (id)
 ) CHARACTER SET `utf8` COLLATE `utf8_bin`;
 
 
-# Table: 'phpbb_topic_prefixes_used'
-# This table holds individual usages of the prefixes
-# stored on the phpbb_topic_prefixes table. This allows
-# for tokens to be used
-CREATE TABLE phpbb_topic_prefixes_used (
+# Table: 'phpbb_topic_prefix_instances'
+# For each prefix applied to a topic, this table holds data specifically
+# for that prefix instance.
+# This mainly allows tokens, such as usernames, timestamps, etc. to be stored
+# for display within the prefix template
+CREATE TABLE phpbb_topic_prefix_instances (
 	id mediumint(8) UNSIGNED NOT NULL auto_increment,
 	prefix int(11) UNSIGNED DEFAULT 0 NOT NULL,
 	topic int(11) UNSIGNED DEFAULT 0 NOT NULL,
-	applied_time int(11) UNSIGNED DEFAULT 0 NOT NULL, # Time when the prefix was applied
-	applied_user int(11) UNSIGNED DEFAULT 0 NOT NULL, # User who applied the prefix
 	ordered int(11) UNSIGNED DEFAULT 0 NOT NULL,
+	token_data text NOT NULL,
 	PRIMARY KEY (id),
 	KEY prefix (prefix),
-	KEY topic (topic),
-	KEY applied_time (applied_time)
+	KEY topic (topic)
 ) CHARACTER SET `utf8` COLLATE `utf8_bin`;

@@ -30,7 +30,7 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 	 * Prefix object instance
 	 * @var phpbb_ext_imkingdavid_prefixed_core_instance
 	 */
-	private $prefix_obj;
+	private $prefix_object;
 
 	/**
 	 * Topic ID
@@ -51,6 +51,12 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 	private $ordered;
 
 	/**
+	 * Token data (serialized array)
+	 * @var string
+	 */
+	private $token_data;
+
+	/**
 	 * Constructor method
 	 */
 	public function __construct(dbal $db, phpbb_cache_service $cache, $id = 0)
@@ -68,31 +74,55 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 	/**
 	 * Parse a prefix instance
 	 *
-	 * @return mixed False upon failure, otherwise, string containing HTML of parsed prefix
+	 * @param	string	$block		If given, this name will be passed to
+	 *								assign_block_vars (otherwise the variables
+	 *								are assigned to the template globally)
+	 * @param	bool	$return		Whether or not to return the prefix title
+	 * @return	bool|string			False on failure; otherwise string
+	 *								containing the plaintext version of prefix
 	 */
-	public function parse($html = true)
+	public function parse($block = '')
 	{
-		if (!$this->instance_id)
+		$this->prefix_object = new phpbb_ext_imkingdavid_prefixed_core_prefix($this->db, $this->cache, $this->prefix_id);
+
+		if (!$this->prefix_object->load())
 		{
 			return false;
 		}
 
-		$this->prefix_obj = new phpbb_ext_imkingdavid_prefixed_core_prefix($this->db, $this->cache, $this->prefix);
-		$this->prefix_obj->load();
-		if (!$this->prefix_obj->get('id'))
+		$title = $this->prefix_object->get('title');
+		$tokens = unserialize($this->token_data);
+		$style = unserialize($this->prefix_object->get('style'));
+
+		foreach ($tokens as $token => $data)
 		{
-			return false;
+			$title = str_replace($token, $data, $title);
 		}
 
-		$return_string = $this->prefix_obj->get('title');
-		if ($html)
+		$css_string = '';
+		foreach ($style as $attribute => $value)
 		{
-			$return_string = $return_string . '<span';
-			$return_string .= '>';
-			$return_string .= '</span>';
+			$css_string .= $attribute . ': ' . $value . ';';
 		}
 
-		return $return_string;
+		$tpl_vars = array(
+			'ID'	=> $this->prefix_object->get('id'),
+			'SHORT'	=> $this->prefix_object->get('short'),
+			'ORDER'	=> $this->prefix_object->get('order'),
+			'TITLE'	=> $title,
+			'STYLE'	=> $css_string,
+		);
+
+		if ($block)
+		{
+			$this->template->assign_block_vars($block, $tpl_vars);
+		}
+		else
+		{
+			$this->template->assign_vars($tpl_vars);
+		}
+
+		return $title;
 	}
 
 	/**
@@ -156,6 +186,7 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 	 */
 	public function set($property, $value)
 	{
+		$property = strtolower($property);
 		$this->$property = $value;
 	}
 
@@ -167,6 +198,7 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 	 */
 	public function get($property)
 	{
+		$property = strtolower($property);
 		return $this->$property;
 	}
 }
