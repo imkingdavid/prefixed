@@ -67,7 +67,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 
 		if (($this->prefixes = $this->cache->get('_prefixes')) === false || $refresh)
 		{
-			$sql = 'SELECT id, title, short, style, users, forums, token_data
+			$sql = 'SELECT id, title, short, style, users, forums
 				FROM ' . PREFIXES_TABLE;
 			$result = $this->db->sql_query($sql);
 			while ($row = $this->db->sql_fetchrow($result))
@@ -79,7 +79,6 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 					'style'			=> $row['style'],
 					'users'			=> $row['users'],
 					'forums'		=> $row['forums'],
-					'token_data'	=> $row['token_data'],
 				);
 			}
 			$this->db->sql_freeresult($result);
@@ -104,7 +103,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 
 		if (($this->prefix_instances = $this->cache->get('_prefixes_used')) === false || $refresh)
 		{
-			$sql = 'SELECT id, prefix, topic, applied_time, applied_user, ordered
+			$sql = 'SELECT id, prefix, topic, ordered, token_data
 				FROM ' . PREFIXES_USED_TABLE;
 			$result = $this->db->sql_query($sql);
 			while ($row = $this->db->sql_fetchrow($result))
@@ -113,9 +112,8 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 					'id'			=> $row['id'],
 					'prefix'		=> $row['prefix'],
 					'topic'			=> $row['topic'],
-					'applied_time'	=> $row['applied_time'],
-					'applied_user'	=> $row['applied_user'],
 					'ordered'		=> $row['ordered'],
+					'token_data'	=> $row['token_data'],
 				);
 			}
 			$this->db->sql_freeresult($result);
@@ -184,7 +182,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	 * @param int $topic_id Topic ID
 	 * @param int $prefix_id Prefix ID
 	 * @param int $forum_id Forum ID
-	 *
+	 * @return null
 	 */
 	public function add_topic_prefix($topic_id, $prefix_id, $forum_id)
 	{
@@ -192,11 +190,13 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 
 		if (count($allowed_prefixes) === count($this->load_prefixes_topic()) || !in_array($prefix_id, $allowed_prefixes) || !in_array($prefix_id, array_keys($this->prefixes)))
 		{
-			return false;
+			return;
 		}
 
 		$prefix_data = $this->prefixes[$prefix_id];
 		$prefix_title = $prefix_data['title'];
+
+		$token_data = array();
 
 		/**
 		 * This is where tokens get applied to a prefix
@@ -204,11 +204,54 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 		 * the prefix title as they see fit
 		 *
 		 * @event prefixed.modify_prefix_title
-		 * @var	string	prefix_title	Prefix title
+		 * @var	string	prefix_title	Title used to check for tokens
+		 *								It is possible to modify the title
+		 *								but that is not recommended.
+		 * @var	array	token_data		Array of tokens and data:
+		 *								'TOKEN'	=> 'value'
 		 * @since 1.0.0-A1
 		 */
-		$vars = array('prefix_title');
+		$vars = array('token_data', 'prefix_title');
 		extract($phpbb_dispatcher->trigger_event('prefixed.modify_prefix_title', compact($vars)));
+
+		$token_data = serialize($token_data);
+
+		$sql_ary = array(
+			'prefix'		=> $title,
+			'topic'			=> $topic_id,
+			'ordered'		=> $this->count_topic_prefixes($topic_id) + 1,
+			'token_data'	=> $row['token_data'],
+		);
+
+		$sql = 'INSERT INTO ' . PREFIXES_USED_TABLE . ' ' . $db->sql_build_array('INSERT', $sql_ary);
+		$this->db->sql_query($sql);
+
+		$this->load_prefix_instances(true);
+	}
+
+	/**
+	 * Remove a single prefix from a topic
+	 *
+	 * @param int	$topic_id	Topic ID
+	 * @param mixed	$prefix_id	Array or Integer Prefix ID
+	 *							If empty, all prefixes on that topic are
+	 *							removed.
+	 * @return null
+	 */
+	public function remove_topic_prefixes($topic_id, $prefix_id)
+	{
+		if (!empty($prefix_id) && !is_array($prefix_id))
+		{
+			$prefix_id = array($prefix_id);
+		}
+		$sql_and = !empty($prefix_id) ? 'AND ' . $this->db->sql_in_set('prefix_id', $prefix_id) : '';
+
+		$sql = 'DELETE FROM ' . PREFIXES_USED_TABLE . '
+			WHERE topic_id = ' . (int) $topic_id . "
+				$sql_and";
+		$this->db->sql_query($sql);
+
+		$this->load_prefix_instances(true);
 	}
 
 	/**
@@ -216,7 +259,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	 *
 	 * @param int $user_id The user to check
 	 * @param int $forum_id The forum to check
-	 *
+	 * @return array Allowed prefix IDs
 	 */
 	public function get_allowed_prefixes($user_id, $forum_id = 0)
 	{
@@ -302,5 +345,26 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 				'FORUMS'	=> $prefix['forums'],
 			));
 		}
+	}
+
+	/**
+	 * Get the number of prefixes in the topic
+	 *
+	 * @param int $topic_id Topic ID
+	 * @return int Number of prefixes in the topic
+	 */
+	public function count_topic_prefixes($topic_id)
+	{
+		$count = 0;
+
+		foreach ($this->prefix_instances as $instance)
+		{
+			if ($instance['topic'] == $topic_id)
+			{
+				$count++;
+			}
+		}
+
+		return $count;
 	}
 }

@@ -2,7 +2,7 @@
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class phpbb_ext_imkingdavid_prefixed_event_prefixed_listener implements EventSubscriberInterface
+class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements EventSubscriberInterface
 {
 	private $db;
 	private $cache;
@@ -40,7 +40,7 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_listener implements EventSub
 		$action = $this->request->variable('action', '');
 		$id = $this->request->variable('prefix_id', 0);
 
-		if (!in_array($action, array('add', 'remove', 'remove_all')))
+		if (!$event['submit'] || !in_array($action, array('add', 'remove', 'remove_all')))
 		{
 			return;
 		}
@@ -71,6 +71,13 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_listener implements EventSub
 			{
 				case 'add':
 					$base->add_topic_prefix($event['topic_id'], $id, $event['forum_id']);
+				break;
+
+				case 'remove_all':
+					$id = 0;
+				// NO break;
+				case 'remove':
+					$base->remove_topic_prefixes($event['topic_id'], $id);
 				break;
 			}
 
