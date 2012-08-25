@@ -7,7 +7,7 @@ This is an extension for phpBB 3.1 that will add a topic prefix functionality to
 ##Installation
 Until the full extensions architecture is completed in phpBB, installation is manual. Here are the steps to follow:
 
-1. Upload the entire `/prefixed/` directory (including the directory itself) into a new `/ext/imkingdavid/` directory within the root phpBB installation directory.
+1. Drop the `imkingdavid/` directory and all contents into the `ext/` directory of your phpBB installation (create it if it does not already exist).
 2. Open a new shell/cmd/terminal window and navigate to the /develop/ directory within the root phpBB installation directory.
 3. To ensure that the files were properly uploaded, type `php extensions.php list`. You should see imkingdavid/prefixed in the list. If not, you may need to clear the cache and try again; othrwise double check that the files are in the proper location.
 4. To enable the extension, type `php extensions.php enable imkingdavid/prefixed`
