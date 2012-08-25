@@ -14,10 +14,8 @@ Until the full extensions architecture is completed in phpBB, installation is ma
 5. Now, clear the cache once again.
 6. Run the queries located in schema.sql
 
-There is currently no frontend interface for managing topic prefixes, so you will have to manually create them.
-
 ##Usage
-Coming soon...
+There is currently no frontend interface for managing topic prefixes, so you will have to manually create them and apply them to topics by creating new rows on the tables added by this extension.
 
 ##Uninstallation
 To disable the Extension, open the shell/cmd/terminal window and run `php extensions.php disable imkingdavid/prefixed`.
