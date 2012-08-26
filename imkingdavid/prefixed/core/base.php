@@ -143,7 +143,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 		{
 			if ($instance['topic'] == $topic_id)
 			{
-				$topic_prefixes[] = new phpbb_ext_imkingdavid_prefixed_core_instance($this->db, $this->cache, $instance['id']);
+				$topic_prefixes[] = new phpbb_ext_imkingdavid_prefixed_core_instance($this->db, $this->cache, $this->template, $instance['id']);
 			}
 		}
 

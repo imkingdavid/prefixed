@@ -59,11 +59,12 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 	/**
 	 * Constructor method
 	 */
-	public function __construct(dbal $db, phpbb_cache_service $cache, $id = 0)
+	public function __construct(dbal $db, phpbb_cache_service $cache, phpbb_template $template, $id = 0)
 	{
 		$this->instance_id = $id;
 		$this->db = $db;
 		$this->cache = $cache;
+		$this->template = $template;
 
 		if ($this->instance_id)
 		{
@@ -96,7 +97,7 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 
 		foreach ($tokens as $token => $data)
 		{
-			$title = str_replace($token, $data, $title);
+			$title = str_replace('{' . $token . '}', $data, $title);
 		}
 
 		$css_string = '';
@@ -141,7 +142,7 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 		// Otherwise, we just query for it
 		if ((($prefix = $this->cache->get('_prefixes_used')) === false) || empty($prefix[$this->instance_id]))
 		{
-			$sql = 'SELECT id, prefix, topic, applied_time, applied_user, ordered
+			$sql = 'SELECT id, prefix, topic, token_data, ordered
 				FROM ' . PREFIX_INSTANCES_TABLE . '
 				WHERE id = ' . (int) $this->instance_id;
 			$result = $this->db->sql_query($sql);
@@ -169,8 +170,7 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 		// And now we set our class properties
 		$this->prefix_id = (int) $row['prefix'];
 		$this->topic = $row['topic'];
-		$this->applied_user = $row['applied_user'];
-		$this->applied_time = $row['applied_time'];
+		$this->token_data = $row['token_data'];
 		$this->ordered = $row['ordered'];
 
 		return true;

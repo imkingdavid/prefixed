@@ -23,7 +23,7 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 		$this->cache = $cache;
 		$this->template = $template;
 		$this->request = $request;
-		$this->base = new phpbb_ext_imkingdavid_prefixed_core_base($db, $cache, $template);
+		$this->base = new phpbb_ext_imkingdavid_prefixed_core_base($db, $cache, $template, $request);
 	}
 
 	static public function getSubscribedEvents()
@@ -96,7 +96,7 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 
 	public function get_viewforum_topic_prefixes($event)
 	{
-		if ($this->base->load_all() && $this->base->load_all_used())
+		if ($this->base->load_prefixes() && $this->base->load_prefix_instances())
 		{
 			$this->base->load_prefixes_topic($event['topicrow']['TOPIC_ID'], 'topicrow.prefix');
 		}
