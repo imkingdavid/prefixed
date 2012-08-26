@@ -142,7 +142,7 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 		if ((($prefix = $this->cache->get('_prefixes_used')) === false) || empty($prefix[$this->instance_id]))
 		{
 			$sql = 'SELECT id, prefix, topic, applied_time, applied_user, ordered
-				FROM ' . PREFIXES_USED_TABLE . '
+				FROM ' . PREFIX_INSTANCES_TABLE . '
 				WHERE id = ' . (int) $this->instance_id;
 			$result = $this->db->sql_query($sql);
 			$row = $this->db->sql_fetchrow($result);

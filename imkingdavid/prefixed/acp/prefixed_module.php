@@ -83,59 +83,36 @@ class phpbb_ext_imkingdavid_prefixed_acp_prefixed_module
 					$submit = false;
 				}
 
-				// We go through the display_vars to make sure no one is trying to set variables he/she is not allowed to...
-				foreach ($display_vars['vars'] as $config_name => $null)
-				{
-					if (!isset($cfg_array[$config_name]) || strpos($config_name, 'legend') !== false)
-					{
-						continue;
-					}
-
-					if ($config_name == 'auth_method' || $config_name == 'feed_news_id' || $config_name == 'feed_exclude_id')
-					{
-						continue;
-					}
-
-					$this->new_config[$config_name] = $config_value = $cfg_array[$config_name];
-
-					if ($config_name == 'email_function_name')
-					{
-						$this->new_config['email_function_name'] = trim(str_replace(array('(', ')'), array('', ''), $this->new_config['email_function_name']));
-						$this->new_config['email_function_name'] = (empty($this->new_config['email_function_name']) || !function_exists($this->new_config['email_function_name'])) ? 'mail' : $this->new_config['email_function_name'];
-						$config_value = $this->new_config['email_function_name'];
-					}
-
-					if ($submit)
-					{
-						set_config($config_name, $config_value);
-
-						if ($config_name == 'allow_quick_reply' && isset($_POST['allow_quick_reply_enable']))
-						{
-							enable_bitfield_column_flag(FORUMS_TABLE, 'forum_flags', log(FORUM_FLAG_QUICK_REPLY, 2));
-						}
-					}
-				}
-
 				if ($submit)
 				{
+					foreach ($display_vars['vars'] as $config_name => $null)
+					{
+						if (!isset($cfg_array[$config_name]) || strpos($config_name, 'legend') !== false)
+						{
+							continue;
+						}
+
+						$this->new_config[$config_name] = $config_value = $cfg_array[$config_name];
+						set_config($config_name, $config_value);
+					}
 					// @todo create this language key
 					add_log('admin', 'LOG_CONFIG_PREFIX_' . strtoupper($mode));
 
 					trigger_error($user->lang['CONFIG_UPDATED'] . adm_back_link($this->u_action));
 				}
 
-				$this->tpl_name = 'acp_example';
-				$this->page_title = $display_vars['title'];
+				$this->tpl_name = 'acp_prefixed_settings';
+				$this->page_title = $user->lang('ACP_PREFIXED_SETTINGS');
 
 				$template->assign_vars(array(
-					'L_TITLE'			=> $user->lang[$display_vars['title']],
-					'L_TITLE_EXPLAIN'	=> $user->lang[$display_vars['title'] . '_EXPLAIN'],
+					'L_TITLE'			=> $user->lang('ACP_PREFIXED_SETTINGS'),
+					'L_TITLE_EXPLAIN'	=> $user->lang('ACP_PREFIXED_SETTINGS_EXPLAIN'),
 
-					'S_ERROR'			=> (sizeof($error)) ? true : false,
+					'S_ERROR'			=> sizeof($error),
 					'ERROR_MSG'			=> implode('<br />', $error),
 
-					'U_ACTION'			=> $this->u_action)
-				);
+					'U_ACTION'			=> $this->u_action,
+				));
 
 				// Output relevant page
 				foreach ($display_vars['vars'] as $config_key => $vars)
@@ -180,8 +157,7 @@ class phpbb_ext_imkingdavid_prefixed_acp_prefixed_module
 						'S_EXPLAIN'		=> $vars['explain'],
 						'TITLE_EXPLAIN'	=> $l_explain,
 						'CONTENT'		=> $content,
-						)
-					);
+					));
 
 					unset($display_vars['vars'][$config_key]);
 				}

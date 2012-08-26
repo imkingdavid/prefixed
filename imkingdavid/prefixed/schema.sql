@@ -9,7 +9,6 @@ CREATE TABLE phpbb_topic_prefixes (
 	PRIMARY KEY (id)
 ) CHARACTER SET `utf8` COLLATE `utf8_bin`;
 
-
 # Table: 'phpbb_topic_prefix_instances'
 # For each prefix applied to a topic, this table holds data specifically
 # for that prefix instance.

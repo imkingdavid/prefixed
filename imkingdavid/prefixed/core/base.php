@@ -104,7 +104,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 		if (($this->prefix_instances = $this->cache->get('_prefixes_used')) === false || $refresh)
 		{
 			$sql = 'SELECT id, prefix, topic, ordered, token_data
-				FROM ' . PREFIXES_USED_TABLE;
+				FROM ' . PREFIX_INSTANCES_TABLE;
 			$result = $this->db->sql_query($sql);
 			while ($row = $this->db->sql_fetchrow($result))
 			{
@@ -223,7 +223,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 			'token_data'	=> $row['token_data'],
 		);
 
-		$sql = 'INSERT INTO ' . PREFIXES_USED_TABLE . ' ' . $db->sql_build_array('INSERT', $sql_ary);
+		$sql = 'INSERT INTO ' . PREFIX_INSTANCES_TABLE . ' ' . $db->sql_build_array('INSERT', $sql_ary);
 		$this->db->sql_query($sql);
 
 		$this->load_prefix_instances(true);
@@ -246,7 +246,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 		}
 		$sql_and = !empty($prefix_id) ? 'AND ' . $this->db->sql_in_set('prefix_id', $prefix_id) : '';
 
-		$sql = 'DELETE FROM ' . PREFIXES_USED_TABLE . '
+		$sql = 'DELETE FROM ' . PREFIX_INSTANCES_TABLE . '
 			WHERE topic_id = ' . (int) $topic_id . "
 				$sql_and";
 		$this->db->sql_query($sql);

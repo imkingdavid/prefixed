@@ -17,7 +17,7 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 
 		// Let's get our table constants out of the way
 		define('PREFIXES_TABLE', $table_prefix . 'topic_prefixes');
-		define('PREFIXES_USED_TABLE', $table_prefix . 'topic_prefixes_used');
+		define('PREFIX_INSTANCES_TABLE', $table_prefix . 'topic_prefix_instances');
 
 		$this->db = $db;
 		$this->cache = $cache;
