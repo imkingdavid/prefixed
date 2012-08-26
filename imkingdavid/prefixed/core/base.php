@@ -309,13 +309,13 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	}
 
 	/**
-	 * Output template for the posting form
+	 * Generate template for the posting form
 	 *
 	 * @var int		$forum_id		ID of the forum
 	 * @var int		$topic_id		ID of the topic
 	 * @return null
 	 */
-	public function output_posting_form($forum_id, $topic_id = 0)
+	public function generate_posting_form($forum_id, $topic_id = 0)
 	{
 		$topic_prefixes_used = array();
 		if ($topic_id)
@@ -328,6 +328,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 				}
 			}
 		}
+		$this->load_prefixes();
 
 		foreach ($this->prefixes as $prefix)
 		{
@@ -339,7 +340,6 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 			$this->template->assign_block_vars('prefix_option', array(
 				'ID'		=> $prefix['id'],
 				'TITLE'		=> $prefix['title'],
-				'SHORT'		=> $prefix['short'],
 				'STYLE'		=> $prefix['style'],
 				'USERS'		=> $prefix['users'],
 				'FORUMS'	=> $prefix['forums'],

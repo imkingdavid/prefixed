@@ -5,6 +5,7 @@ CREATE TABLE phpbb_topic_prefixes (
 	short varchar(255) DEFAULT '' NOT NULL,
 	style varchar(255) DEFAULT '' NOT NULL,
 	forums varchar(255) DEFAULT '' NOT NULL,
+	groups varchar(255) DEFAULT '' NOT NULL,
 	users varchar(255) DEFAULT '' NOT NULL,
 	PRIMARY KEY (id)
 ) CHARACTER SET `utf8` COLLATE `utf8_bin`;

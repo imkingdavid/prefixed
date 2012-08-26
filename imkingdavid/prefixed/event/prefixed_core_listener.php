@@ -37,6 +37,11 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 
 	public function manage_prefixes_on_posting($event)
 	{
+		// This needs to be moved to an event that is called after
+		// $user->setup() in posting.php because otherwise $template->assign_*
+		// methods do not work
+		//$this->base->generate_posting_form($event['forum_id'], $event['topic_id']);
+
 		$action = $this->request->variable('action', '');
 		$id = $this->request->variable('prefix_id', 0);
 
@@ -82,8 +87,6 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 			}
 
 		}
-
-		$this->base->generate_posting_form($event['forum_id'], $event['topic_id']);
 	}
 
 	public function get_viewtopic_topic_prefix($event)
