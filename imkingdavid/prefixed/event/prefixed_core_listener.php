@@ -8,12 +8,14 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 	private $cache;
 	private $template;
 	private $request;
+	private $user;
 	private $table_prefix;
 	private $base;
 
 	public function __construct()
 	{
-		global $db, $cache, $template, $request, $table_prefix;
+		global $db, $cache, $template, $request, $user, $table_prefix;
+		global $phpbb_container;
 
 		// Let's get our table constants out of the way
 		define('PREFIXES_TABLE', $table_prefix . 'topic_prefixes');
@@ -23,25 +25,44 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 		$this->cache = $cache;
 		$this->template = $template;
 		$this->request = $request;
-		$this->base = new phpbb_ext_imkingdavid_prefixed_core_base($db, $cache, $template, $request);
+		$this->user = $user;
+		$this->base = $phpbb_container->get('prefixed.base');
 	}
 
 	static public function getSubscribedEvents()
 	{
 		return array(
+			// phpBB Core Events
 			'core.viewtopic_modify_page_title'	=> 'get_viewtopic_topic_prefix',
 			'core.viewforum_modify_topicrow'	=> 'get_viewforum_topic_prefixes',
 			'core.modify_posting_parameters'	=> 'manage_prefixes_on_posting',
+			'core.posting_modify_template_vars'	=> 'generate_posting_form',
+
+			// Events added by this extension
+			'prefixed.modify_prefix_title'		=> 'get_token_data',
 		);
+	}
+
+	public function get_token_data($event)
+	{
+		if (strpos($event['title'], '{DATE}') !== false)
+		{
+			$event['token_data']['DATE'] = time();
+		}
+
+		if (strpos($event['title'], '{USERNAME}') !== false)
+		{
+			$event['token_data']['USERNAME'] = $this->user->data['username'];
+		}
+	}
+
+	public function generate_posting_form($event)
+	{
+		$this->base->generate_posting_form($event['forum_id'], $event['topic_id']);
 	}
 
 	public function manage_prefixes_on_posting($event)
 	{
-		// This needs to be moved to an event that is called after
-		// $user->setup() in posting.php because otherwise $template->assign_*
-		// methods do not work
-		//$this->base->generate_posting_form($event['forum_id'], $event['topic_id']);
-
 		$action = $this->request->variable('action', '');
 		$id = $this->request->variable('prefix_id', 0);
 

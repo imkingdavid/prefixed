@@ -1,0 +1,8 @@
+services:
+    prefixed.base:
+        class: phpbb_ext_imkingdavid_prefixed_core_base
+        arguments:
+            - @dbal.conn
+            - @cache.driver
+            - @template
+            - @request

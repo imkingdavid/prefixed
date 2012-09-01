@@ -129,7 +129,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	 *
 	 * @param	int		$topic_id	ID of the topic
 	 * @param	string	$block		Name of the block to send to the 
-	 * @return	string	Prefixes all in one string
+	 * @return	string	Plaintext string of a topic's prefixes
 	 */
 	public function load_prefixes_topic($topic_id, $block = '')
 	{
@@ -244,11 +244,10 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 		{
 			$prefix_id = array($prefix_id);
 		}
-		$sql_and = !empty($prefix_id) ? 'AND ' . $this->db->sql_in_set('prefix_id', $prefix_id) : '';
 
+		$sql_and = !empty($prefix_id) ? ' AND ' . $this->db->sql_in_set('prefix_id', $prefix_id) : '';
 		$sql = 'DELETE FROM ' . PREFIX_INSTANCES_TABLE . '
-			WHERE topic_id = ' . (int) $topic_id . "
-				$sql_and";
+			WHERE topic_id = ' . (int) $topic_id . "$sql_and";
 		$this->db->sql_query($sql);
 
 		$this->load_prefix_instances(true);

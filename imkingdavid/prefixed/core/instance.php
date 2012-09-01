@@ -97,7 +97,7 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 
 		foreach ($tokens as $token => $data)
 		{
-			$title = str_replace('{' . $token . '}', $data, $title);
+			$title = str_replace("{$token}", $data, $title);
 		}
 
 		$css_string = '';
