@@ -10,7 +10,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 
 	/**
 	 * Cache object instance
-	 * @var phpbb_cache_drive_base
+	 * @var phpbb_cache_drive_interface
 	 */
 	private $cache;
 
@@ -44,7 +44,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	 * @param dbal $db Database object
 	 * @param phpbb_cache_driver_base $cache Cache object
 	 */
-	public function __construct(dbal $db, phpbb_cache_service $cache, phpbb_template $template, phpbb_request $request)
+	public function __construct(dbal $db, phpbb_cache_driver_interface $cache, phpbb_template $template, phpbb_request $request)
 	{
 		global $phpbb_root_path, $phpEx;
 		$this->db = $db;
