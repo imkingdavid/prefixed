@@ -21,6 +21,7 @@ To do either, click the appropriate link in the ACP Extension manager you used t
 
 ##Command Line
 You are also welcome to use the cmd/terminal commands available via the `develop/extensions.php` file to enable/disable/purge the extension. Syntax is like so:
+
 `/path/to/phpbb/develop/>php extensions.php enable imkingdavid/prefixed`
 `/path/to/phpbb/develop/>php extensions.php disable imkingdavid/prefixed`
 `/path/to/phpbb/develop/>php extensions.php purge imkingdavid/prefixed`
