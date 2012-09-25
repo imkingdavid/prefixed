@@ -14,18 +14,18 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 
 	public function __construct()
 	{
-		global $db, $cache, $template, $request, $user, $table_prefix;
 		global $phpbb_container;
-
-		// Let's get our table constants out of the way
+        
+        // Let's get our table constants out of the way
+        $table_prefix = $phpbb_container->get('core.table_prefix');
 		define('PREFIXES_TABLE', $table_prefix . 'topic_prefixes');
 		define('PREFIX_INSTANCES_TABLE', $table_prefix . 'topic_prefix_instances');
 
-		$this->db = $db;
-		$this->cache = $cache;
-		$this->template = $template;
-		$this->request = $request;
-		$this->user = $user;
+		$this->db = $phpbb_container->get('dbal.conn');
+		$this->cache = $phpbb_container->get('cache.driver');
+		$this->template = $phpbb_container->get('template');
+		$this->request = $phpbb_container->get('request');
+		$this->user = $phpbb_container->get('user');
 		$this->base = $phpbb_container->get('prefixed.base');
 	}
 
