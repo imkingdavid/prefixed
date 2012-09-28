@@ -219,7 +219,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 		$sql_ary = array(
 			'prefix'		=> $title,
 			'topic'			=> $topic_id,
-			'ordered'		=> $this->count_topic_prefixes($topic_id) + 1,
+			'ordered'		=> $this->count_topic_prefixes($topic_id)++,
 			'token_data'	=> $row['token_data'],
 		);
 

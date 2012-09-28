@@ -59,9 +59,9 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 	/**
 	 * Constructor method
 	 */
-	public function __construct(dbal $db, phpbb_cache_service $cache, phpbb_template $template, $id = 0)
+	public function __construct(dbal $db, phpbb_cache_service $cache, phpbb_template $template, $instance_id = 0)
 	{
-		$this->instance_id = $id;
+		$this->instance_id = $instance_id;
 		$this->db = $db;
 		$this->cache = $cache;
 		$this->template = $template;
@@ -97,7 +97,7 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 
 		foreach ($tokens as $token => $data)
 		{
-			$title = str_replace("{$token}", $data, $title);
+			$title = str_replace('{' . $token . '}', $data, $title);
 		}
 
 		$css_string = '';
