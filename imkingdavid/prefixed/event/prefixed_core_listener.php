@@ -15,7 +15,7 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 	public function __construct()
 	{
 		global $phpbb_container;
-        
+
         // Let's get our table constants out of the way
         $table_prefix = $phpbb_container->get('core.table_prefix');
 		define('PREFIXES_TABLE', $table_prefix . 'topic_prefixes');
@@ -27,6 +27,7 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 		$this->request = $phpbb_container->get('request');
 		$this->user = $phpbb_container->get('user');
 		$this->base = $phpbb_container->get('prefixed.base');
+        $this->dispatcher = $phpbb_container->get('dispatcher');
 	}
 
 	static public function getSubscribedEvents()
@@ -45,15 +46,29 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 
 	public function get_token_data($event)
 	{
+        $tokens = array();
+        
 		if (strpos($event['title'], '{DATE}') !== false)
 		{
-			$event['token_data']['DATE'] = time();
+			$tokens['DATE'] = time();
 		}
 
 		if (strpos($event['title'], '{USERNAME}') !== false)
 		{
-			$event['token_data']['USERNAME'] = $this->user->data['username'];
+			$tokens['USERNAME'] = $this->user->data['username'];
 		}
+
+        /**
+        * You can use this event to add new tokens to be parsed in prefixes
+        *
+        * @event prefixed.get_token_data
+        * @var    array	tokens		Array of tokens to parse; see above for syntax
+        * @since 3.1-A1
+        */
+        $vars = array('tokens');
+        extract($this->dispatcher->trigger_event('prefixed.get_token_data', compact($vars)));
+
+        $event['token_data'] = $tokens;
 	}
 
 	public function generate_posting_form($event)
@@ -91,23 +106,26 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 			}
 		}
 
-		if ($perform_action)
+		if (!$perform_action)
 		{
-			switch ($action)
-			{
-				case 'add':
-					$base->add_topic_prefix($event['topic_id'], $id, $event['forum_id']);
-				break;
-
-				case 'remove_all':
-					$id = 0;
-				// NO break;
-				case 'remove':
-					$base->remove_topic_prefixes($event['topic_id'], $id);
-				break;
-			}
-
+            return;
 		}
+
+        switch ($action)
+		{
+			case 'add':
+				$base->add_topic_prefix($event['topic_id'], $id, $event['forum_id']);
+			break;
+
+			case 'remove_all':
+				$id = 0;
+			// NO break;
+			case 'remove':
+				$base->remove_topic_prefixes($event['topic_id'], $id);
+			break;
+		}
+
+        return;
 	}
 
 	public function get_viewtopic_topic_prefix($event)
