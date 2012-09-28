@@ -17,7 +17,7 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 		global $phpbb_container;
 
         // Let's get our table constants out of the way
-        $table_prefix = $phpbb_container->get('core.table_prefix');
+        $table_prefix = $phpbb_container->getParameter('core.table_prefix');
 		define('PREFIXES_TABLE', $table_prefix . 'topic_prefixes');
 		define('PREFIX_INSTANCES_TABLE', $table_prefix . 'topic_prefix_instances');
 
