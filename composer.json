@@ -16,7 +16,7 @@
     ],
     "require": {
         "phpbb": "3.1.0-dev",
-        "php": "5.3.0",
+        "php": "5.4.0",
     },
     "extra": {
         "display-name": "[pre]fixed"
