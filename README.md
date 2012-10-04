@@ -7,10 +7,12 @@ This is an extension for phpBB 3.1 that will add a topic prefix functionality to
 ##Installation
 You can install this on the latest copy of the develop branch (phpBB 3.1-dev) by following the steps below:
 
-1. Drop the `imkingdavid/` directory and all contents into the `ext/` directory of your phpBB installation (create it if it does not already exist).
-2. Navigate in the ACP to System -> Manage board extensions
-3. Click on the Details page to ensure that your PHP and phpBB versions are compatible with this extension.
-4. Go back to the extensions list and click Enable
+1. If there is not yet an `./ext/imkingdavid/prefixed/` folder tree starting from your board root, create one.
+2. Copy the entire contents of this repo into that folder you just created.
+3. Navigate in the ACP to `System -> Manage board extensions`.
+4. Click on the Details page to ensure that your PHP and phpBB versions are compatible with this extension.
+5. Go back to the extensions list and click Enable
+6. In one way or another, run the contents of the `schema.sql` file on your database.
 
 ##Usage
 There is currently no frontend interface for managing topic prefixes, so you will have to manually create them and apply them to topics by creating new rows on the tables added by this extension. (Ask me on IRC if you need help.)
