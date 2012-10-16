@@ -108,7 +108,7 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 
 		if (!$perform_action)
 		{
-            return;
+			return;
 		}
 
 		switch ($action)
