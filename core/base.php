@@ -201,7 +201,10 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 		/**
 		 * This is where tokens get applied to a prefix
 		 * Other extensions can add tokens using this, or can otherwise modify
-		 * the prefix title as they see fit
+		 * the prefix title as they see fit.
+		 *
+		 * NOTE: See the get_token_data method in the prefixed_core_listener for
+		 * example syntax and usage.
 		 *
 		 * @event prefixed.modify_prefix_title
 		 * @var	string	prefix_title	Title used to check for tokens
@@ -220,7 +223,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 			'prefix'		=> $title,
 			'topic'			=> $topic_id,
 			'ordered'		=> $this->count_topic_prefixes($topic_id)++,
-			'token_data'	=> $row['token_data'],
+			'token_data'	=> $token_data,
 		);
 
 		$sql = 'INSERT INTO ' . PREFIX_INSTANCES_TABLE . ' ' . $db->sql_build_array('INSERT', $sql_ary);

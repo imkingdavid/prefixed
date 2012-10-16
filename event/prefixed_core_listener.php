@@ -58,16 +58,6 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 			$tokens['USERNAME'] = $this->user->data['username'];
 		}
 
-		/**
-		 * You can use this event to add new tokens to be parsed in prefixes
-		 *
-		 * @event prefixed.get_token_data
-		 * @var    array	tokens		Array of tokens to parse; see above for syntax
-		 * @since 3.1-A1
-		 */
-		$vars = array('tokens');
-		extract($this->dispatcher->trigger_event('prefixed.get_token_data', compact($vars)));
-
 		$event['token_data'] = $tokens;
 	}
 
