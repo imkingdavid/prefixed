@@ -16,8 +16,8 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 	{
 		global $phpbb_container;
 
-        // Let's get our table constants out of the way
-        $table_prefix = $phpbb_container->getParameter('core.table_prefix');
+		// Let's get our table constants out of the way
+		$table_prefix = $phpbb_container->getParameter('core.table_prefix');
 		define('PREFIXES_TABLE', $table_prefix . 'topic_prefixes');
 		define('PREFIX_INSTANCES_TABLE', $table_prefix . 'topic_prefix_instances');
 
@@ -46,8 +46,8 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 
 	public function get_token_data($event)
 	{
-        $tokens = array();
-        
+		$tokens = array();
+
 		if (strpos($event['title'], '{DATE}') !== false)
 		{
 			$tokens['DATE'] = time();
@@ -58,17 +58,17 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 			$tokens['USERNAME'] = $this->user->data['username'];
 		}
 
-        /**
-        * You can use this event to add new tokens to be parsed in prefixes
-        *
-        * @event prefixed.get_token_data
-        * @var    array	tokens		Array of tokens to parse; see above for syntax
-        * @since 3.1-A1
-        */
-        $vars = array('tokens');
-        extract($this->dispatcher->trigger_event('prefixed.get_token_data', compact($vars)));
+		/**
+		 * You can use this event to add new tokens to be parsed in prefixes
+		 *
+		 * @event prefixed.get_token_data
+		 * @var    array	tokens		Array of tokens to parse; see above for syntax
+		 * @since 3.1-A1
+		 */
+		$vars = array('tokens');
+		extract($this->dispatcher->trigger_event('prefixed.get_token_data', compact($vars)));
 
-        $event['token_data'] = $tokens;
+		$event['token_data'] = $tokens;
 	}
 
 	public function generate_posting_form($event)
@@ -79,7 +79,7 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 	public function manage_prefixes_on_posting($event)
 	{
 		$action = $this->request->variable('action', '');
-		$id = $this->request->variable('prefix_id', 0);
+		$ids = $this->request->variable('prefix_id', array(0));
 
 		if (!$event['submit'] || !in_array($action, array('add', 'remove', 'remove_all')))
 		{
@@ -111,21 +111,21 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
             return;
 		}
 
-        switch ($action)
+		switch ($action)
 		{
 			case 'add':
 				$base->add_topic_prefix($event['topic_id'], $id, $event['forum_id']);
 			break;
 
 			case 'remove_all':
-				$id = 0;
+				$ids = 0;
 			// NO break;
 			case 'remove':
-				$base->remove_topic_prefixes($event['topic_id'], $id);
+				$base->remove_topic_prefixes($event['topic_id'], $ids);
 			break;
 		}
 
-        return;
+		return;
 	}
 
 	public function get_viewtopic_topic_prefix($event)
