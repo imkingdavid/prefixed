@@ -43,7 +43,7 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 	 * @var int
 	 */
 	private $applied_time;
-	
+
 	/**
 	 * Order of the prefix
 	 * @var int
@@ -78,7 +78,6 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 	 * @param	string	$block		If given, this name will be passed to
 	 *								assign_block_vars (otherwise the variables
 	 *								are assigned to the template globally)
-	 * @param	bool	$return		Whether or not to return the prefix title
 	 * @return	bool|string			False on failure; otherwise string
 	 *								containing the plaintext version of prefix
 	 */
@@ -86,7 +85,7 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 	{
 		$this->prefix_object = new phpbb_ext_imkingdavid_prefixed_core_prefix($this->db, $this->cache, $this->prefix_id);
 
-		if (!$this->prefix_object->load())
+		if (!$this->prefix_object->get('loaded') && !$this->prefix_object->load())
 		{
 			return false;
 		}
@@ -103,7 +102,10 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 		$css_string = '';
 		foreach ($style as $attribute => $value)
 		{
-			$css_string .= $attribute . ': ' . $value . ';';
+			if ($this->valid_css($attribute))
+			{
+				$css_string .= $attribute . ': ' . $value . ';';
+			}
 		}
 
 		$tpl_vars = array(
@@ -127,6 +129,25 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 	}
 
 	/**
+	* Determine whether or not a given CSS attribute is valid for use;
+	* we only allow certain attributes to be used.
+	*
+	* @param string $attribute The attribute
+	* @return bool
+	*/
+	protected function css_is_valid($attribute)
+	{
+		return in_array($attribute, array(
+			'color',
+			'background-color',
+			'background',
+			'font-family',
+			'font',
+			'text-decoration',
+		));
+	}
+
+	/**
 	 * Load a prefix instance's data
 	 *
 	 * @return bool True if the instance exists, false if it doesn't
@@ -137,7 +158,7 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 		{
 			return false;
 		}
-		
+
 		// If this particular prefix instance is in the cache, we can grab it there
 		// Otherwise, we just query for it
 		if ((($prefix = $this->cache->get('_prefixes_used')) === false) || empty($prefix[$this->instance_id]))
@@ -148,7 +169,7 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 			$result = $this->db->sql_query($sql);
 			$row = $this->db->sql_fetchrow($result);
 			$this->db->sql_freeresult($result);
-			
+
 			// since the cache is either completely empty
 			// or else we dont' have this prefix instance cached, we need to cache it
 			$prefix[$this->instance_id] = $row;
@@ -174,7 +195,7 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 		$this->ordered = $row['ordered'];
 
 		return true;
-	
+
 	}
 
 	/**

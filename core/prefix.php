@@ -51,6 +51,12 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix
 	private $forums;
 
 	/**
+	* Whether or not the object has been loaded
+	* @var bool
+	*/
+	private $loaded = false;
+
+	/**
 	 * Constructor method
 	 *
 	 * @param dbal $db Database object
@@ -80,7 +86,7 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix
 		{
 			return false;
 		}
-		
+
 		// If this particular prefix is in the cache, we can grab it there
 		// Otherwise, we just query for it
 		if ((($prefix = $this->cache->get('_prefixes')) === false) || empty($prefix[$this->prefix_id]))
@@ -91,7 +97,7 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix
 			$result = $this->db->sql_query($sql);
 			$row = $this->db->sql_fetchrow($result);
 			$this->db->sql_freeresult($result);
-			
+
 			// since the cache is either completely empty
 			// or else we dont' have this prefix cached, we need to cache it
 			$prefix[$this->prefix_id] = $row;
@@ -116,6 +122,8 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix
 		$this->style = $row['style'];
 		$this->users = $row['users'];
 		$this->forums = $row['forums'];
+
+		$this->loaded = true;
 
 		return true;
 	}

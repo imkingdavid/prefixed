@@ -128,7 +128,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	 * Load a topic's prefix instances
 	 *
 	 * @param	int		$topic_id	ID of the topic
-	 * @param	string	$block		Name of the block to send to the 
+	 * @param	string	$block		Name of the block to send to the template
 	 * @return	string	Plaintext string of a topic's prefixes
 	 */
 	public function load_prefixes_topic($topic_id, $block = '')
@@ -158,7 +158,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 		$return_string = '';
 		foreach ($topic_prefixes as $prefix)
 		{
-			$return_string .= $prefix->parse($block, true);
+			$return_string .= $prefix->parse($block);
 		}
 
 		return $return_string;
