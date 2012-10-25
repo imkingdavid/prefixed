@@ -72,14 +72,14 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 			$result = $this->db->sql_query($sql);
 			while ($row = $this->db->sql_fetchrow($result))
 			{
-				$this->prefixes[$row['id']] = array(
+				$this->prefixes[$row['id']] = [
 					'id'			=> $row['id'],
 					'title'			=> $row['title'],
 					'short'			=> $row['short'],
 					'style'			=> $row['style'],
 					'users'			=> $row['users'],
 					'forums'		=> $row['forums'],
-				);
+				];
 			}
 			$this->db->sql_freeresult($result);
 
@@ -108,13 +108,13 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 			$result = $this->db->sql_query($sql);
 			while ($row = $this->db->sql_fetchrow($result))
 			{
-				$this->prefix_instances[$row['id']] = array(
+				$this->prefix_instances[$row['id']] = [
 					'id'			=> $row['id'],
 					'prefix'		=> $row['prefix'],
 					'topic'			=> $row['topic'],
 					'ordered'		=> $row['ordered'],
 					'token_data'	=> $row['token_data'],
-				);
+				];
 			}
 			$this->db->sql_freeresult($result);
 
@@ -138,7 +138,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 			return '';
 		}
 
-		$topic_prefixes = array();
+		$topic_prefixes = [];
 		foreach ($this->prefix_instances as $instance)
 		{
 			if ($instance['topic'] == $topic_id)
@@ -153,7 +153,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 		}
 
 		// We want to sort the prefixes by the 'ordered' property, and we can do that with our custom sort function
-		usort($topic_prefixes, array('phpbb_ext_imkingdavid_prefixed_core_base', 'sort_topic_prefixes'));
+		usort($topic_prefixes, ['phpbb_ext_imkingdavid_prefixed_core_base', 'sort_topic_prefixes']);
 
 		$return_string = '';
 		foreach ($topic_prefixes as $prefix)
@@ -196,7 +196,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 		$prefix_data = $this->prefixes[$prefix_id];
 		$prefix_title = $prefix_data['title'];
 
-		$token_data = array();
+		$token_data = [];
 
 		/**
 		 * This is where tokens get applied to a prefix
@@ -214,17 +214,17 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 		 *								'TOKEN'	=> 'value'
 		 * @since 1.0.0-A1
 		 */
-		$vars = array('token_data', 'prefix_title');
+		$vars = ['token_data', 'prefix_title'];
 		extract($phpbb_dispatcher->trigger_event('prefixed.modify_prefix_title', compact($vars)));
 
 		$token_data = serialize($token_data);
 
-		$sql_ary = array(
+		$sql_ary = [
 			'prefix'		=> $title,
 			'topic'			=> $topic_id,
 			'ordered'		=> $this->count_topic_prefixes($topic_id)++,
 			'token_data'	=> $token_data,
-		);
+		];
 
 		$sql = 'INSERT INTO ' . PREFIX_INSTANCES_TABLE . ' ' . $db->sql_build_array('INSERT', $sql_ary);
 		$this->db->sql_query($sql);
@@ -233,7 +233,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	}
 
 	/**
-	 * Remove a single prefix from a topic
+	 * Remove the specified or all prefixes from a topic
 	 *
 	 * @param int	$topic_id	Topic ID
 	 * @param mixed	$prefix_id	Array or Integer Prefix ID
@@ -245,7 +245,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	{
 		if (!empty($prefix_id) && !is_array($prefix_id))
 		{
-			$prefix_id = array($prefix_id);
+			$prefix_id = [$prefix_id];
 		}
 
 		$sql_and = !empty($prefix_id) ? ' AND ' . $this->db->sql_in_set('prefix_id', $prefix_id) : '';
@@ -267,7 +267,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	{
 		if (empty($this->prefixes))
 		{
-			return array();
+			return [];
 		}
 
 		if (!function_exists('group_memberships'))
@@ -277,7 +277,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 		$groups = group_memberships(false, $user_id);
 
 		$prefixes = $this->prefixes;
-		$allowed_prefixes = array();
+		$allowed_prefixes = [];
 
 		foreach ($prefixes as $prefix)
 		{
@@ -319,7 +319,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	 */
 	public function generate_posting_form($forum_id, $topic_id = 0)
 	{
-		$topic_prefixes_used = array();
+		$topic_prefixes_used = [];
 		if ($topic_id)
 		{
 			foreach ($this->prefix_instances as $instance)
@@ -339,13 +339,13 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 				continue;
 			}
 
-			$this->template->assign_block_vars('prefix_option', array(
+			$this->template->assign_block_vars('prefix_option', [
 				'ID'		=> $prefix['id'],
 				'TITLE'		=> $prefix['title'],
 				'STYLE'		=> $prefix['style'],
 				'USERS'		=> $prefix['users'],
 				'FORUMS'	=> $prefix['forums'],
-			));
+			]);
 		}
 	}
 

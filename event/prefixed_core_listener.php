@@ -32,7 +32,7 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 
 	static public function getSubscribedEvents()
 	{
-		return array(
+		return [
 			// phpBB Core Events
 			'core.viewtopic_modify_page_title'	=> 'get_viewtopic_topic_prefix',
 			'core.viewforum_modify_topicrow'	=> 'get_viewforum_topic_prefixes',
@@ -41,12 +41,12 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 
 			// Events added by this extension
 			'prefixed.modify_prefix_title'		=> 'get_token_data',
-		);
+		];
 	}
 
 	public function get_token_data($event)
 	{
-		$tokens = array();
+		$tokens = [];
 
 		if (strpos($event['title'], '{DATE}') !== false)
 		{
@@ -69,9 +69,9 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 	public function manage_prefixes_on_posting($event)
 	{
 		$action = $this->request->variable('action', '');
-		$ids = $this->request->variable('prefix_id', array(0));
+		$ids = $this->request->variable('prefix_id', [0]);
 
-		if (!$event['submit'] || !in_array($action, array('add', 'remove', 'remove_all')))
+		if (!$event['submit'] || !in_array($action, ['add', 'remove', 'remove_all']))
 		{
 			return;
 		}

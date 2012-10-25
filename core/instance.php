@@ -108,13 +108,13 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 			}
 		}
 
-		$tpl_vars = array(
+		$tpl_vars = [
 			'ID'	=> $this->prefix_object->get('id'),
 			'SHORT'	=> $this->prefix_object->get('short'),
 			'ORDER'	=> $this->prefix_object->get('order'),
 			'TITLE'	=> $title,
 			'STYLE'	=> $css_string,
-		);
+		];
 
 		if ($block)
 		{
@@ -137,14 +137,14 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 	*/
 	protected function css_is_valid($attribute)
 	{
-		return in_array($attribute, array(
+		return in_array($attribute, [
 			'color',
 			'background-color',
 			'background',
 			'font-family',
 			'font',
 			'text-decoration',
-		));
+		]);
 	}
 
 	/**
