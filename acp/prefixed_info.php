@@ -1,16 +1,23 @@
 <?php
 /**
-*
-* @package acp
-* @version $Id$
-* @copyright (c) 2005 phpBB Group
-* @license http://opensource.org/licenses/gpl-license.php GNU Public License
-*
-*/
+ *
+ * @package prefixed
+ * @copyright (c) 2012 David King (imkingdavid)
+ * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
+ *
+ */
 
 /**
-* @package module_install
-*/
+ * @ignore
+ */
+if (!defined('IN_PHPBB'))
+{
+	exit;
+}
+
+/**
+ *
+ */
 class phpbb_ext_imkingdavid_prefixed_acp_prefixed_info
 {
 	function module()

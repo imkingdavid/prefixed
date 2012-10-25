@@ -1,4 +1,19 @@
 <?php
+/**
+ *
+ * @package prefixed
+ * @copyright (c) 2012 David King (imkingdavid)
+ * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
+ *
+ */
+
+/**
+ * @ignore
+ */
+if (!defined('IN_PHPBB'))
+{
+	exit;
+}
 
 class phpbb_ext_imkingdavid_prefixed_core_instance
 {
@@ -129,12 +144,12 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 	}
 
 	/**
-	* Determine whether or not a given CSS attribute is valid for use;
-	* we only allow certain attributes to be used.
-	*
-	* @param string $attribute The attribute
-	* @return bool
-	*/
+	 * Determine whether or not a given CSS attribute is valid for use;
+	 * we only allow certain attributes to be used.
+	 *
+	 * @param string $attribute The attribute
+	 * @return bool
+	 */
 	protected function css_is_valid($attribute)
 	{
 		return in_array($attribute, [
