@@ -61,8 +61,7 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 
 	public function get_token_data($event)
 	{
-		$tokens = [];
-
+		$tokens =& $event['token_data'];
 		if (strpos($event['title'], '{DATE}') !== false)
 		{
 			$tokens['DATE'] = time();
@@ -72,8 +71,6 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 		{
 			$tokens['USERNAME'] = $this->user->data['username'];
 		}
-
-		$event['token_data'] = $tokens;
 	}
 
 	public function generate_posting_form($event)
