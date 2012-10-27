@@ -64,7 +64,7 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 		$tokens =& $event['token_data'];
 		if (strpos($event['title'], '{DATE}') !== false)
 		{
-			$tokens['DATE'] = time();
+			$tokens['DATE'] = $this->user->format_date(microtime(true));
 		}
 
 		if (strpos($event['title'], '{USERNAME}') !== false)
