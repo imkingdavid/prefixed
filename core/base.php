@@ -111,7 +111,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	 */
 	public function load_prefix_instances($refresh = false)
 	{
-		if (!empty($this->prefix_instances) && !$refesh)
+		if (!empty($this->prefix_instances) && !$refresh)
 		{
 			return $this->prefix_instances;
 		}
@@ -237,7 +237,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 		$sql_ary = [
 			'prefix'		=> $title,
 			'topic'			=> $topic_id,
-			'ordered'		=> $this->count_topic_prefixes($topic_id)++,
+			'ordered'		=> $this->count_topic_prefixes($topic_id) + 1,
 			'token_data'	=> $token_data,
 		];
 

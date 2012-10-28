@@ -127,17 +127,19 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 
 	public function get_viewtopic_topic_prefix($event)
 	{
-		if ($this->container->get('prefixed.base')->load_prefixes() && $this->container->get('prefixed.base')->load_prefix_instances())
-		{
-			$event['page_title'] = $this->container->get('prefixed.base')->load_prefixes_topic($event['topic_data']['topic_id'], 'prefix') . '&nbsp;' . $event['page_title'];
-		}
+		$event['page_title'] = $this->load_prefixes_topic($event, 'topic_data', 'prefix') . '&nbsp;' . $event['page_title'];
 	}
 
 	public function get_viewforum_topic_prefixes($event)
 	{
+		$this->load_prefixes_topic($event, 'row', 'prefix');
+	}
+
+	protected function load_prefixes_topic($event, $array_name = 'row', $block = 'prefix')
+	{
 		if ($this->container->get('prefixed.base')->load_prefixes() && $this->container->get('prefixed.base')->load_prefix_instances())
 		{
-			$this->container->get('prefixed.base')->load_prefixes_topic($event['topicrow']['TOPIC_ID'], 'topicrow.prefix');
+			$this->container->get('prefixed.base')->load_prefixes_topic($event[$array_name]['topic_id'], $block);
 		}
 	}
 }

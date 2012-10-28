@@ -74,7 +74,7 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 	/**
 	 * Constructor method
 	 */
-	public function __construct(dbal $db, phpbb_cache_service $cache, phpbb_template $template, $instance_id = 0)
+	public function __construct(dbal $db, phpbb_cache_driver_interface $cache, phpbb_template $template, $instance_id = 0)
 	{
 		$this->instance_id = $instance_id;
 		$this->db = $db;
@@ -117,16 +117,14 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 		$css_string = '';
 		foreach ($style as $attribute => $value)
 		{
-			if ($this->valid_css($attribute))
+			if ($this->css_is_valid($attribute))
 			{
 				$css_string .= $attribute . ': ' . $value . ';';
 			}
 		}
 
 		$tpl_vars = [
-			'ID'	=> $this->prefix_object->get('id'),
 			'SHORT'	=> $this->prefix_object->get('short'),
-			'ORDER'	=> $this->prefix_object->get('order'),
 			'TITLE'	=> $title,
 			'STYLE'	=> $css_string,
 		];

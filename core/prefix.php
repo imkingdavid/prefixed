@@ -78,7 +78,7 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix
 	 * @param phpbb_cache_service $cache Cache object
 	 * @param int $id Prefix ID
 	 */
-	public function __construct(dbal $db, phpbb_cache_service $cache, $id = 0)
+	public function __construct(dbal $db, phpbb_cache_driver_interface $cache, $id = 0)
 	{
 		$this->prefix_id = $id;
 		$this->db = $db;
