@@ -276,6 +276,8 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	 *
 	 * @param int $user_id The user to check
 	 * @param int $forum_id The forum to check
+	 *						If this is value evaluates to false, not forum ID
+	 *						restriction is placed on prefixes
 	 * @return array Allowed prefix IDs
 	 */
 	public function get_allowed_prefixes($user_id, $forum_id = 0)
@@ -285,16 +287,19 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 			return [];
 		}
 
+		$groups = $allowed_prefixes = [];
+
 		if (!function_exists('group_memberships'))
 		{
 			include("{$phpbb_root_path}includes/functions_user.$phpEx");
 		}
-		$groups = group_memberships(false, $user_id);
 
-		$prefixes = $this->prefixes;
-		$allowed_prefixes = [];
+		foreach (group_memberships(false, $user_id) as $membership)
+		{
+			$groups[] = $membership['group_id'];
+		}
 
-		foreach ($prefixes as $prefix)
+		foreach ($this->prefixes as $prefix)
 		{
 			// If we are given a forum ID to filter by, only allow use of the
 			// prefix if it is allowed in this forum
@@ -307,7 +312,7 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 			// we allow use of the prefix
 			foreach ($groups as $group)
 			{
-				if (in_array($group['group_id'], explode(',', $prefix['groups'])))
+				if (in_array($group, explode(',', $prefix['groups'])))
 				{
 					$allowed_prefixes[] = $prefix['id'];
 					continue 2;
@@ -374,13 +379,12 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	{
 		$count = 0;
 
-		foreach ($this->prefix_instances as $instance)
-		{
+		array_map(function($instance) use(&$count, $topic_id) {
 			if ($instance['topic'] == $topic_id)
 			{
 				$count++;
 			}
-		}
+		}, $this->prefix_instances);
 
 		return $count;
 	}
