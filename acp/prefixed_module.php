@@ -164,7 +164,7 @@ class phpbb_ext_imkingdavid_prefixed_acp_prefixed_module
 
 			case 'prefixes':
 				// @todo Do this
-				$action	= request_var('action', '');
+				$action	= $request->variable('action', '');
 				switch ($action)
 				{
 					case 'add':
