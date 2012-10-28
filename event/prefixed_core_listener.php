@@ -27,22 +27,11 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 	private $table_prefix;
 	private $base;
 
-	public function __construct()
-	{
-		global $phpbb_container;
-
-		$this->container = &$phpbb_container;
-
-		// Let's get our table constants out of the way
-		$table_prefix = $this->container->getParameter('core.table_prefix');
-		define('PREFIXES_TABLE', $table_prefix . 'topic_prefixes');
-		define('PREFIX_INSTANCES_TABLE', $table_prefix . 'topic_prefix_instances');
-	}
-
 	static public function getSubscribedEvents()
 	{
 		return [
 			// phpBB Core Events
+			'core.user_setup'					=> 'setup',
 			'core.viewtopic_modify_page_title'	=> 'get_viewtopic_topic_prefix',
 			'core.viewforum_modify_topicrow'	=> 'get_viewforum_topic_prefixes',
 			'core.modify_posting_parameters'	=> 'manage_prefixes_on_posting',
@@ -53,29 +42,46 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 		];
 	}
 
+	public function setup($event)
+	{
+		global $phpbb_container;
+
+		$this->container = &$phpbb_container;
+
+		// Let's get our table constants out of the way
+		$table_prefix = $this->container->getParameter('core.table_prefix');
+		define('PREFIXES_TABLE', $table_prefix . 'topic_prefixes');
+		define('PREFIX_INSTANCES_TABLE', $table_prefix . 'topic_prefix_instances');
+
+		$this->db = $this->container->get('dbal.conn');
+		$this->user = $this->container->get('user');
+		$this->base = $this->container->get('prefixed.base');
+		$this->request = $this->container->get('request');
+	}
+
 	public function get_token_data($event)
 	{
 		$tokens =& $event['token_data'];
 		if (strpos($event['title'], '{DATE}') !== false)
 		{
-			$tokens['DATE'] = $this->container->get('user')->format_date(microtime(true));
+			$tokens['DATE'] = $this->user->format_date(microtime(true));
 		}
 
 		if (strpos($event['title'], '{USERNAME}') !== false)
 		{
-			$tokens['USERNAME'] = $this->container->get('user')->data['username'];
+			$tokens['USERNAME'] = $this->user->data['username'];
 		}
 	}
 
 	public function generate_posting_form($event)
 	{
-		$this->container->get('prefixed.base')->generate_posting_form($event['forum_id'], $event['topic_id']);
+		$this->base->generate_posting_form($event['forum_id'], $event['topic_id']);
 	}
 
 	public function manage_prefixes_on_posting($event)
 	{
-		$action = $this->container->get('request')->variable('action', '');
-		$ids = $this->container->get('request')->variable('prefix_id', [0]);
+		$action = $this->request->variable('action', '');
+		$ids = $this->request->variable('prefix_id', [0]);
 
 		if (!$event['submit'] || !in_array($action, ['add', 'remove', 'remove_all']))
 		{
@@ -89,13 +95,12 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 		// with the first post in the topic
 		if ($event['mode'] == 'edit')
 		{
-			$db = $this->container->get('dbal.conn');
 			$sql = 'SELECT topic_first_post_id
 				FROM ' . TOPICS_TABLE . '
 				WHERE topic_id = ' . (int) $event['topic_id'];
-			$result = $db->sql_query($sql);
-			$first_post_id = $db->sql_fetchrow('topic_first_post_id');
-			$db->sql_freeresult($result);
+			$result = $this->db->sql_query($sql);
+			$first_post_id = $this->db->sql_fetchrow('topic_first_post_id');
+			$this->db->sql_freeresult($result);
 
 			if ($first_post_id != $event['post_id'])
 			{
@@ -111,14 +116,14 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 		switch ($action)
 		{
 			case 'add':
-				$this->container->get('prefixed.base')->add_topic_prefix($event['topic_id'], $id, $event['forum_id']);
+				$this->base->add_topic_prefix($event['topic_id'], $id, $event['forum_id']);
 			break;
 
 			case 'remove_all':
 				$ids = 0;
 			// NO break;
 			case 'remove':
-				$this->container->get('prefixed.base')->remove_topic_prefixes($event['topic_id'], $ids);
+				$this->base->remove_topic_prefixes($event['topic_id'], $ids);
 			break;
 		}
 
@@ -127,7 +132,7 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 
 	public function get_viewtopic_topic_prefix($event)
 	{
-		$event['page_title'] = $this->load_prefixes_topic($event, 'topic_data', 'prefix') . '&nbsp;' . $event['page_title'];
+		$event['page_title'] = $this->load_prefixes_topic($event, 'topic_data', 'prefix') . $event['page_title'];
 	}
 
 	public function get_viewforum_topic_prefixes($event)
@@ -137,9 +142,10 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 
 	protected function load_prefixes_topic($event, $array_name = 'row', $block = 'prefix')
 	{
-		if ($this->container->get('prefixed.base')->load_prefixes() && $this->container->get('prefixed.base')->load_prefix_instances())
+		if ($this->base->load_prefixes() && $this->base->load_prefix_instances())
 		{
-			$this->container->get('prefixed.base')->load_prefixes_topic($event[$array_name]['topic_id'], $block);
+			return $this->base->load_prefixes_topic($event[$array_name]['topic_id'], $block) . '&nbsp;';
 		}
+		return '';
 	}
 }

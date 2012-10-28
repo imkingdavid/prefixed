@@ -106,8 +106,8 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 		}
 
 		$title = $this->prefix_object->get('title');
-		$tokens = unserialize($this->token_data);
-		$style = unserialize($this->prefix_object->get('style'));
+		$tokens = json_decode($this->token_data);
+		$style = json_decode($this->prefix_object->get('style'));
 
 		foreach ($tokens as $token => $data)
 		{
