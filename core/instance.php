@@ -117,10 +117,7 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 		$css_string = '';
 		foreach ($style as $attribute => $value)
 		{
-			if ($this->css_is_valid($attribute))
-			{
-				$css_string .= $attribute . ': ' . $value . ';';
-			}
+			$css_string .= $attribute . ': ' . $value . ';';
 		}
 
 		$tpl_vars = [
@@ -139,25 +136,6 @@ class phpbb_ext_imkingdavid_prefixed_core_instance
 		}
 
 		return $title;
-	}
-
-	/**
-	 * Determine whether or not a given CSS attribute is valid for use;
-	 * we only allow certain attributes to be used.
-	 *
-	 * @param string $attribute The attribute
-	 * @return bool
-	 */
-	protected function css_is_valid($attribute)
-	{
-		return in_array($attribute, [
-			'color',
-			'background-color',
-			'background',
-			'font-family',
-			'font',
-			'text-decoration',
-		]);
 	}
 
 	/**
