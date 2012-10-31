@@ -64,22 +64,6 @@ class phpbb_ext_imkingdavid_prefixed_core_instance extends ArrayObject
 		}
 	}
 
-	/**
-	 * Set the instance ID
-	 *
-	 * @param int $id Instance ID
-	 * @return $this
-	 */
-	public function set_id($id = 0)
-	{
-		if (!empty($id))
-		{
-			$this['id'] = $id;
-		}
-
-		return $this;
-	}
-
 	public function set_prefix_object(phpbb_ext_imkingdavid_prefixed_core_prefix $prefix)
 	{
 		$this->prefix_object = $prefix;
