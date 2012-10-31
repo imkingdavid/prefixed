@@ -17,16 +17,56 @@ if (!defined('IN_PHPBB'))
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements EventSubscriberInterface
+class phpbb_ext_imkingdavid_prefixed_event_listener implements EventSubscriberInterface
 {
+	/**
+	 * DBAL object
+	 * @var dbal
+	 */
 	private $db;
+
+	/**
+	 * Cache driver object
+	 * @var phpbb_cache_driver_interface
+	 */
 	private $cache;
+
+	/**
+	 * Template object
+	 * @var phpbb_template
+	 */
 	private $template;
+
+	/**
+	 * Request object
+	 * @var phpbb_request
+	 */
 	private $request;
+
+	/**
+	 * User object
+	 * @var phpbb_user
+	 */
 	private $user;
-	private $table_prefix;
+
+	/**
+	 * Prefix manager object
+	 * @var phpbb_ext_imkingdavid_prefixed_core_manager
+	 */
 	private $manager;
 
+	/**
+	 * Table prefix
+	 * @var string
+	 */
+	private $table_prefix;
+
+	/**
+	 * Get subscribed events
+	 *
+	 * @return array
+	 * @static
+	 */
 	static public function getSubscribedEvents()
 	{
 		return [
@@ -44,6 +84,12 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 		];
 	}
 
+	/**
+	 * Set up the environment
+	 *
+	 * @param Event $event Event object
+	 * @return null
+	 */
 	public function setup($event)
 	{
 		global $phpbb_container;
@@ -60,6 +106,12 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 		$this->request = $this->container->get('request');
 	}
 
+	/**
+	 * Get the actual data to store in the DB for given tokens
+	 *
+	 * @param Event $event Event object
+	 * @return null
+	 */
 	public function get_token_data($event)
 	{
 		$tokens =& $event['token_data'];
@@ -75,11 +127,21 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 		}
 	}
 
+	/**
+	 * Get the form things for the posting form
+	 *
+	 * @return Event $event Event object
+	 */
 	public function generate_posting_form($event)
 	{
 		$this->manager->generate_posting_form($this->request->variable('p', 0));
 	}
 
+	/**
+	 * Perform given actions with given prefix IDs on the posting screen
+	 *
+	 * @return Event $event Event object
+	 */
 	public function manage_prefixes_on_posting($event)
 	{
 		$action = $this->request->variable('action', '');
@@ -132,24 +194,42 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 		return;
 	}
 
+	/**
+	 * Get the parsed prefix for the current topic, output it to the template
+	 * Also gets a plaintext version for the browser page title
+	 *
+	 * @param Event $event Event object
+	 * @return null
+	 */
 	public function get_viewtopic_topic_prefix($event)
 	{
 		$event['page_title'] = $this->load_prefixes_topic($event, 'topic_data') . $event['page_title'];
 	}
 
+	/**
+	 * Get the parsed prefix for each of the topics in the forum row
+	 *
+	 * @param Event $event Event object
+	 * @return null
+	 */
 	public function get_viewforum_topic_prefixes($event)
 	{
 		$this->load_prefixes_topic($event);
 	}
 
+	/**
+	 * Helper method that gets the topic prefixes for view(forum/topic) page
+	 *
+	 * @param Event $event Event object
+	 * @return null
+	 */
 	protected function load_prefixes_topic($event, $array_name = 'row', $block = 'prefix')
 	{
 		return (
 			isset($event[$array_name]['topic_id'])
-			&& $this->manager->load_prefixes()
-			&& $this->manager->load_prefix_instances()
-		)
-		? $this->manager->load_prefixes_topic($event[$array_name]['topic_id'], $block) . '&nbsp;'
-		: '';
+			&& $this->manager->count_prefixes()
+			&& $this->manager->count_prefix_instances()
+		)	? $this->manager->load_prefixes_topic($event[$array_name]['topic_id'], $block) . '&nbsp;'
+			: '';
 	}
 }

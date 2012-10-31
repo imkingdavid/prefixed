@@ -66,18 +66,24 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 		$this->cache = $cache;
 		$this->template = $template;
 		$this->request = $request;
+
+		$this->load_prefixes()
+			->load_prefix_instances();
 	}
 
 	/**
 	 * Load all prefixes
+	 * NOTE: This sets the prefixes property and returns the current
+	 * instance of this object. Use the get_prefixes to get the array
+	 * returned.
 	 *
-	 * @return array Prefixes
+	 * @return $this
 	 */
 	public function load_prefixes($refresh = false)
 	{
-		if (!empty($this->prefixes) && !$refresh)
+		if (!$refresh && !empty($this->prefixes))
 		{
-			return $this->prefixes;
+			return $this;
 		}
 
 		if (($this->prefixes = $this->cache->get('_prefixes')) === false || $refresh)
@@ -101,19 +107,36 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 			$this->cache->put('_prefixes', $this->prefixes);
 		}
 
+		return $this;
+	}
+
+	/**
+	 * Get the array of prefixes
+	 *
+	 * @param bool $refresh Whether to use the cached version or load from the
+	 *	database.
+	 * @return array Prefix data
+	 */
+	public function get_prefixes($refresh = false)
+	{
+		$this->load_prefixes();
+
 		return $this->prefixes;
 	}
 
 	/**
 	 * Load all prefix instances
+	 * NOTE: This sets the prefix_instances property and returns the current
+	 * instance of this object. Use get_prefix_instance() to get the array
+	 * returned.
 	 *
-	 * @return array Prefix instances
+	 * @return $this
 	 */
 	public function load_prefix_instances($refresh = false)
 	{
-		if (!empty($this->prefix_instances) && !$refresh)
+		if (!$refresh && !empty($this->prefix_instances))
 		{
-			return $this->prefix_instances;
+			return $this;
 		}
 
 		if (($this->prefix_instances = $this->cache->get('_prefixes_used')) === false || $refresh)
@@ -136,6 +159,20 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 			$this->cache->put('_prefixes_used', $this->prefix_instances);
 		}
 
+		return $this;
+	}
+
+	/**
+	 * Get the array of prefix instances
+	 *
+	 * @param bool $refresh Whether to use the cached version or load from the
+	 *	database.
+	 * @return array Prefix data
+	 */
+	public function get_prefix_instances($refresh = false)
+	{
+		$this->load_prefix_instaces();
+
 		return $this->prefix_instances;
 	}
 
@@ -148,7 +185,7 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 	 */
 	public function load_prefixes_topic($topic_id, $block = '')
 	{
-		if (!$this->load_prefix_instances())
+		if (!$this->count_prefix_instances())
 		{
 			return '';
 		}
@@ -168,7 +205,7 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 		}
 
 		// We want to sort the prefixes by the 'ordered' property, and we can do that with our custom sort function
-		usort($topic_prefixes, ['phpbb_ext_imkingdavid_prefixed_core_base', 'sort_topic_prefixes']);
+		usort($topic_prefixes, [$this, 'sort_topic_prefixes']);
 
 		$return_string = '';
 		foreach ($topic_prefixes as $prefix)
@@ -362,9 +399,6 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 		$forum_id = $row['forum_id'];
 
 		$topic_prefixes_used = [];
-		$this->load_prefixes();
-		$this->load_prefix_instances();
-
 		foreach ($this->prefix_instances as $instance)
 		{
 			if ((int) $instance['topic'] === (int) $topic_id)
@@ -422,5 +456,25 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 		}, $this->prefix_instances);
 
 		return $count;
+	}
+
+	/**
+	 * Get the number of prefixes in total
+	 *
+	 * @return int
+	 */
+	public function count_prefixes()
+	{
+		return sizeof($this->prefixes);
+	}
+
+	/**
+	 * Get the number of prefix instances in total
+	 *
+	 * @return int
+	 */
+	public function count_prefix_instances()
+	{
+		return sizeof($this->prefix_instances);
 	}
 }
