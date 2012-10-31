@@ -15,7 +15,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-class phpbb_ext_imkingdavid_prefixed_core_base
+class phpbb_ext_imkingdavid_prefixed_core_manager
 {
 	/**
 	 * Database object instance

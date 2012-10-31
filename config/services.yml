@@ -1,6 +1,6 @@
 services:
-    prefixed.base:
-        class: phpbb_ext_imkingdavid_prefixed_core_base
+    prefixed.manager:
+        class: phpbb_ext_imkingdavid_prefixed_core_manager
         arguments:
             - @dbal.conn
             - @cache.driver

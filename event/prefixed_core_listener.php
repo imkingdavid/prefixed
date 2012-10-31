@@ -25,7 +25,7 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 	private $request;
 	private $user;
 	private $table_prefix;
-	private $base;
+	private $manager;
 
 	static public function getSubscribedEvents()
 	{
@@ -56,7 +56,7 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 		define('PREFIX_INSTANCES_TABLE', $table_prefix . 'topic_prefix_instances');
 
 		$this->db = $this->container->get('dbal.conn');
-		$this->base = $this->container->get('prefixed.base');
+		$this->manager = $this->container->get('prefixed.manager');
 		$this->request = $this->container->get('request');
 	}
 
@@ -77,7 +77,7 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 
 	public function generate_posting_form($event)
 	{
-		$this->base->generate_posting_form($this->request->variable('p', 0));
+		$this->manager->generate_posting_form($this->request->variable('p', 0));
 	}
 
 	public function manage_prefixes_on_posting($event)
@@ -118,14 +118,14 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 		switch ($action)
 		{
 			case 'add':
-				$this->base->add_topic_prefix($event['topic_id'], $id, $event['forum_id']);
+				$this->manager->add_topic_prefix($event['topic_id'], $id, $event['forum_id']);
 			break;
 
 			case 'remove_all':
 				$ids = 0;
 			// NO break;
 			case 'remove':
-				$this->base->remove_topic_prefixes($event['topic_id'], $ids);
+				$this->manager->remove_topic_prefixes($event['topic_id'], $ids);
 			break;
 		}
 
@@ -146,10 +146,10 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 	{
 		return (
 			isset($event[$array_name]['topic_id'])
-			&& $this->base->load_prefixes()
-			&& $this->base->load_prefix_instances()
+			&& $this->manager->load_prefixes()
+			&& $this->manager->load_prefix_instances()
 		)
-		? $this->base->load_prefixes_topic($event[$array_name]['topic_id'], $block) . '&nbsp;'
+		? $this->manager->load_prefixes_topic($event[$array_name]['topic_id'], $block) . '&nbsp;'
 		: '';
 	}
 }
