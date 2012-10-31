@@ -41,25 +41,15 @@ trait phpbb_ext_imkingdavid_prefixed_core_loadable
 			$row = $this->db->sql_fetchrow($result);
 			$this->db->sql_freeresult($result);
 
-			// since the cache is either completely empty
-			// or else we dont' have this prefix instance cached, we need to cache it
 			$prefix[$id] = $row;
 			$this->cache->put($cache_name, $prefix);
 		}
 		else
 		{
-			// if we have the prefix instance cached, we can grab it.
 			$row = $prefix[$id];
 		}
 
-		// If after checking the cache and the database we come up empty,
-		// we should stop here
-		if (empty($row))
-		{
-			return array();
-		}
-
-		return $row;
+		return $row ?: [];
 	}
 
 	/**
