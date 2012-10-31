@@ -34,8 +34,10 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 			'core.user_setup'					=> 'setup',
 			'core.viewtopic_modify_page_title'	=> 'get_viewtopic_topic_prefix',
 			'core.viewforum_modify_topicrow'	=> 'get_viewforum_topic_prefixes',
-			'core.modify_posting_parameters'	=> 'manage_prefixes_on_posting',
-			'core.posting_modify_template_vars'	=> 'generate_posting_form',
+			'core.posting_modify_template_vars'	=> [
+				['manage_prefixes_on_posting'],
+				['generate_posting_form'],
+			],
 
 			// Events added by this extension
 			'prefixed.modify_prefix_title'		=> 'get_token_data',
@@ -54,7 +56,6 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 		define('PREFIX_INSTANCES_TABLE', $table_prefix . 'topic_prefix_instances');
 
 		$this->db = $this->container->get('dbal.conn');
-		$this->user = $this->container->get('user');
 		$this->base = $this->container->get('prefixed.base');
 		$this->request = $this->container->get('request');
 	}
@@ -62,20 +63,21 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 	public function get_token_data($event)
 	{
 		$tokens =& $event['token_data'];
+
 		if (strpos($event['title'], '{DATE}') !== false)
 		{
-			$tokens['DATE'] = $this->user->format_date(microtime(true));
+			$tokens['DATE'] = $this->container->get('user')->format_date(microtime(true));
 		}
 
 		if (strpos($event['title'], '{USERNAME}') !== false)
 		{
-			$tokens['USERNAME'] = $this->user->data['username'];
+			$tokens['USERNAME'] = $this->container->get('user')->data['username'];
 		}
 	}
 
 	public function generate_posting_form($event)
 	{
-		$this->base->generate_posting_form($event['forum_id'], $event['topic_id']);
+		$this->base->generate_posting_form($this->request->variable('p', 0));
 	}
 
 	public function manage_prefixes_on_posting($event)
@@ -132,20 +134,22 @@ class phpbb_ext_imkingdavid_prefixed_event_prefixed_core_listener implements Eve
 
 	public function get_viewtopic_topic_prefix($event)
 	{
-		$event['page_title'] = $this->load_prefixes_topic($event, 'topic_data', 'prefix') . $event['page_title'];
+		$event['page_title'] = $this->load_prefixes_topic($event, 'topic_data') . $event['page_title'];
 	}
 
 	public function get_viewforum_topic_prefixes($event)
 	{
-		$this->load_prefixes_topic($event, 'row', 'prefix');
+		$this->load_prefixes_topic($event);
 	}
 
 	protected function load_prefixes_topic($event, $array_name = 'row', $block = 'prefix')
 	{
-		if ($this->base->load_prefixes() && $this->base->load_prefix_instances())
-		{
-			return $this->base->load_prefixes_topic($event[$array_name]['topic_id'], $block) . '&nbsp;';
-		}
-		return '';
+		return (
+			isset($event[$array_name]['topic_id'])
+			&& $this->base->load_prefixes()
+			&& $this->base->load_prefix_instances()
+		)
+		? $this->base->load_prefixes_topic($event[$array_name]['topic_id'], $block) . '&nbsp;'
+		: '';
 	}
 }

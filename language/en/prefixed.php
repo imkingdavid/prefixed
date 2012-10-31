@@ -39,7 +39,5 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, [
-	'ACP_PREFIXED_MANAGEMENT'	=> 'Topic Prefix Management',
-	'ACP_PREFIXED_SETTINGS'		=> 'Prefix Settings',
-	'ACP_PREFIXED_MANAGE'		=> 'Manage Prefixes',
+	'POSTING_PREFIXES'	=> 'Topic prefixes',
 ]);

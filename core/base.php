@@ -337,35 +337,70 @@ class phpbb_ext_imkingdavid_prefixed_core_base
 	 * @var int		$topic_id		ID of the topic
 	 * @return null
 	 */
-	public function generate_posting_form($forum_id, $topic_id = 0)
+	public function generate_posting_form($post_id = 0)
 	{
-		$topic_prefixes_used = [];
-		if ($topic_id)
+		if (!$post_id)
 		{
-			foreach ($this->prefix_instances as $instance)
+			return;
+		}
+
+		// Get some information from the database
+		$sql = 'SELECT t.topic_first_post_id, t.forum_id, t.topic_id
+			FROM ' . TOPICS_TABLE . ' t, ' . POSTS_TABLE . ' p 
+			WHERE p.post_id = ' . (int) $post_id . '
+				AND t.topic_id = p.topic_id';
+		$result = $this->db->sql_query($sql);
+		$row = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult($result);
+
+		// Only edit the first post of the topic
+		if ((int) $row['topic_first_post_id'] !==  (int) $post_id)
+		{
+			return;
+		}
+		$topic_id = $row['topic_id'];
+		$forum_id = $row['forum_id'];
+
+		$topic_prefixes_used = [];
+		$this->load_prefixes();
+		$this->load_prefix_instances();
+
+		foreach ($this->prefix_instances as $instance)
+		{
+			if ((int) $instance['topic'] === (int) $topic_id)
 			{
-				if ($instance['topic_id'] == $topic_id)
-				{
-					$topic_prefixes_used[] = $instance['prefix'];
-				}
+				$topic_prefixes_used[] = $instance['prefix'];
 			}
 		}
-		$this->load_prefixes();
 
 		foreach ($this->prefixes as $prefix)
 		{
 			if (in_array($prefix['id'], $topic_prefixes_used))
 			{
-				continue;
+				foreach ($this->prefix_instances as $instance_ary)
+				{
+					if ($prefix['id'] == $instance_ary['prefix'])
+					{
+						$instance = new phpbb_ext_imkingdavid_prefixed_core_instance($this->db, $this->cache, $this->template, $instance['id']);
+						$instance->parse('prefix_used');
+					}
+				}
 			}
-
-			$this->template->assign_block_vars('prefix_option', [
-				'ID'		=> $prefix['id'],
-				'TITLE'		=> $prefix['title'],
-				'STYLE'		=> $prefix['style'],
-				'USERS'		=> $prefix['users'],
-				'FORUMS'	=> $prefix['forums'],
-			]);
+			else
+			{
+				$style = '';
+				$style_ary = json_decode($prefix['style']);
+				foreach ($style_ary as $element => $value)
+				{
+					$style .= $element . ': ' . $value . ';';
+				}
+				$this->template->assign_block_vars('prefix_option', [
+					'ID'		=> $prefix['id'],
+					'SHORT'		=> $prefix['short'],
+					'TITLE'		=> $prefix['title'],
+					'STYLE'		=> $style,
+				]);
+			}
 		}
 	}
 

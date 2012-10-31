@@ -66,7 +66,7 @@ class phpbb_ext_imkingdavid_prefixed_acp_prefixed_module
 					],
 				];
 				$this->new_config = $config;
-				$cfg_array = (isset($_REQUEST['config'])) ? utf8_normalize_nfc(request_var('config', ['' => ''], true)) : $this->new_config;
+				$cfg_array = (isset($_REQUEST['config'])) ? utf8_normalize_nfc($request->variable('config', ['' => ''], true)) : $this->new_config;
 				$error = [];
 
 				// We validate the complete config if wished
