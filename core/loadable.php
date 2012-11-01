@@ -49,6 +49,8 @@ trait phpbb_ext_imkingdavid_prefixed_core_loadable
 			$row = $prefix[$id];
 		}
 
+		$this->loaded = true;
+
 		return $row ?: [];
 	}
 

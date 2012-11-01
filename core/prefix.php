@@ -35,24 +35,73 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix extends ArrayObject
 	protected $cache;
 
 	/**
+	 * Template
+	 * @var phpbb_template
+	 */
+	protected $template;
+
+	/**
 	 * Constructor method
 	 *
 	 * @param dbal $db Database object
 	 * @param phpbb_cache_service $cache Cache object
 	 * @param int $id Prefix ID
 	 */
-	public function __construct(dbal $db, phpbb_cache_driver_interface $cache, $id = 0)
+	public function __construct(dbal $db, phpbb_cache_driver_interface $cache, phpbb_template $template, $id = 0)
 	{
 		parent::__construct();
 
-		$this->offsetSet('id', $id, false);
+		$this['id'] = $id;
 		$this->db = $db;
 		$this->cache = $cache;
+		$this->template = $template;
 
 		if ($this['id'])
 		{
 			$this->load();
 		}
+	}
+
+	/**
+	 * Parse the style of the prefix
+	 *
+	 * @param	string	$block		If given, this name will be passed to
+	 *								assign_block_vars (otherwise the variables
+	 *								are assigned to the template globally)
+	 * @param	string	$vars		Variables to send to the template
+	 * @return	string	HTML parsed prefix
+	 */
+	public function parse($block = '', array $vars = [])
+	{
+		if (!$this->loaded() && !$this->load())
+		{
+			return '';
+		}
+
+		$style = '';
+		if (!empty($this['style']))
+		{
+			foreach (json_decode($this['style'], true) as $attribute => $value)
+			{
+				$style .= $attribute . ': ' . $value . ';';
+			}
+		}
+
+		$tpl_vars = array_merge([
+			'SHORT'	=> $this['short'],
+			'TITLE'	=> $this['title'],
+			'STYLE'	=> $style,
+		], $vars);
+
+		call_user_func_array(
+			[
+				$this->template,
+				$block ? 'assign_block_vars' : 'assign_vars',
+			],
+			$block ? [$block, $tpl_vars] : [$tpl_vars]
+		);
+
+		return $this['title'];
 	}
 
 	/**
@@ -63,7 +112,12 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix extends ArrayObject
 	 */
 	public function load()
 	{
-		if ($this->loaded() || !$this['id'])
+		if ($this->loaded())
+		{
+			return true;
+		}
+		// @todo: check "else if" vs. "elseif" for phpBB
+		else if (!$this['id'])
 		{
 			return false;
 		}
@@ -79,6 +133,6 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix extends ArrayObject
 			$this[$key] = $value;
 		}
 
-		return $this->loaded = true;
+		return true;
 	}
 }

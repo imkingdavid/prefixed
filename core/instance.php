@@ -48,12 +48,17 @@ class phpbb_ext_imkingdavid_prefixed_core_instance extends ArrayObject
 
 	/**
 	 * Constructor method
+	 *
+	 * @param dbal $db DBAL object
+	 * @param phpbb_cache_driver_interface $cache Cache driver object
+	 * @param phpbb_template $template Template object
+	 * @param int $id Instance ID
 	 */
-	public function __construct(dbal $db, phpbb_cache_driver_interface $cache, phpbb_template $template, $instance_id = 0)
+	public function __construct(dbal $db, phpbb_cache_driver_interface $cache, phpbb_template $template, $id = 0)
 	{
 		parent::__construct();
 
-		$this->offsetSet('id', $instance_id, false);
+		$this['id'] = $id;
 		$this->db = $db;
 		$this->cache = $cache;
 		$this->template = $template;
@@ -64,6 +69,12 @@ class phpbb_ext_imkingdavid_prefixed_core_instance extends ArrayObject
 		}
 	}
 
+	/**
+	 * Set the prefix object for this instance
+	 *
+	 * @param phpbb_ext_imkingdavid_prefixed_core_prefix
+	 * @return $this
+	 */
 	public function set_prefix_object(phpbb_ext_imkingdavid_prefixed_core_prefix $prefix)
 	{
 		$this->prefix_object = $prefix;
@@ -77,49 +88,26 @@ class phpbb_ext_imkingdavid_prefixed_core_instance extends ArrayObject
 	 * @param	string	$block		If given, this name will be passed to
 	 *								assign_block_vars (otherwise the variables
 	 *								are assigned to the template globally)
-	 * @return	bool|string			False on failure; otherwise string
-	 *								containing the plaintext version of prefix
+	 * @return	 string				Plaintext prefix
 	 */
 	public function parse($block = '')
 	{
 		if (!$this->prefix_object instanceof phpbb_ext_imkingdavid_prefixed_core_prefix)
 		{
-			$this->set_prefix_object(new phpbb_ext_imkingdavid_prefixed_core_prefix($this->db, $this->cache, $this['prefix']));
+			$this->set_prefix_object(new phpbb_ext_imkingdavid_prefixed_core_prefix($this->db, $this->cache, $this->template, $this['prefix']));
 		}
 
 		if (!$this->prefix_object->loaded() && !$this->prefix_object->load())
 		{
-			return false;
+			return '';
 		}
 
-		$title = $this->prefix_object['title'];
 		foreach (json_decode($this['token_data'], true) as $token => $data)
 		{
-			$title = str_replace('{' . $token . '}', $data, $title);
+			$this->prefix_object['title'] = str_replace('{' . $token . '}', $data, $this->prefix_object['title']);
 		}
 
-		$style = '';
-		foreach (json_decode($this->prefix_object['style'], true) as $attribute => $value)
-		{
-			$style .= $attribute . ': ' . $value . ';';
-		}
-
-		$tpl_vars = [
-			'ID'	=> 1,
-			'SHORT'	=> $this->prefix_object['short'],
-			'TITLE'	=> $title,
-			'STYLE'	=> $style,
-		];
-
-		call_user_func_array(
-			[
-				$this->template,
-				$block ? 'assign_block_vars' : 'assign_vars',
-			],
-			$block ? [$block, $tpl_vars] : [$tpl_vars]
-		);
-
-		return $title;
+		return $this->prefix_object->parse($block, ['ID' => $this['id']]);
 	}
 
 	/**
@@ -130,7 +118,11 @@ class phpbb_ext_imkingdavid_prefixed_core_instance extends ArrayObject
 	 */
 	public function load()
 	{
-		if ($this->loaded() || !$this['id'])
+		if ($this->loaded())
+		{
+			return true;
+		}
+		else if (!$this['id'])
 		{
 			return false;
 		}
@@ -146,6 +138,6 @@ class phpbb_ext_imkingdavid_prefixed_core_instance extends ArrayObject
 			$this[$key] = $value;
 		}
 
-		return $this->loaded = true;
+		return true;
 	}
 }
