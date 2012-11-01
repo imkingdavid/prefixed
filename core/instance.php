@@ -17,8 +17,7 @@ if (!defined('IN_PHPBB'))
 
 class phpbb_ext_imkingdavid_prefixed_core_instance extends ArrayObject
 {
-	use phpbb_ext_imkingdavid_prefixed_core_array_object,
-	phpbb_ext_imkingdavid_prefixed_core_loadable {
+	use phpbb_ext_imkingdavid_prefixed_core_loadable {
 		load as loader;
 	}
 
