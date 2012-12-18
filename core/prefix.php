@@ -23,7 +23,7 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix extends ArrayObject
 
 	/**
 	 * Database
-	 * @var dbal
+	 * @var phpbb_db_driver
 	 */
 	protected $db;
 
@@ -42,11 +42,11 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix extends ArrayObject
 	/**
 	 * Constructor method
 	 *
-	 * @param dbal $db Database object
+	 * @param phpbb_db_driver $db Database object
 	 * @param phpbb_cache_service $cache Cache object
 	 * @param int $id Prefix ID
 	 */
-	public function __construct(dbal $db, phpbb_cache_driver_interface $cache, phpbb_template $template, $id = 0)
+	public function __construct(phpbb_db_driver $db, phpbb_cache_driver_interface $cache, phpbb_template $template, $id = 0)
 	{
 		parent::__construct();
 
@@ -115,7 +115,6 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix extends ArrayObject
 		{
 			return true;
 		}
-		// @todo: check "else if" vs. "elseif" for phpBB
 		else if (!$this['id'])
 		{
 			return false;

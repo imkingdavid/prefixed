@@ -25,6 +25,7 @@ trait phpbb_ext_imkingdavid_prefixed_core_loadable
 
 	/**
 	 * Load a loadable item
+	 *
 	 * The class that uses this should have $this->cache and $this->db defined
 	 * properly.
 	 *
@@ -55,7 +56,7 @@ trait phpbb_ext_imkingdavid_prefixed_core_loadable
 	}
 
 	/**
-	 * Determine whether the prefix has been loaded
+	 * Determine whether the item has been loaded
 	 *
 	 * @return bool
 	 */

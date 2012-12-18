@@ -23,7 +23,7 @@ class phpbb_ext_imkingdavid_prefixed_core_instance extends ArrayObject
 
 	/**
 	 * Database
-	 * @var dbal
+	 * @var phpbb_db_driver
 	 */
 	protected $db;
 
@@ -48,12 +48,12 @@ class phpbb_ext_imkingdavid_prefixed_core_instance extends ArrayObject
 	/**
 	 * Constructor method
 	 *
-	 * @param dbal $db DBAL object
+	 * @param phpbb_db_driver $db DBAL object
 	 * @param phpbb_cache_driver_interface $cache Cache driver object
 	 * @param phpbb_template $template Template object
 	 * @param int $id Instance ID
 	 */
-	public function __construct(dbal $db, phpbb_cache_driver_interface $cache, phpbb_template $template, $id = 0)
+	public function __construct(phpbb_db_driver $db, phpbb_cache_driver_interface $cache, phpbb_template $template, $id = 0)
 	{
 		parent::__construct();
 
