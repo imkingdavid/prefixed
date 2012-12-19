@@ -73,6 +73,7 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 
 	/**
 	 * Load all prefixes
+	 *
 	 * NOTE: This sets the prefixes property and returns the current
 	 * instance of this object. Use the get_prefixes to get the array
 	 * returned.
@@ -126,6 +127,7 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 
 	/**
 	 * Load all prefix instances
+	 *
 	 * NOTE: This sets the prefix_instances property and returns the current
 	 * instance of this object. Use get_prefix_instance() to get the array
 	 * returned.

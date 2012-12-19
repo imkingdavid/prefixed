@@ -20,8 +20,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class phpbb_ext_imkingdavid_prefixed_event_listener implements EventSubscriberInterface
 {
 	/**
-	 * DBAL object
-	 * @var dbal
+	 * Database object
+	 * @var phpbb_db_driver
 	 */
 	private $db;
 
@@ -221,15 +221,16 @@ class phpbb_ext_imkingdavid_prefixed_event_listener implements EventSubscriberIn
 	 * Helper method that gets the topic prefixes for view(forum/topic) page
 	 *
 	 * @param Event $event Event object
+	 * @param string $array_name Name of the array that contains the topic_id
+	 * @param string $block The name of the template block
 	 * @return null
 	 */
 	protected function load_prefixes_topic($event, $array_name = 'row', $block = 'prefix')
 	{
-		return (
-			isset($event[$array_name]['topic_id'])
-			&& $this->manager->count_prefixes()
-			&& $this->manager->count_prefix_instances()
-		)	? $this->manager->load_prefixes_topic($event[$array_name]['topic_id'], $block) . '&nbsp;'
-			: '';
+		return (isset($event[$array_name]['topic_id']) &&
+			$this->manager->count_prefixes() &&
+			$this->manager->count_prefix_instances())
+		? $this->manager->load_prefixes_topic($event[$array_name]['topic_id'], $block) . '&nbsp;'
+		: '';
 	}
 }

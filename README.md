@@ -4,6 +4,10 @@
 
 This is an extension for phpBB 3.1 that will add a topic prefix functionality to your board.
 
+##Requirements
+- >= phpBB 3.1-dev
+- >= PHP 5.4
+
 ##Installation
 You can install this on the latest copy of the develop branch (phpBB 3.1-dev) by following the steps below:
 
