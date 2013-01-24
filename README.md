@@ -16,7 +16,7 @@ You can install this on the latest copy of the develop branch (phpBB 3.1-dev) by
 3. Navigate in the ACP to `System -> Manage board extensions`.
 4. Click on the Details page to ensure that your PHP and phpBB versions are compatible with this extension.
 5. Go back to the extensions list and click Enable
-6. In one way or another, run the contents of the `schema.sql` file on your database.
+6. Until Migrations are merged into develop, either install this over the migrations branch, or run the queries in this file: https://github.com/imkingdavid/prefixed/blob/967c6b0772f086a91457223528af9010eda04a40/schema.sql
 
 ##Usage
 There is currently no frontend interface for managing topic prefixes, so you will have to manually create them and apply them to topics by creating new rows on the tables added by this extension. (Ask me on IRC if you need help.)
