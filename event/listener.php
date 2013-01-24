@@ -2,7 +2,7 @@
 /**
  *
  * @package prefixed
- * @copyright (c) 2012 David King (imkingdavid)
+ * @copyright (c) 2013 David King (imkingdavid)
  * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  *
  */
