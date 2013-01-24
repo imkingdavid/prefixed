@@ -197,7 +197,7 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 		{
 			if ($instance['topic'] == $topic_id)
 			{
-				$topic_prefixes[] = new phpbb_ext_imkingdavid_prefixed_core_instance($this->db, $this->cache, $this->template, $instance['id']);
+				$topic_prefixes[] = $this->get_instance($instance['id']);
 			}
 		}
 
@@ -289,9 +289,11 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 	/**
 	 * Remove the specified or all prefixes from a topic
 	 *
+	 * This does not check auth or ask for confirmation.
+	 *
 	 * @param int	$topic_id	Topic ID
 	 * @param mixed	$prefix_id	Array or Integer Prefix ID
-	 *							If empty, all prefixes on that topic are
+	 *							If empty, ALL prefixes on that topic are
 	 *							removed.
 	 * @return null
 	 */
@@ -417,7 +419,7 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 				{
 					if ($prefix['id'] == $instance_ary['prefix'])
 					{
-						$instance = new phpbb_ext_imkingdavid_prefixed_core_instance($this->db, $this->cache, $this->template, $instance['id']);
+						$instance = $this->get_instance($instance['id']);
 						$instance->parse('prefix_used');
 					}
 				}
@@ -478,5 +480,10 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 	public function count_prefix_instances()
 	{
 		return sizeof($this->prefix_instances);
+	}
+
+	public function get_instance($instance_id)
+	{
+		return new phpbb_ext_imkingdavid_prefixed_core_instance($this->db, $this->cache, $this->template, $instance_id);
 	}
 }

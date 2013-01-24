@@ -36,7 +36,7 @@ trait phpbb_ext_imkingdavid_prefixed_core_loadable
 	 */
 	public function load($cache_name, $id, $sql)
 	{
-		if ((($prefix = $this->cache->get($cache_name)) === false) || empty($prefix[$id]))
+		if ((false === $prefix = $this->cache->get($cache_name)) || empty($prefix[$id]))
 		{
 			$result = $this->db->sql_query($sql);
 			$row = $this->db->sql_fetchrow($result);

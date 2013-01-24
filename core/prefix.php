@@ -18,7 +18,7 @@ if (!defined('IN_PHPBB'))
 class phpbb_ext_imkingdavid_prefixed_core_prefix extends ArrayObject
 {
 	use phpbb_ext_imkingdavid_prefixed_core_loadable {
-		load as loader;
+		load as _load;
 	}
 
 	/**
@@ -124,8 +124,8 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix extends ArrayObject
 			FROM ' . PREFIXES_TABLE . '
 			WHERE id = ' . (int) $this['id'];
 
-		// Uses the load() method of the 'loadable' trait
-		$row = $this->loader('_prefixes', $this['id'], $sql);
+		// Uses the load() method of the 'loadable' trait, aliased as _load()
+		$row = $this->_load('_prefixes', $this['id'], $sql);
 		foreach ($row as $key => $value)
 		{
 			$this[$key] = $value;

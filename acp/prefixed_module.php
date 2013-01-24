@@ -51,7 +51,6 @@ class phpbb_ext_imkingdavid_prefixed_acp_prefixed_module
 						'sitename'				=> ['lang' => 'SITE_NAME',				'validate' => 'string',	'type' => 'text:40:255', 'explain' => false],
 						'site_desc'				=> ['lang' => 'SITE_DESC',				'validate' => 'string',	'type' => 'text:40:255', 'explain' => false],
 						'board_disable'			=> ['lang' => 'DISABLE_BOARD',			'validate' => 'bool',	'type' => 'custom', 'method' => 'board_disable', 'explain' => true],
-						'board_disable_msg'		=> false,
 						'default_lang'			=> ['lang' => 'DEFAULT_LANGUAGE',		'validate' => 'lang',	'type' => 'select', 'function' => 'language_select', 'params' => ['{CONFIG_VALUE}'], 'explain' => false],
 						'default_dateformat'	=> ['lang' => 'DEFAULT_DATE_FORMAT',	'validate' => 'string',	'type' => 'custom', 'method' => 'dateformat_select', 'explain' => true],
 						'board_timezone'		=> ['lang' => 'SYSTEM_TIMEZONE',		'validate' => 'string',	'type' => 'select', 'function' => 'tz_select', 'params' => ['{CONFIG_VALUE}', 1], 'explain' => true],

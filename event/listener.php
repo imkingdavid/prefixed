@@ -94,7 +94,7 @@ class phpbb_ext_imkingdavid_prefixed_event_listener implements EventSubscriberIn
 	{
 		global $phpbb_container;
 
-		$this->container = &$phpbb_container;
+		$this->container = $phpbb_container;
 
 		// Let's get our table constants out of the way
 		$table_prefix = $this->container->getParameter('core.table_prefix');
@@ -153,7 +153,7 @@ class phpbb_ext_imkingdavid_prefixed_event_listener implements EventSubscriberIn
 		}
 
 		// We treat the form as refreshed so we don't lose entered information
-		$event['refresh'] = $perform_action = true;
+		$event['refresh'] = true;
 
 		// If the mode is edit, we need to ensure to that we are working
 		// with the first post in the topic
@@ -166,15 +166,10 @@ class phpbb_ext_imkingdavid_prefixed_event_listener implements EventSubscriberIn
 			$first_post_id = $this->db->sql_fetchrow('topic_first_post_id');
 			$this->db->sql_freeresult($result);
 
-			if ($first_post_id != $event['post_id'])
+			if ((int) $first_post_id !== (int) $event['post_id'])
 			{
-				$perform_action = false;
+				return;
 			}
-		}
-
-		if (!$perform_action)
-		{
-			return;
 		}
 
 		switch ($action)
