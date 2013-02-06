@@ -19,7 +19,7 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 {
 	/**
 	 * Database object instance
-	 * @var dbal
+	 * @var phpbb_db_driver
 	 */
 	protected $db;
 
@@ -56,10 +56,10 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 	/**
 	 * Constructor method
 	 *
-	 * @param dbal $db Database object
+	 * @param phpbb_db_driver $db Database object
 	 * @param phpbb_cache_driver_base $cache Cache object
 	 */
-	public function __construct(dbal $db, phpbb_cache_driver_interface $cache, phpbb_template $template, phpbb_request $request)
+	public function __construct(phpbb_db_driver $db, phpbb_cache_driver_interface $cache, phpbb_template $template, phpbb_request $request)
 	{
 		global $phpbb_root_path, $phpEx;
 		$this->db = $db;
@@ -80,13 +80,8 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 	 *
 	 * @return $this
 	 */
-	public function load_prefixes($refresh = false)
+	public function load_prefixes()
 	{
-		if (!$refresh && !empty($this->prefixes))
-		{
-			return $this;
-		}
-
 		if (($this->prefixes = $this->cache->get('_prefixes')) === false || $refresh)
 		{
 			$sql = 'SELECT id, title, short, style, users, forums
@@ -120,7 +115,12 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 	 */
 	public function get_prefixes($refresh = false)
 	{
-		$this->load_prefixes();
+		if (!$refresh && !empty($this->prefixes))
+		{
+			return $this-> $prefixes;
+		}
+
+		$this->load_prefixes($refresh);
 
 		return $this->prefixes;
 	}
@@ -134,13 +134,8 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 	 *
 	 * @return $this
 	 */
-	public function load_prefix_instances($refresh = false)
+	public function load_prefix_instances()
 	{
-		if (!$refresh && !empty($this->prefix_instances))
-		{
-			return $this;
-		}
-
 		if (($this->prefix_instances = $this->cache->get('_prefixes_used')) === false || $refresh)
 		{
 			$sql = 'SELECT id, prefix, topic, ordered, token_data
@@ -173,6 +168,11 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 	 */
 	public function get_prefix_instances($refresh = false)
 	{
+		if (!$refresh && !empty($this->prefix_instances))
+		{
+			return $this->prefix_instances;
+		}
+
 		$this->load_prefix_instaces();
 
 		return $this->prefix_instances;
@@ -187,6 +187,8 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 	 */
 	public function load_prefixes_topic($topic_id, $block = '')
 	{
+		// If there aren't any instantiated prefixes, the topic won't have any
+		// to load, so let's just stop right here
 		if (!$this->count_prefix_instances())
 		{
 			return '';
@@ -195,12 +197,13 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 		$topic_prefixes = [];
 		foreach ($this->prefix_instances as $instance)
 		{
-			if ($instance['topic'] == $topic_id)
+			if ((int) $instance['topic'] === (int) $topic_id)
 			{
 				$topic_prefixes[] = $this->get_instance($instance['id']);
 			}
 		}
 
+		// If this topic has no prefixes
 		if (empty($topic_prefixes))
 		{
 			return '';

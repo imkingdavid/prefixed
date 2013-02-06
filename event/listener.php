@@ -140,7 +140,8 @@ class phpbb_ext_imkingdavid_prefixed_event_listener implements EventSubscriberIn
 	/**
 	 * Perform given actions with given prefix IDs on the posting screen
 	 *
-	 * @return Event $event Event object
+	 * @param Event $event Event object
+	 * @return null
 	 */
 	public function manage_prefixes_on_posting($event)
 	{
@@ -185,8 +186,6 @@ class phpbb_ext_imkingdavid_prefixed_event_listener implements EventSubscriberIn
 				$this->manager->remove_topic_prefixes($event['topic_id'], $ids);
 			break;
 		}
-
-		return;
 	}
 
 	/**
@@ -218,7 +217,7 @@ class phpbb_ext_imkingdavid_prefixed_event_listener implements EventSubscriberIn
 	 * @param Event $event Event object
 	 * @param string $array_name Name of the array that contains the topic_id
 	 * @param string $block The name of the template block
-	 * @return null
+	 * @return string Plaintext string of topic prefixes
 	 */
 	protected function load_prefixes_topic($event, $array_name = 'row', $block = 'prefix')
 	{

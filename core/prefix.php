@@ -62,13 +62,14 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix extends ArrayObject
 	}
 
 	/**
-	 * Parse the style of the prefix
+	 * This function assigns the parsed prefix to to template variables and
+	 * returns the plain text prefix (used for browser page title)
 	 *
 	 * @param	string	$block		If given, this name will be passed to
 	 *								assign_block_vars (otherwise the variables
 	 *								are assigned to the template globally)
 	 * @param	string	$vars		Variables to send to the template
-	 * @return	string	HTML parsed prefix
+	 * @return	string	Plaintext prefix
 	 */
 	public function parse($block = '', array $vars = [])
 	{

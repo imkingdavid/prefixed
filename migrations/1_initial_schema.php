@@ -23,7 +23,7 @@ class phpbb_ext_imkingdavid_prefixed_migrations_1_initial_schema extends phpbb_d
 	/**
 	 * @inheritdoc
 	 */
-	public static function update_schema()
+	public function update_schema()
 	{
 		return [
 			'add_tables'	=> [
@@ -52,6 +52,7 @@ class phpbb_ext_imkingdavid_prefixed_migrations_1_initial_schema extends phpbb_d
 						'ordered'		=> ['UINT', 0],
 						'token_data'	=> ['TEXT', ''],
 					],
+					'PRIMARY_KEY'	=> 'id',
 				],
 			],
 		];
