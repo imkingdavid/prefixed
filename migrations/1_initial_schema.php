@@ -57,4 +57,17 @@ class phpbb_ext_imkingdavid_prefixed_migrations_1_initial_schema extends phpbb_d
 			],
 		];
 	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function revert_schema()
+	{
+		return [
+			'drop_tables'	=> [
+				$this->table_prefix . 'topic_prefixes',
+				$this->table_prefix . 'topic_prefix_instances',
+			],
+		];
+	}
 }
