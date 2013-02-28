@@ -88,6 +88,7 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix extends ArrayObject
 		}
 
 		$tpl_vars = array_merge([
+			'ID'	=> $this['id'],
 			'SHORT'	=> $this['short'],
 			'TITLE'	=> $this['title'],
 			'STYLE'	=> $style,
@@ -133,5 +134,15 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix extends ArrayObject
 		}
 
 		return true;
+	}
+
+	/**
+	 * Update/Insert an entry in the database
+	 *
+	 * If $this->id === 0 Then: INSERT; Else: UPDATE; Endif;
+	 */
+	public function update()
+	{
+
 	}
 }

@@ -42,4 +42,11 @@ $lang = array_merge($lang, [
 	'ACP_PREFIXED_MANAGEMENT'	=> 'Topic Prefix Management',
 	'ACP_PREFIXED_SETTINGS'		=> 'Prefix Settings',
 	'ACP_PREFIXED_MANAGE'		=> 'Manage Prefixes',
+
+	'PREFIX_VIEW_TITLE'			=> 'View prefixes',
+	'PREFIX_VIEW_EXPLAIN'		=> 'This page lists the prefixes you have created for use on your board. From here, you can add, edit, and delete prefixes.',
+	'PREFIX_ADD_TITLE'			=> 'Create prefix',
+	'PREFIX_ADD_EXPLAIN'		=> 'Use the form below to create a new prefix.',
+	'PREFIX_EDIT_TITLE'			=> 'Modify prefix',
+	'PREFIX_EDIT_EXPLAIN'		=> 'Use the form below to modify the prefix data.',
 ]);

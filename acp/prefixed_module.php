@@ -163,12 +163,31 @@ class phpbb_ext_imkingdavid_prefixed_acp_prefixed_module
 
 			case 'prefixes':
 				// @todo Do this
-				$action	= $request->variable('action', '');
+				$action	= $request->variable('action', 'list');
+				$manager = new phpbb_ext_imkingdavid_prefixed_core_manager($db, $cache, $template, $request);
+
 				switch ($action)
 				{
 					case 'add':
 					case 'edit':
-					
+						if ($request->is_set_post('submit'))
+						{
+						}
+						else if ($action === 'edit')
+						{
+							$id = $request->variable('prefix_id', 0);
+							// Set the form fields to the corresponding values
+							// from the database
+							$prefix = new phpbb_ext_imkingdavid_prefixed_core_prefix($db, $cache, $template, $id);
+							$template->assign_vars([
+								'TITLE' => $prefix['title'],
+								'SHORT' => $prefix['short']
+								'STYLE' => $prefix['style'],
+								'FORUMS' => $prefix['forums'],
+								'GROUPS' => $prefix['groups'],
+								'USERS' => $prefix['users'],
+							]);
+						}
 					break;
 
 					case 'delete':
@@ -176,12 +195,10 @@ class phpbb_ext_imkingdavid_prefixed_acp_prefixed_module
 
 					default:
 					case 'list':
-						$base = new phpbb_ext_imkingdavid_prefixed_core_base($db, $cache, $template, $request);
-
-						$prefixes = $base->load_prefixes();
+						$prefixes = $manager->get_prefixes();
 						foreach ($prefixes as $prefix)
 						{
-							$this->template->assign_block_vars('prefix', [
+							$template->assign_block_vars('prefix', [
 								'ID'		=> $prefix['id'],
 								'TITLE'		=> $prefix['title'],
 								'SHORT'		=> $prefix['short'],

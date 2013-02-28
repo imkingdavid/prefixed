@@ -78,9 +78,10 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 	 * instance of this object. Use the get_prefixes to get the array
 	 * returned.
 	 *
+	 * @param bool $refresh True means load from database instead of cache
 	 * @return $this
 	 */
-	public function load_prefixes()
+	public function load_prefixes($refresh = false)
 	{
 		if (($this->prefixes = $this->cache->get('_prefixes')) === false || $refresh)
 		{
@@ -132,9 +133,10 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 	 * instance of this object. Use get_prefix_instance() to get the array
 	 * returned.
 	 *
+	 * @param bool $refresh True means load from database instead of cache
 	 * @return $this
 	 */
-	public function load_prefix_instances()
+	public function load_prefix_instances($refresh = false)
 	{
 		if (($this->prefix_instances = $this->cache->get('_prefixes_used')) === false || $refresh)
 		{
