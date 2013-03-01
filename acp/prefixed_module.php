@@ -180,7 +180,7 @@ class phpbb_ext_imkingdavid_prefixed_acp_prefixed_module
 							$prefix = new phpbb_ext_imkingdavid_prefixed_core_prefix($db, $cache, $template, $id);
 							$template->assign_vars([
 								'TITLE' => $prefix['title'],
-								'SHORT' => $prefix['short']
+								'SHORT' => $prefix['short'],
 								'STYLE' => $prefix['style'],
 								'FORUMS' => $prefix['forums'],
 								'GROUPS' => $prefix['groups'],
