@@ -36,6 +36,13 @@ class phpbb_ext_imkingdavid_prefixed_migrations_2_initial_data extends phpbb_db_
 		return [
 			// We'll use this to keep track of the extension version in the DB
 			['config.add', ['prefixed_version', '1.0.0a1']],
+
+			['module.add', ['acp', 'ACP_MESSAGES', 'ACP_PREFIXED_MANAGEMENT']],
+			['module.add', ['acp', 'ACP_PREFIXED_MANAGEMENT', [
+					'module_basename'	=> 'acp_prefixed',
+					'modes'				=> ['settings', 'prefixes'],
+				]
+			]],
 		];
 	}
 }
