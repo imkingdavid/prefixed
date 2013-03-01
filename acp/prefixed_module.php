@@ -27,7 +27,7 @@ class phpbb_ext_imkingdavid_prefixed_acp_prefixed_module
 	{
 		global $db, $user, $auth, $template;
 		global $config, $phpbb_root_path, $phpbb_admin_path, $phpEx;
-		global $cache;
+		global $cache, $request;
 
 		$submit = $request->is_set_post('submit');
 
@@ -47,18 +47,6 @@ class phpbb_ext_imkingdavid_prefixed_acp_prefixed_module
 					'title'	=> 'ACP_PREFIXED_SETTINGS',
 					'vars'	=> [
 						'legend1'				=> 'ACP_PREFIXED_SETTINGS',
-						'sitename'				=> ['lang' => 'SITE_NAME',				'validate' => 'string',	'type' => 'text:40:255', 'explain' => false],
-						'site_desc'				=> ['lang' => 'SITE_DESC',				'validate' => 'string',	'type' => 'text:40:255', 'explain' => false],
-						'board_disable'			=> ['lang' => 'DISABLE_BOARD',			'validate' => 'bool',	'type' => 'custom', 'method' => 'board_disable', 'explain' => true],
-						'default_lang'			=> ['lang' => 'DEFAULT_LANGUAGE',		'validate' => 'lang',	'type' => 'select', 'function' => 'language_select', 'params' => ['{CONFIG_VALUE}'], 'explain' => false],
-						'default_dateformat'	=> ['lang' => 'DEFAULT_DATE_FORMAT',	'validate' => 'string',	'type' => 'custom', 'method' => 'dateformat_select', 'explain' => true],
-						'board_timezone'		=> ['lang' => 'SYSTEM_TIMEZONE',		'validate' => 'string',	'type' => 'select', 'function' => 'tz_select', 'params' => ['{CONFIG_VALUE}', 1], 'explain' => true],
-						'board_dst'				=> ['lang' => 'SYSTEM_DST',			'validate' => 'bool',	'type' => 'radio:yes_no', 'explain' => false],
-						'default_style'			=> ['lang' => 'DEFAULT_STYLE',			'validate' => 'int',	'type' => 'select', 'function' => 'style_select', 'params' => ['{CONFIG_VALUE}', false], 'explain' => false],
-						'override_user_style'	=> ['lang' => 'OVERRIDE_STYLE',		'validate' => 'bool',	'type' => 'radio:yes_no', 'explain' => true],
-
-						'legend2'				=> 'WARNINGS',
-						'warnings_expire_days'	=> ['lang' => 'WARNINGS_EXPIRE',		'validate' => 'int',	'type' => 'text:3:4', 'explain' => true, 'append' => ' ' . $user->lang['DAYS']],
 
 						'legend3'					=> 'ACP_SUBMIT_CHANGES',
 					],
@@ -98,7 +86,7 @@ class phpbb_ext_imkingdavid_prefixed_acp_prefixed_module
 					trigger_error($user->lang['CONFIG_UPDATED'] . adm_back_link($this->u_action));
 				}
 
-				$this->tpl_name = 'acp_prefixed_settings';
+				$this->tpl_name = 'acp_prefixed';
 				$this->page_title = $user->lang('ACP_PREFIXED_SETTINGS');
 
 				$template->assign_vars([
