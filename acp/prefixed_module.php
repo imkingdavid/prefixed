@@ -29,7 +29,6 @@ class phpbb_ext_imkingdavid_prefixed_acp_prefixed_module
 		global $config, $phpbb_root_path, $phpbb_admin_path, $phpEx;
 		global $cache;
 
-		$user->add_lang('acp/prefixed');
 		$submit = $request->is_set_post('submit');
 
 		$form_key = 'acp_prefixed';

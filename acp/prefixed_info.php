@@ -27,8 +27,8 @@ class phpbb_ext_imkingdavid_prefixed_acp_prefixed_info
 			'title'		=> 'ACP_PREFIXED_MANAGEMENT',
 			'version'	=> '1.0.0',
 			'modes'		=> [
-				'settings'		=> ['title' => 'ACP_PREFIXED_SETTINGS', 'auth' => 'acl_a_prefixes', 'cat' => ['ACP_MESSAGES']],
-				'prefixes'		=> ['title' => 'ACP_PREFIXED_MANAGE', 'auth' => 'acl_a_prefixes', 'cat' => ['ACP_MESSAGES']],
+				'settings'		=> ['title' => 'ACP_PREFIXED_SETTINGS', 'auth' => '', 'cat' => ['ACP_MESSAGES']],
+				'prefixes'		=> ['title' => 'ACP_PREFIXED_MANAGE', 'auth' => '', 'cat' => ['ACP_MESSAGES']],
 			],
 		];
 	}
