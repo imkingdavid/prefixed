@@ -2,7 +2,7 @@
     "name": "imkingdavid/prefixed",
     "type": "phpbb3-extension",
     "description": "An extension for phpBB 3.1 that will add a topic prefix functionality to your board.",
-    "homepage": "http://www.github.com/imkingdavid/phpbb-prefixed",
+    "homepage": "http://www.github.com/imkingdavid/prefixed",
     "version": "1.0.0",
     "time": "2012-05-15",
     "licence": "GPLv2",
