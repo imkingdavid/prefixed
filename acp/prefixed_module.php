@@ -73,16 +73,17 @@ class phpbb_ext_imkingdavid_prefixed_acp_prefixed_module
 								else
 								{
 									$sql = 'UPDATE ' . PREFIXES_TABLE . ' SET ' . $db->sql_build_array('UPDATE', $prefix) .'
-										WHERE prefix_id = ' . (int) $prefix_id;
+										WHERE id = ' . (int) $prefix_id;
 								}
 								$db->sql_query($sql);
 
+								$manager->clear_prefix_cache();
 								// Show the message
 								trigger_error($user->lang('PREFIX_' . strtoupper($action) . 'ED_SUCCESS') .
 									adm_back_link($this->u_action));
 							}
 						}
-						
+
 
 						// If the form was submitted and there was an error
 						// or the form was not submitted and we are editing
@@ -112,6 +113,43 @@ class phpbb_ext_imkingdavid_prefixed_acp_prefixed_module
 					break;
 
 					case 'delete':
+						if ($prefix_id)
+						{
+							$prefix = new phpbb_ext_imkingdavid_prefixed_core_prefix($db, $cache, $template, $prefix_id);
+							if ($prefix->exists())
+							{
+								if (confirm_box(true))
+								{
+									// Format: table => prefix ID column
+									$tables = [
+										PREFIX_INSTANCES_TABLE => 'prefix',
+										PREFIXES_TABLE => 'id',
+									];
+
+									foreach ($tables as $table => $column)
+									{
+										// Delete all instances of this prefix
+										$sql = 'DELETE FROM ' . $table . '
+											WHERE ' . $column . ' = ' . (int) $prefix_id;
+										$db->sql_query($sql);
+									}
+
+									$manager->clear_prefix_cache();
+									trigger_error('PREFIX_DELETED_SUCCESS');
+								}
+								else
+								{
+									$s_hidden_fields = build_hidden_fields([
+										'submit'    => true,
+									]);
+
+									//display mode
+									confirm_box(false, 'DELETE_PREFIX', $s_hidden_fields);
+								}
+							}
+						}
+
+						trigger_error('NO_PREFIX_ID_SPECIFIED');
 					break;
 
 					default:
@@ -121,6 +159,7 @@ class phpbb_ext_imkingdavid_prefixed_acp_prefixed_module
 							'U_ACTION'	=> $this->u_action . '&amp;action=add',
 						]);
 						$prefixes = $manager->get_prefixes();
+
 						if ($prefixes !== false)
 						{
 							foreach ($prefixes as $prefix)
@@ -128,8 +167,8 @@ class phpbb_ext_imkingdavid_prefixed_acp_prefixed_module
 								$object = (new phpbb_ext_imkingdavid_prefixed_core_prefix(
 									$db, $cache, $template, (int) $prefix['id']
 								))->parse('prefix', [
-									'U_DELETE'	=> $this->u_action . '&amp;action=delete&amp;prefix_id=' . $row['bbcode_id'],
-									'U_EDIT'	=> $this->u_action . '&amp;action=edit&amp;prefix_id=' . $row['bbcode_id']
+									'U_DELETE'	=> $this->u_action . '&amp;action=delete&amp;prefix_id=' . $prefix['id'],
+									'U_EDIT'	=> $this->u_action . '&amp;action=edit&amp;prefix_id=' . $prefix['id']
 								]);
 							}
 						}

@@ -81,9 +81,14 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix extends ArrayObject
 		$style = '';
 		if (!empty($this['style']))
 		{
-			foreach (json_decode($this['style'], true) as $attribute => $value)
+			$json_array = json_decode($this['style'], true);
+
+			if (!empty($json_array))
 			{
-				$style .= $attribute . ': ' . $value . ';';
+				foreach ($json_array as $attribute => $value)
+				{
+					$style .= $attribute . ': ' . $value . ';';
+				}
 			}
 		}
 

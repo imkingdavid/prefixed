@@ -61,7 +61,11 @@ $lang = array_merge($lang, [
 	'PREFIX_USERS'			=> 'Users',
 	'PREFIX_FORUMS_EXPLAIN'	=> 'Specify which users can apply this prefix (overrides group setting).',
 
+	'DELETE_PREFIX'				=> 'Are you sure you want to delete the specified prefix?',
+	'DELETE_PREFIX_CONFIRM'		=> 'The prefix and all of its instances will be deleted. This cannot be undone.',
+
 	'PREFIX_ADDED_SUCCESS'		=> 'The prefix has been added successfully.',
 	'PREFIX_EDITED_SUCCESS'		=> 'The prefix has been updated successfully.',
 	'PREFIX_DELETED_SUCCESS'	=> 'The prefix has been deleted successfully.',
+	'NO_PREFIX_ID_SPECIFIED'	=> 'You must specify a valid prefix ID.',
 ]);

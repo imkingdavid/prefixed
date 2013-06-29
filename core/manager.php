@@ -118,7 +118,7 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 	{
 		if (!$refresh && !empty($this->prefixes))
 		{
-			return $this-> $prefixes;
+			return $this->prefixes;
 		}
 
 		$this->load_prefixes($refresh);
@@ -392,7 +392,7 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 
 		// Get some information from the database
 		$sql = 'SELECT t.topic_first_post_id, t.forum_id, t.topic_id
-			FROM ' . TOPICS_TABLE . ' t, ' . POSTS_TABLE . ' p 
+			FROM ' . TOPICS_TABLE . ' t, ' . POSTS_TABLE . ' p
 			WHERE p.post_id = ' . (int) $post_id . '
 				AND t.topic_id = p.topic_id';
 		$result = $this->db->sql_query($sql);
@@ -487,6 +487,22 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 		return sizeof($this->prefix_instances);
 	}
 
+	/**
+	 * Clear the prefix cache (both prefixes and instances)
+	 *
+	 * @return null
+	 */
+	public function clear_prefix_cache()
+	{
+		$this->cache->destroy('_prefixes');
+		$this->cache->destroy('_prefixes_used');
+	}
+
+	/**
+	 * Get a prefix instance object for the given instance ID
+	 *
+	 * @return phpbb_ext_imkingdavid_prefixed_core_instance
+	 */
 	public function get_instance($instance_id)
 	{
 		return new phpbb_ext_imkingdavid_prefixed_core_instance($this->db, $this->cache, $this->template, $instance_id);

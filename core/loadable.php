@@ -24,6 +24,12 @@ trait phpbb_ext_imkingdavid_prefixed_core_loadable
 	protected $loaded = false;
 
 	/**
+	 * Whether or not the object exists in the database
+	 * @var bool
+	 */
+	protected $exists = false;
+
+	/**
 	 * Load a loadable item
 	 *
 	 * The class that uses this should have $this->cache and $this->db defined
@@ -50,6 +56,7 @@ trait phpbb_ext_imkingdavid_prefixed_core_loadable
 			$row = $prefix[$id];
 		}
 
+		$this->exists = (bool) sizeof($row);
 		$this->loaded = true;
 
 		return $row ?: [];
@@ -63,5 +70,15 @@ trait phpbb_ext_imkingdavid_prefixed_core_loadable
 	public function loaded()
 	{
 		return $this->loaded;
+	}
+
+	/**
+	 * Determine whether the item exists in the database
+	 *
+	 * @return bool
+	 */
+	public function exists()
+	{
+		return $this->exists;
 	}
 }
