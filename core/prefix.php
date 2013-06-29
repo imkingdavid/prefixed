@@ -145,4 +145,15 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix extends ArrayObject
 	{
 
 	}
+
+	/**
+	 * Set a property or array of properties
+	 *
+	 * @param array $key_val Either key/value pair or array of key value pairs
+	 * @return null
+	 */
+	public function set($key_val)
+	{
+
+	}
 }

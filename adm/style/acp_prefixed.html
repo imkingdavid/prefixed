@@ -2,48 +2,121 @@
 
 <a id="maincontent"></a>
 
-<h1>{PAGE_TITLE}</h1>
+<h1>{L_TITLE}</h1>
 
-<p>{PAGE_EXPLAIN}</p>
+<p>{L_TITLE_EXPLAIN}</p>
+<!-- IF S_LIST -->
+	<form id="acp_bbcodes" method="post" action="{U_ACTION}">
+		<fieldset class="tabulated">
+		<legend>{L_ACP_BBCODES}</legend>
 
-<!-- IF S_ERROR -->
-	<div class="errorbox">
-		<h3>{L_WARNING}</h3>
-		<p>{ERROR_MSG}</p>
-	</div>
-<!-- ENDIF -->
+		<table cellspacing="1" id="down">
+		<thead>
+		<tr>
+			<th>{L_PREFIX}</th>
+			<th>{L_PREFIX_PARSED}</th>
+			<th>{L_ACTION}</th>
+		</tr>
+		</thead>
+		<tbody>
+		<!-- BEGIN prefix -->
+			<!-- IF prefix.S_ROW_COUNT is even --><tr class="row1"><!-- ELSE --><tr class="row2"><!-- ENDIF -->
+				<td style="text-align: center;">{prefix.SHORT}</td>
+				<td style="text-align: center;"><span style="{prefix.STYLE}">{prefix.TITLE}</span></td>
+				<td style="text-align: right; width: 40px;"><a href="{prefix.U_EDIT}">{ICON_EDIT}</a> <a href="{prefix.U_DELETE}" data-ajax="row_delete">{ICON_DELETE}</a></td>
+			</tr>
+		<!-- BEGINELSE -->
+			<tr class="row3">
+				<td colspan="3">{L_ACP_NO_ITEMS}</td>
+			</tr>
+		<!-- END prefix -->
+		</tbody>
+		</table>
 
-<form id="acp_board" method="post" action="{U_ACTION}">
+		<p class="quick">
+			<input class="button2" name="submit" type="submit" value="{L_ADD_PREFIX}" />
+		</p>
+		{S_FORM_TOKEN}
+		</fieldset>
 
-<!-- BEGIN options -->
-	<!-- IF options.S_LEGEND -->
-		<!-- IF not options.S_FIRST_ROW -->
-			</fieldset>
-		<!-- ENDIF -->
-		<fieldset>
-			<legend>{options.LEGEND}</legend>
-	<!-- ELSE -->
-
-		<dl>
-			<dt><label for="{options.KEY}">{options.TITLE}:</label><!-- IF options.S_EXPLAIN --><br /><span>{options.TITLE_EXPLAIN}</span><!-- ENDIF --></dt>
-			<dd>{options.CONTENT}</dd>
-		</dl>
-
+	</form>
+<!-- ELSE -->
+	<!-- IF S_ERROR -->
+		<div class="errorbox">
+			<h3>{L_WARNING}</h3>
+			<p>{ERROR_MSG}</p>
+		</div>
 	<!-- ENDIF -->
-<!-- END options -->
 
-<!-- IF S_AUTH -->
-	<!-- BEGIN auth_tpl -->
-		{auth_tpl.TPL}
-	<!-- END auth_tpl -->
+	<form id="acp_prefixes" method="post" action="{U_ACTION}">
+		<fieldset>
+			<legend>{LEGEND}</legend>
+			<dl>
+				<dt>
+					<label for="prefix_title">{L_PREFIX_TITLE}:</label>
+					<!-- IF S_EXPLAIN -->
+						<br /><span>{L_PREFIX_TITLE_EXPLAIN}</span>
+					<!-- ENDIF -->
+				</dt>
+				<dd><input type="text" id="prefix_title" name="prefix_title" size="60" maxlength="255" value="{PREFIX_TITLE}" /></dd>
+			</dl>
+
+			<dl>
+				<dt>
+					<label for="prefix_short">{L_PREFIX_SHORT}:</label>
+					<!-- IF S_EXPLAIN -->
+						<br /><span>{L_PREFIX_SHORT_EXPLAIN}</span>
+					<!-- ENDIF -->
+				</dt>
+				<dd><input type="text" id="prefix_short" name="prefix_short" size="60" maxlength="255" value="{PREFIX_SHORT}" /></dd>
+			</dl>
+
+			<dl>
+				<dt>
+					<label for="prefix_style">{L_PREFIX_STYLE}:</label>
+					<!-- IF S_EXPLAIN -->
+						<br /><span>{L_PREFIX_STYLE_EXPLAIN}</span>
+					<!-- ENDIF -->
+				</dt>
+				<dd><input type="text" id="prefix_style" name="prefix_style" size="60" maxlength="255" value="{PREFIX_STYLE}" /></dd>
+			</dl>
+
+			<dl>
+				<dt>
+					<label for="prefix_forums">{L_PREFIX_FORUMS}:</label>
+					<!-- IF S_EXPLAIN -->
+						<br /><span>{L_PREFIX_FORUMS_EXPLAIN}</span>
+					<!-- ENDIF -->
+				</dt>
+				<dd><input type="text" id="prefix_forums" name="prefix_forums" size="60" maxlength="255" value="{PREFIX_FORUMS}" /></dd>
+			</dl>
+
+			<dl>
+				<dt>
+					<label for="prefix_groups">{L_PREFIX_GROUPS}:</label>
+					<!-- IF S_EXPLAIN -->
+						<br /><span>{L_PREFIX_GROUPS_EXPLAIN}</span>
+					<!-- ENDIF -->
+				</dt>
+				<dd><input type="text" id="prefix_groups" name="prefix_groups" size="60" maxlength="255" value="{PREFIX_GROUPS}" /></dd>
+			</dl>
+
+			<dl>
+				<dt>
+					<label for="prefix_users">{L_PREFIX_USERS}:</label>
+					<!-- IF S_EXPLAIN -->
+						<br /><span>{L_PREFIX_USERS_EXPLAIN}</span>
+					<!-- ENDIF -->
+				</dt>
+				<dd><input type="text" id="prefix_users" name="prefix_users" size="60" maxlength="255" value="{PREFIX_USERS}" /></dd>
+			</dl>
+
+			<p class="submit-buttons">
+				<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />&nbsp;
+				<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+			</p>
+			{S_FORM_TOKEN}
+		</fieldset>
+	</form>
 <!-- ENDIF -->
-
-	<p class="submit-buttons">
-		<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />&nbsp;
-		<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
-	</p>
-	{S_FORM_TOKEN}
-</fieldset>
-</form>
-
 <!-- INCLUDE overall_footer.html -->

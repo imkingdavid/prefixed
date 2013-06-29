@@ -39,14 +39,29 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, [
-	'ACP_PREFIXED_MANAGEMENT'	=> 'Topic Prefix Management',
-	'ACP_PREFIXED_SETTINGS'		=> 'Prefix Settings',
-	'ACP_PREFIXED_MANAGE'		=> 'Manage Prefixes',
+	'ACP_PREFIXED_MANAGEMENT'		=> 'Topic Prefix Management',
+	'ACP_PREFIXED_MANAGE'			=> 'Manage Prefixes',
+	'ACP_PREFIXED_MANAGE_EXPLAIN'	=> 'On this page, you can manage the topic prefixes for your board.',
 
-	'PREFIX_VIEW_TITLE'			=> 'View prefixes',
-	'PREFIX_VIEW_EXPLAIN'		=> 'This page lists the prefixes you have created for use on your board. From here, you can add, edit, and delete prefixes.',
-	'PREFIX_ADD_TITLE'			=> 'Create prefix',
-	'PREFIX_ADD_EXPLAIN'		=> 'Use the form below to create a new prefix.',
-	'PREFIX_EDIT_TITLE'			=> 'Modify prefix',
-	'PREFIX_EDIT_EXPLAIN'		=> 'Use the form below to modify the prefix data.',
+	'ACP_PREFIXES'			=> 'Topic Prefixes',
+	'PREFIX'				=> 'Prefix',
+	'PREFIX_PARSED'			=> 'Output',
+	'ADD_PREFIX'			=> 'New Prefix',
+
+	'PREFIX_TITLE'			=> 'Prefix',
+	'PREFIX_TITLE_EXPLAIN'	=> 'This is what will actually be displayed in front of the topic title.',
+	'PREFIX_SHORT'			=> 'Short name',
+	'PREFIX_SHORT_EXPLAIN'	=> 'This is a unique identifier to help you differentiate between prefixes.',
+	'PREFIX_STYLE'			=> 'CSS Style',
+	'PREFIX_STYLE_EXPLAIN'	=> 'This is the style that will be applied to your prefix. Raw CSS is allowed.',
+	'PREFIX_FORUMS'			=> 'Forums',
+	'PREFIX_FORUMS_EXPLAIN'	=> 'Specify which forums can contain this prefix.',
+	'PREFIX_GROUPS'			=> 'Groups',
+	'PREFIX_FORUMS_EXPLAIN'	=> 'Specify which groups can apply this prefix.',
+	'PREFIX_USERS'			=> 'Users',
+	'PREFIX_FORUMS_EXPLAIN'	=> 'Specify which users can apply this prefix (overrides group setting).',
+
+	'PREFIX_ADDED_SUCCESS'		=> 'The prefix has been added successfully.',
+	'PREFIX_EDITED_SUCCESS'		=> 'The prefix has been updated successfully.',
+	'PREFIX_DELETED_SUCCESS'	=> 'The prefix has been deleted successfully.',
 ]);

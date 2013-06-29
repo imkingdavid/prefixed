@@ -106,6 +106,8 @@ class phpbb_ext_imkingdavid_prefixed_core_instance extends ArrayObject
 			$this->prefix_object['title'] = str_replace('{' . $token . '}', $data, $this->prefix_object['title']);
 		}
 
+		// To clarify, the second argument here is simply replacing the prefix
+		// ID with the instance ID in the template
 		return $this->prefix_object->parse($block, ['ID' => $this['id']]);
 	}
 

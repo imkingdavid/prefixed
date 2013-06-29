@@ -457,7 +457,7 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 	{
 		$count = 0;
 
-		array_map(function($instance) use(&$count, $topic_id) {
+		array_map(function($instance) use (&$count, $topic_id) {
 			if ($instance['topic'] == $topic_id)
 			{
 				$count++;
