@@ -7,6 +7,8 @@
  *
  */
 
+namespace imkingdavid\prefixed\core;
+
 /**
  * @ignore
  */
@@ -15,7 +17,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-trait phpbb_ext_imkingdavid_prefixed_core_loadable
+trait loadable
 {
 	/**
 	 * Whether or not the object has been loaded

@@ -7,6 +7,8 @@
  *
  */
 
+namespace imkingdavid\prefixed\migrations\v10x;
+
 /**
  * @ignore
  */
@@ -18,14 +20,22 @@ if (!defined('IN_PHPBB'))
 /**
  * Initial data changes needed for Extension installation
  */
-class phpbb_ext_imkingdavid_prefixed_migrations_2_initial_data extends phpbb_db_migration
+class m2_initial_data extends \phpbb\db\migration\migration
 {
+	/**
+	 * @inheritdoc
+	 */
+	public function effectively_installed()
+	{
+		return isset($this->config['prefixed_version']) && version_compare($this->config['prefixed_version'], '1.0.0a1', '>=');
+	}
+
 	/**
 	 * @inheritdoc
 	 */
 	static public function depends_on()
 	{
-		return array('phpbb_ext_imkingdavid_prefixed_migrations_1_initial_schema');
+		return array('\imkingdavid\prefixed\migrations\v10x\m1_initial_schema');
 	}
 
 	/**
@@ -39,7 +49,7 @@ class phpbb_ext_imkingdavid_prefixed_migrations_2_initial_data extends phpbb_db_
 
 			['module.add', ['acp', 'ACP_CAT_POSTING', 'ACP_PREFIXED_MANAGEMENT']],
 			['module.add', ['acp', 'ACP_PREFIXED_MANAGEMENT', [
-					'module_basename'	=> 'phpbb_ext_imkingdavid_prefixed_acp_prefixed_module',
+					'module_basename'	=> '\imkingdavid\prefixed\acp\prefixed_module',
 					'modes'				=> ['settings', 'prefixes'],
 				]
 			]],

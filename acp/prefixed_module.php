@@ -7,6 +7,8 @@
  *
  */
 
+namespace imkingdavid\prefixed\acp;
+
 /**
  * @ignore
  */
@@ -18,7 +20,7 @@ if (!defined('IN_PHPBB'))
 /**
  *
  */
-class phpbb_ext_imkingdavid_prefixed_acp_prefixed_module
+class prefixed_module
 {
 	var $u_action;
 	var $new_config = [];
@@ -48,7 +50,7 @@ class phpbb_ext_imkingdavid_prefixed_acp_prefixed_module
 				$page_title = 'ACP_PREFIXED_MANAGE';
 				// @todo Do this
 				$action	= $request->variable('action', 'list');
-				$manager = new phpbb_ext_imkingdavid_prefixed_core_manager($db, $cache, $template, $request);
+				$manager = new imkingdavid\prefixed\core\manager($db, $cache, $template, $request);
 
 				switch ($action)
 				{
@@ -57,9 +59,9 @@ class phpbb_ext_imkingdavid_prefixed_acp_prefixed_module
 						if ($submit)
 						{
 							$error = [];
-							$prefix['title'] = $request->variable('prefix_title', '');
+							$prefix['title'] = $request->variable('prefix_title', '', true);
 							$prefix['short'] = $request->variable('prefix_short', '');
-							$prefix['style'] = $request->variable('prefix_style', '');
+							$prefix['style'] = $request->variable('prefix_style', '', true);
 							$prefix['forums'] = $request->variable('prefix_forums', '');
 							$prefix['groups'] = $request->variable('prefix_groups', '');
 							$prefix['users'] = $request->variable('prefix_users', '');
@@ -99,7 +101,7 @@ class phpbb_ext_imkingdavid_prefixed_acp_prefixed_module
 						{
 							// Set the form fields to the corresponding values
 							// from the database
-							$prefix = new phpbb_ext_imkingdavid_prefixed_core_prefix($db, $cache, $template, $prefix_id);
+							$prefix = new imkingdavid\prefixed\core\prefix($db, $cache, $template, $prefix_id);
 						}
 
 						$template->assign_vars([
@@ -115,7 +117,7 @@ class phpbb_ext_imkingdavid_prefixed_acp_prefixed_module
 					case 'delete':
 						if ($prefix_id)
 						{
-							$prefix = new phpbb_ext_imkingdavid_prefixed_core_prefix($db, $cache, $template, $prefix_id);
+							$prefix = new imkingdavid\prefixed\core\prefix($db, $cache, $template, $prefix_id);
 							if ($prefix->exists())
 							{
 								if (confirm_box(true))
@@ -164,7 +166,7 @@ class phpbb_ext_imkingdavid_prefixed_acp_prefixed_module
 						{
 							foreach ($prefixes as $prefix)
 							{
-								$object = (new phpbb_ext_imkingdavid_prefixed_core_prefix(
+								$object = (new imkingdavid\prefixed\core\prefix(
 									$db, $cache, $template, (int) $prefix['id']
 								))->parse('prefix', [
 									'U_DELETE'	=> $this->u_action . '&amp;action=delete&amp;prefix_id=' . $prefix['id'],

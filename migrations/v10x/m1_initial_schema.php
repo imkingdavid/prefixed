@@ -7,6 +7,8 @@
  *
  */
 
+namespace imkingdavid\prefixed\migrations\v10x;
+
 /**
  * @ignore
  */
@@ -18,7 +20,7 @@ if (!defined('IN_PHPBB'))
 /**
  * Initial schema changes needed for Extension installation
  */
-class phpbb_ext_imkingdavid_prefixed_migrations_1_initial_schema extends phpbb_db_migration
+class m1_initial_schema extends \phpbb\db\migration\migration
 {
 	/**
 	 * @inheritdoc

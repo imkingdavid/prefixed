@@ -7,6 +7,10 @@
  *
  */
 
+namespace imkingdavid\prefixed\event;
+
+// use imkingdavid\prefixed\core\manager;
+
 /**
  * @ignore
  */
@@ -17,41 +21,41 @@ if (!defined('IN_PHPBB'))
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class phpbb_ext_imkingdavid_prefixed_event_listener implements EventSubscriberInterface
+class listener implements EventSubscriberInterface
 {
 	/**
 	 * Database object
-	 * @var phpbb_db_driver
+	 * @var \phpbb\db\driver
 	 */
 	private $db;
 
 	/**
 	 * Cache driver object
-	 * @var phpbb_cache_driver_interface
+	 * @var \phpbb\cache\driver\interface
 	 */
 	private $cache;
 
 	/**
 	 * Template object
-	 * @var phpbb_template
+	 * @var \phpbb\template
 	 */
 	private $template;
 
 	/**
 	 * Request object
-	 * @var phpbb_request
+	 * @var \phpbb\request
 	 */
 	private $request;
 
 	/**
 	 * User object
-	 * @var phpbb_user
+	 * @var \phpbb\user
 	 */
 	private $user;
 
 	/**
 	 * Prefix manager object
-	 * @var phpbb_ext_imkingdavid_prefixed_core_manager
+	 * @var imkingdavid\prefixed\core\manager
 	 */
 	private $manager;
 

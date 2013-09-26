@@ -7,6 +7,8 @@
  *
  */
 
+namespace imkingdavid\prefixed\core;
+
 /**
  * @ignore
  */
@@ -15,7 +17,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-class phpbb_ext_imkingdavid_prefixed_core_manager
+class manager
 {
 	/**
 	 * Database object instance
@@ -59,7 +61,7 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 	 * @param phpbb_db_driver $db Database object
 	 * @param phpbb_cache_driver_base $cache Cache object
 	 */
-	public function __construct(phpbb_db_driver $db, phpbb_cache_driver_interface $cache, phpbb_template $template, phpbb_request $request)
+	public function __construct(\phpbb\db\driver $db, \phpbb\cache\driver\interface $cache, \phpbb\template $template, \phpbb\request $request)
 	{
 		global $phpbb_root_path, $phpEx;
 		$this->db = $db;
@@ -226,11 +228,11 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 	/**
 	 * Custom sort function used by usort() to order a topic's prefixes by their "ordered" property
 	 *
-	 * @param phpbb_ext_imkingdavid_prefixed_core_instance $a First comparison argument
-	 * @param phpbb_ext_imkingdavid_prefixed_core_instance $b Second comparison argument
+	 * @param instance $a First comparison argument
+	 * @param instance $b Second comparison argument
 	 * @return int 0 for equal, 1 for a greater than b, -1 for b greater than a
 	 */
-	static public function sort_topic_prefixes(phpbb_ext_imkingdavid_prefixed_core_instance $a, phpbb_ext_imkingdavid_prefixed_core_instance $b)
+	static public function sort_topic_prefixes(instance $a, instance $b)
 	{
 		return $a->get('ordered') == $b->get('ordered') ? 0 : ($a->get('ordered') > $b->get('ordered') ? 1 : -1);
 	}
@@ -501,10 +503,10 @@ class phpbb_ext_imkingdavid_prefixed_core_manager
 	/**
 	 * Get a prefix instance object for the given instance ID
 	 *
-	 * @return phpbb_ext_imkingdavid_prefixed_core_instance
+	 * @return instance
 	 */
 	public function get_instance($instance_id)
 	{
-		return new phpbb_ext_imkingdavid_prefixed_core_instance($this->db, $this->cache, $this->template, $instance_id);
+		return new instance($this->db, $this->cache, $this->template, $instance_id);
 	}
 }

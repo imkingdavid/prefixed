@@ -7,6 +7,8 @@
  *
  */
 
+namespace imkingdavid\prefixed;
+
 /**
  * @ignore
  */
@@ -18,6 +20,6 @@ if (!defined('IN_PHPBB'))
 /**
  * Main extension class for Prefixed extension.
  */
-class phpbb_ext_imkingdavid_prefixed_ext extends phpbb_extension_base
+class ext extends \phpbb\extension\base
 {
 }

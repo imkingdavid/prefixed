@@ -7,6 +7,8 @@
  *
  */
 
+namespace imkingdavid\prefixed\core;
+
 /**
  * @ignore
  */
@@ -15,9 +17,9 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-class phpbb_ext_imkingdavid_prefixed_core_prefix extends ArrayObject
+class prefix extends ArrayObject
 {
-	use phpbb_ext_imkingdavid_prefixed_core_loadable {
+	use loadable {
 		load as _load;
 	}
 
@@ -46,7 +48,7 @@ class phpbb_ext_imkingdavid_prefixed_core_prefix extends ArrayObject
 	 * @param phpbb_cache_service $cache Cache object
 	 * @param int $id Prefix ID
 	 */
-	public function __construct(phpbb_db_driver $db, phpbb_cache_driver_interface $cache, phpbb_template $template, $id = 0)
+	public function __construct(\phpbb\db\driver $db, \phpbb\cache\driver\interface $cache, \phpbb\template $template, $id = 0)
 	{
 		parent::__construct();
 

@@ -7,6 +7,8 @@
  *
  */
 
+namespace imkingdavid\prefixed\acp;
+
 /**
  * @ignore
  */
@@ -18,12 +20,12 @@ if (!defined('IN_PHPBB'))
 /**
  *
  */
-class phpbb_ext_imkingdavid_prefixed_acp_prefixed_info
+class prefixed_info
 {
 	function module()
 	{
 		return [
-			'filename'	=> 'prefixed_module',
+			'filename'	=> '\imkingdavid\prefixed\acp\prefixed_module',
 			'title'		=> 'ACP_PREFIXED_MANAGEMENT',
 			'version'	=> '1.0.0',
 			'modes'		=> [

@@ -7,6 +7,8 @@
  *
  */
 
+namespace imkingdavid\prefixed\core;
+
 /**
  * @ignore
  */
@@ -15,45 +17,45 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-class phpbb_ext_imkingdavid_prefixed_core_instance extends ArrayObject
+class instance extends ArrayObject
 {
-	use phpbb_ext_imkingdavid_prefixed_core_loadable {
+	use loadable {
 		load as _load;
 	}
 
 	/**
 	 * Database
-	 * @var phpbb_db_driver
+	 * @var \phpbb\db\driver
 	 */
 	protected $db;
 
 	/**
 	 * Cache
-	 * @var phpbb_cache_service
+	 * @var \phpbb\cache\service
 	 */
 	protected $cache;
 
 	/**
 	 * Template
-	 * @var phpbb_template
+	 * @var \phpbb\template
 	 */
 	protected $template;
 
 	/**
 	 * Prefix object instance
-	 * @var phpbb_ext_imkingdavid_prefixed_core_instance
+	 * @var instance
 	 */
 	protected $prefix_object = null;
 
 	/**
 	 * Constructor method
 	 *
-	 * @param phpbb_db_driver $db DBAL object
-	 * @param phpbb_cache_driver_interface $cache Cache driver object
-	 * @param phpbb_template $template Template object
+	 * @param \phpbb\db\driver $db DBAL object
+	 * @param \phpbb\cache\driver_interface $cache Cache driver object
+	 * @param \phpbb\template $template Template object
 	 * @param int $id Instance ID
 	 */
-	public function __construct(phpbb_db_driver $db, phpbb_cache_driver_interface $cache, phpbb_template $template, $id = 0)
+	public function __construct(\phpbb\db\driver $db, \phpbb\cache\driver\interface $cache, \phpbb\template $template, $id = 0)
 	{
 		parent::__construct();
 
@@ -71,10 +73,10 @@ class phpbb_ext_imkingdavid_prefixed_core_instance extends ArrayObject
 	/**
 	 * Set the prefix object for this instance
 	 *
-	 * @param phpbb_ext_imkingdavid_prefixed_core_prefix
+	 * @param prefix $prefix
 	 * @return $this
 	 */
-	public function set_prefix_object(phpbb_ext_imkingdavid_prefixed_core_prefix $prefix)
+	public function set_prefix_object(prefix $prefix)
 	{
 		$this->prefix_object = $prefix;
 
@@ -91,9 +93,9 @@ class phpbb_ext_imkingdavid_prefixed_core_instance extends ArrayObject
 	 */
 	public function parse($block = '')
 	{
-		if (!$this->prefix_object instanceof phpbb_ext_imkingdavid_prefixed_core_prefix)
+		if (!$this->prefix_object instanceof prefix)
 		{
-			$this->set_prefix_object(new phpbb_ext_imkingdavid_prefixed_core_prefix($this->db, $this->cache, $this->template, $this['prefix']));
+			$this->set_prefix_object(new prefix($this->db, $this->cache, $this->template, $this['prefix']));
 		}
 
 		if (!$this->prefix_object->loaded() && !$this->prefix_object->load())
