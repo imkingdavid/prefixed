@@ -55,7 +55,7 @@ class instance extends ArrayObject
 	 * @param \phpbb\template $template Template object
 	 * @param int $id Instance ID
 	 */
-	public function __construct(\phpbb\db\driver $db, \phpbb\cache\driver\interface $cache, \phpbb\template $template, $id = 0)
+	public function __construct(\phpbb\db\driver\driver $db, \phpbb\cache\driver\driver_interface $cache, \phpbb\template\template $template, $id = 0)
 	{
 		parent::__construct();
 

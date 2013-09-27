@@ -61,7 +61,7 @@ class manager
 	 * @param phpbb_db_driver $db Database object
 	 * @param phpbb_cache_driver_base $cache Cache object
 	 */
-	public function __construct(\phpbb\db\driver $db, \phpbb\cache\driver\interface $cache, \phpbb\template $template, \phpbb\request $request)
+	public function __construct(\phpbb\db\driver\driver $db, \phpbb\cache\driver\driver_interface $cache, \phpbb\template\template $template, \phpbb\request\request_interface $request)
 	{
 		global $phpbb_root_path, $phpEx;
 		$this->db = $db;

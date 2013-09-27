@@ -30,11 +30,12 @@ class m3_remove_settings_module extends \phpbb\db\migration\migration
 	{
 		$sql = 'SELECT module_basename
 			FROM ' . MODULES_TABLE . "
-			WHERE module_basename = '\imkingdavid\prefixed\acp\prefixed_module'";
+			WHERE module_basename = 'prefixed_module'
+				AND module_mode = 'settings'";
 		$result = $this->db->sql_query($sql);
 		$exists = $this->db->sql_fetchfield('basename');
 		$this->db->sql_freeresult($result);
-		return ;
+		return !$exists;
 	}
 
 	/**
@@ -52,7 +53,7 @@ class m3_remove_settings_module extends \phpbb\db\migration\migration
 	{
 		return [
 			['module.remove', ['acp', 'ACP_PREFIXED_MANAGEMENT', [
-					'module_basename'	=> '\imkingdavid\prefixed\acp\prefixed_module',
+					'module_basename'	=> 'prefixed_module',
 					'modes'				=> ['settings'],
 				]
 			]],
