@@ -49,7 +49,7 @@ class m2_initial_data extends \phpbb\db\migration\migration
 
 			['module.add', ['acp', 'ACP_CAT_POSTING', 'ACP_PREFIXED_MANAGEMENT']],
 			['module.add', ['acp', 'ACP_PREFIXED_MANAGEMENT', [
-					'module_basename'	=> 'prefixed_module',
+					'module_basename'	=> '\imkingdavid\prefixed\acp\prefixed_module',
 					'modes'				=> ['settings', 'prefixes'],
 			]]],
 		];

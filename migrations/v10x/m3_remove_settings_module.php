@@ -26,21 +26,6 @@ class m3_remove_settings_module extends \phpbb\db\migration\migration
 	/**
 	 * @inheritdoc
 	 */
-	public function effectively_installed()
-	{
-		$sql = 'SELECT module_basename
-			FROM ' . MODULES_TABLE . "
-			WHERE module_basename = 'prefixed_module'
-				AND module_mode = 'settings'";
-		$result = $this->db->sql_query($sql);
-		$exists = $this->db->sql_fetchfield('basename');
-		$this->db->sql_freeresult($result);
-		return !$exists;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
 	static public function depends_on()
 	{
 		return array('\imkingdavid\prefixed\migrations\v10x\m2_initial_data');
@@ -53,7 +38,7 @@ class m3_remove_settings_module extends \phpbb\db\migration\migration
 	{
 		return [
 			['module.remove', ['acp', 'ACP_PREFIXED_MANAGEMENT', [
-					'module_basename'	=> 'prefixed_module',
+					'module_basename'	=> '\imkingdavid\prefixed\acp\prefixed_module',
 					'modes'				=> ['settings'],
 				]
 			]],

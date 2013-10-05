@@ -50,7 +50,7 @@ class prefixed_module
 				$page_title = 'ACP_PREFIXED_MANAGE';
 				// @todo Do this
 				$action	= $request->variable('action', 'list');
-				$manager = new imkingdavid\prefixed\core\manager($db, $cache, $template, $request);
+				$manager = new \imkingdavid\prefixed\core\manager($db, $cache, $template, $request);
 
 				switch ($action)
 				{

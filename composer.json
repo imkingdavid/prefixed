@@ -1,6 +1,6 @@
 {
     "name": "imkingdavid/prefixed",
-    "type": "phpbb3-extension",
+    "type": "phpbb-extension",
     "description": "An extension for phpBB 3.1 that will add a topic prefix functionality to your board.",
     "homepage": "http://www.github.com/imkingdavid/prefixed",
     "version": "1.0.0",
@@ -15,10 +15,10 @@
         }
     ],
     "require": {
-        "phpbb": "3.1.0-dev",
-        "php": "5.4.0"
+        "phpbb/phpbb": "3.1.*@dev",
+        "php": ">=5.4"
     },
     "extra": {
-        "display-name": "[pre]fixed"
+        "display-name": "[pre]fixed - phpBB Topic Prefixes - v1.0.0"
     }
 }
