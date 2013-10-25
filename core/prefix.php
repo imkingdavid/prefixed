@@ -17,7 +17,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-class prefix extends ArrayObject
+class prefix extends \ArrayObject
 {
 	use loadable {
 		load as _load;
@@ -71,9 +71,12 @@ class prefix extends ArrayObject
 	 *								assign_block_vars (otherwise the variables
 	 *								are assigned to the template globally)
 	 * @param	string	$vars		Variables to send to the template
+	 * @param	string  $var_prefix Optional prefix for template variables
+	 *								This only applies to the four vars that
+	 *								are assigned in this method
 	 * @return	string	Plaintext prefix
 	 */
-	public function parse($block = '', array $vars = [])
+	public function parse($block = '', array $vars = [], $var_prefix = '')
 	{
 		if (!$this->loaded() && !$this->load())
 		{
@@ -94,11 +97,13 @@ class prefix extends ArrayObject
 			}
 		}
 
+		$var_prefix = strtoupper($var_prefix);
+
 		$tpl_vars = array_merge([
-			'ID'	=> $this['id'],
-			'SHORT'	=> $this['short'],
-			'TITLE'	=> $this['title'],
-			'STYLE'	=> $style,
+			$var_prefix . 'ID'		=> $this['id'],
+			$var_prefix . 'SHORT'	=> $this['short'],
+			$var_prefix . 'TITLE'	=> $this['title'],
+			$var_prefix . 'STYLE'	=> $style,
 		], $vars);
 
 		call_user_func_array(

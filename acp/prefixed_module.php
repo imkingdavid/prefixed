@@ -36,6 +36,7 @@ class prefixed_module
 		$config = $phpbb_container->get('config');
 		$cache = $phpbb_container->get('cache.driver');
 		$request = $phpbb_container->get('request');
+		$manager = $phpbb_container->get('prefixed.manager');
 
 		$submit = (bool) $request->is_set_post('submit');
 		$prefix_id = (int) $request->variable('prefix_id', 0);
@@ -50,7 +51,8 @@ class prefixed_module
 				$page_title = 'ACP_PREFIXED_MANAGE';
 				// @todo Do this
 				$action	= $request->variable('action', 'list');
-				$manager = new \imkingdavid\prefixed\core\manager($db, $cache, $template, $request);
+				$prefix_id = $request->variable('prefix_id', 0);
+				$prefix = $prefix_id ? new \imkingdavid\prefixed\core\prefix($db, $cache, $template, $prefix_id) : array();
 
 				switch ($action)
 				{
@@ -59,14 +61,31 @@ class prefixed_module
 						if ($submit)
 						{
 							$error = [];
+							$prefix = [];
 							$prefix['title'] = $request->variable('prefix_title', '', true);
 							$prefix['short'] = $request->variable('prefix_short', '');
 							$prefix['style'] = $request->variable('prefix_style', '', true);
 							$prefix['forums'] = $request->variable('prefix_forums', '');
 							$prefix['groups'] = $request->variable('prefix_groups', '');
 							$prefix['users'] = $request->variable('prefix_users', '');
+
 							if (!sizeof($error))
 							{
+								// Get the style into JSON format by creating an
+								// array and running json_encode()
+								$css_attributes = explode(';', $prefix['style']);
+								$style = array();
+								foreach ($css_attributes as $attribute)
+								{
+									if (empty($attribute) || strpos($attribute, ':') === false)
+									{
+										continue;
+									}
+									$attr = explode(':', $attribute);
+									$style[$attr[0]] = $attr[1];
+								}
+								$prefix['style'] = json_encode($style);
+
 								// Update or insert the prefix in the database
 								if ($action === 'add')
 								{
@@ -97,11 +116,13 @@ class prefixed_module
 								'ERROR_MSG'	=> $error,
 							]);
 						}
-						else if ($action === 'edit')
+
+						$style = json_decode($prefix['style']);
+						$prefix['style'] = '';
+						foreach ($style as $key => $value)
 						{
-							// Set the form fields to the corresponding values
-							// from the database
-							$prefix = new imkingdavid\prefixed\core\prefix($db, $cache, $template, $prefix_id);
+							$value = trim($value);
+							$prefix['style'] .= "$key:$value;";
 						}
 
 						$template->assign_vars([
@@ -112,12 +133,19 @@ class prefixed_module
 							'PREFIX_GROUPS' => isset($prefix['groups']) ? $prefix['groups'] : '',
 							'PREFIX_USERS' => isset($prefix['users']) ? $prefix['users'] : '',
 						]);
+						
+						if (!$submit && $action === 'edit')
+						{
+							// Set the form fields to the corresponding values
+							// from the database
+							$prefix = new \imkingdavid\prefixed\core\prefix($db, $cache, $template, $prefix_id);
+							$prefix->parse('', [], 'PREFIX_');
+						}
 					break;
 
 					case 'delete':
 						if ($prefix_id)
 						{
-							$prefix = new imkingdavid\prefixed\core\prefix($db, $cache, $template, $prefix_id);
 							if ($prefix->exists())
 							{
 								if (confirm_box(true))
@@ -166,7 +194,7 @@ class prefixed_module
 						{
 							foreach ($prefixes as $prefix)
 							{
-								$object = (new imkingdavid\prefixed\core\prefix(
+								$object = (new \imkingdavid\prefixed\core\prefix(
 									$db, $cache, $template, (int) $prefix['id']
 								))->parse('prefix', [
 									'U_DELETE'	=> $this->u_action . '&amp;action=delete&amp;prefix_id=' . $prefix['id'],

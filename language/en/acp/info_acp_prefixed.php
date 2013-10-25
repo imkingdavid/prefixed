@@ -57,9 +57,9 @@ $lang = array_merge($lang, [
 	'PREFIX_FORUMS'			=> 'Forums',
 	'PREFIX_FORUMS_EXPLAIN'	=> 'Specify which forums can contain this prefix.',
 	'PREFIX_GROUPS'			=> 'Groups',
-	'PREFIX_FORUMS_EXPLAIN'	=> 'Specify which groups can apply this prefix.',
+	'PREFIX_GROUPS_EXPLAIN'	=> 'Specify which groups can apply this prefix.',
 	'PREFIX_USERS'			=> 'Users',
-	'PREFIX_FORUMS_EXPLAIN'	=> 'Specify which users can apply this prefix (overrides group setting).',
+	'PREFIX_USERS_EXPLAIN'	=> 'Specify which users can apply this prefix (overrides group setting).',
 
 	'DELETE_PREFIX'				=> 'Are you sure you want to delete the specified prefix?',
 	'DELETE_PREFIX_CONFIRM'		=> 'The prefix and all of its instances will be deleted. This cannot be undone.',

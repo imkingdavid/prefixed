@@ -199,11 +199,13 @@ class manager
 		}
 
 		$topic_prefixes = [];
-		foreach ($this->prefix_instances as $instance)
-		{
-			if ((int) $instance['topic'] === (int) $topic_id)
+		if (!empty($this->prefix_instances)) {
+			foreach ($this->prefix_instances as $instance)
 			{
-				$topic_prefixes[] = $this->get_instance($instance['id']);
+				if ((int) $instance['topic'] === (int) $topic_id)
+				{
+					$topic_prefixes[] = $this->get_instance($instance['id']);
+				}
 			}
 		}
 
@@ -410,11 +412,14 @@ class manager
 		$forum_id = $row['forum_id'];
 
 		$topic_prefixes_used = [];
-		foreach ($this->prefix_instances as $instance)
+		if ($this->prefix_instances)
 		{
-			if ((int) $instance['topic'] === (int) $topic_id)
+			foreach ($this->prefix_instances as $instance)
 			{
-				$topic_prefixes_used[] = $instance['prefix'];
+				if ((int) $instance['topic'] === (int) $topic_id)
+				{
+					$topic_prefixes_used[] = $instance['prefix'];
+				}
 			}
 		}
 
@@ -437,7 +442,7 @@ class manager
 				$style_ary = json_decode($prefix['style']);
 				foreach ($style_ary as $element => $value)
 				{
-					$style .= $element . ': ' . $value . ';';
+					$style .= "$element:$value;";
 				}
 				$this->template->assign_block_vars('prefix_option', [
 					'ID'		=> $prefix['id'],

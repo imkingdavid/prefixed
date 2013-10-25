@@ -105,6 +105,7 @@ class listener implements EventSubscriberInterface
 		define('PREFIXES_TABLE', $table_prefix . 'topic_prefixes');
 		define('PREFIX_INSTANCES_TABLE', $table_prefix . 'topic_prefix_instances');
 
+		$this->user = $this->container->get('user');
 		$this->db = $this->container->get('dbal.conn');
 		$this->manager = $this->container->get('prefixed.manager');
 		$this->request = $this->container->get('request');
@@ -138,6 +139,7 @@ class listener implements EventSubscriberInterface
 	 */
 	public function generate_posting_form($event)
 	{
+		$this->user->add_lang_ext('imkingdavid/prefixed', 'prefixed');
 		$this->manager->generate_posting_form($this->request->variable('p', 0));
 	}
 

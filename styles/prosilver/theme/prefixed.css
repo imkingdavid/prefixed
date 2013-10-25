@@ -1,0 +1,9 @@
+#available_prefixes, #used_prefixes {
+	min-width:100px;
+	min-height:100px;
+	padding:10px;
+	margin:5px;
+	background-color:#cadceb;
+	float:left;
+	list-style: none;
+}

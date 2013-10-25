@@ -40,4 +40,5 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, [
 	'POSTING_PREFIXES'	=> 'Topic prefixes',
+	'POSTING_PREFIXES_USED' => 'Topic prefixes applied'
 ]);
