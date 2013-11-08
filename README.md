@@ -9,13 +9,19 @@ This is an extension for phpBB 3.1 that will add a topic prefix functionality to
 - >= PHP 5.4
 
 ##Installation
-You can install this on the latest copy of the develop branch (phpBB 3.1-dev) by following the steps below:
+You can install this on the latest copy of the develop branch (phpBB 3.1-dev) by following the steps below.
 
+**Manual:**
 1. If there is not yet an `./ext/imkingdavid/prefixed/` folder tree starting from your board root, create one.
 2. Copy the entire contents of this repo into that folder you just created (You can leave out the *.md files, .gitignore, and the .git folder).
 3. Navigate in the ACP to `Customise -> Manage extensions -> Extensions`.
-4. Click on the Details page to ensure that your PHP and phpBB versions are compatible with this extension (or see "Requirements" above).
-5. Go back to the extensions list and click Enable.
+4. Click Enable.
+
+**Git:**
+1. From the board root run the following git command:
+`git clone https://github.com/imkingdavid/prefixed.git ext/imkingdavid/prefixed`
+2. Go to `ACP -> Customise -> Manage extensions -> Extensions`
+3. Click Enable next to the [pre]fixed extension.
 
 ##Usage
 There is currently no frontend interface for managing topic prefixes, neither in the ACP or on the viewtopic page, so you will have to manually create them and apply them to topics by creating new rows on the appropriate tables added by this extension. (Ask me on IRC if you need help.)
