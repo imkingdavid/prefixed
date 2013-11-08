@@ -12,12 +12,14 @@ This is an extension for phpBB 3.1 that will add a topic prefix functionality to
 You can install this on the latest copy of the develop branch (phpBB 3.1-dev) by following the steps below.
 
 **Manual:**
+
 1. If there is not yet an `./ext/imkingdavid/prefixed/` folder tree starting from your board root, create one.
 2. Copy the entire contents of this repo into that folder you just created (You can leave out the *.md files, .gitignore, and the .git folder).
 3. Navigate in the ACP to `Customise -> Manage extensions -> Extensions`.
 4. Click Enable.
 
 **Git:**
+
 1. From the board root run the following git command:
 `git clone https://github.com/imkingdavid/prefixed.git ext/imkingdavid/prefixed`
 2. Go to `ACP -> Customise -> Manage extensions -> Extensions`
