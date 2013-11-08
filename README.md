@@ -30,5 +30,5 @@ There is currently no frontend interface for managing topic prefixes, neither in
 
 ##Uninstallation
 In the ACP -> Customise -> Manage Extensions -> Extensions module, you can click one of the following:
-- Disable: This keeps the Extension data intact but prevents it from running. Prefixes will remain in the database but will not appear with topic titles. You can re-enable the extension and the same prefixes will still be applied to the same topics as before.
-- Purge: This uninstalls the extension and destroys any data added by it. You can re-enable the extension, but all prefixes will be gone.
+- **Disable:** This keeps the Extension data and schema intact but prevents it from running. Prefixes will remain in the database but will not appear with topic titles, and the administration area will be unavailable. When you re-enable the extension, all functionality will become active again.
+- **Delete data:** This destroys any data added by the extension, and reverts any schema changes it made. You can re-enable the extension, but all prefixes will be gone.
