@@ -105,7 +105,7 @@ class instance extends ArrayObject
 
 		foreach (json_decode($this['token_data'], true) as $token => $data)
 		{
-			$this->prefix_object['title'] = str_replace('{' . $token . '}', $data, $this->prefix_object['title']);
+			$this->prefix_object['title'] = str_replace($token, $data, $this->prefix_object['title']);
 		}
 
 		// To clarify, the second argument here is simply replacing the prefix

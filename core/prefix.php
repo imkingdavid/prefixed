@@ -83,27 +83,12 @@ class prefix extends \ArrayObject
 			return '';
 		}
 
-		$style = '';
-		if (!empty($this['style']))
-		{
-			$json_array = json_decode($this['style'], true);
-
-			if (!empty($json_array))
-			{
-				foreach ($json_array as $attribute => $value)
-				{
-					$style .= $attribute . ': ' . $value . ';';
-				}
-			}
-		}
-
 		$var_prefix = strtoupper($var_prefix);
 
 		$tpl_vars = array_merge([
 			$var_prefix . 'ID'		=> $this['id'],
 			$var_prefix . 'SHORT'	=> $this['short'],
 			$var_prefix . 'TITLE'	=> $this['title'],
-			$var_prefix . 'STYLE'	=> $style,
 		], $vars);
 
 		call_user_func_array(
@@ -134,7 +119,7 @@ class prefix extends \ArrayObject
 			return false;
 		}
 
-		$sql = 'SELECT id, title, short, style, users, forums
+		$sql = 'SELECT id, title, short, users, forums
 			FROM ' . PREFIXES_TABLE . '
 			WHERE id = ' . (int) $this['id'];
 
@@ -161,7 +146,7 @@ class prefix extends \ArrayObject
 	/**
 	 * Set a property or array of properties
 	 *
-	 * @param array $key_val Either key/value pair or array of key value pairs
+	 * @param array $key_val [key => value] pairs
 	 * @return null
 	 */
 	public function set($key_val)

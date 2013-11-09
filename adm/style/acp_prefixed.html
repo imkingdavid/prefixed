@@ -22,7 +22,7 @@
 		<!-- BEGIN prefix -->
 			<!-- IF prefix.S_ROW_COUNT is even --><tr class="row1"><!-- ELSE --><tr class="row2"><!-- ENDIF -->
 				<td style="text-align: center;">{prefix.SHORT}</td>
-				<td style="text-align: center;"><span style="{prefix.STYLE}">{prefix.TITLE}</span></td>
+				<td style="text-align: center;">{prefix.TITLE}</td>
 				<td style="text-align: right; width: 40px;"><a href="{prefix.U_EDIT}">{ICON_EDIT}</a> <a href="{prefix.U_DELETE}">{ICON_DELETE}</a></td>
 			</tr>
 		<!-- BEGINELSE -->
@@ -65,14 +65,6 @@
 						<br /><span>{L_PREFIX_SHORT_EXPLAIN}</span>
 				</dt>
 				<dd><input type="text" id="prefix_short" name="prefix_short" size="60" maxlength="255" value="{PREFIX_SHORT}" /></dd>
-			</dl>
-
-			<dl>
-				<dt>
-					<label for="prefix_style">{L_PREFIX_STYLE}:</label>
-						<br /><span>{L_PREFIX_STYLE_EXPLAIN}</span>
-				</dt>
-				<dd><input type="text" id="prefix_style" name="prefix_style" size="60" maxlength="255" value="{PREFIX_STYLE}" /></dd>
 			</dl>
 
 			<dl>

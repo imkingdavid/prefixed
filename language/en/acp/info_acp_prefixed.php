@@ -49,11 +49,9 @@ $lang = array_merge($lang, [
 	'ADD_PREFIX'			=> 'New Prefix',
 
 	'PREFIX_TITLE'			=> 'Prefix',
-	'PREFIX_TITLE_EXPLAIN'	=> 'This is what will actually be displayed in front of the topic title.',
+	'PREFIX_TITLE_EXPLAIN'	=> 'This is what will actually be displayed in front of the topic title. BBCode is supported. Certain tokens may be used, which will be substituted with actual data when the prefix is applied.',
 	'PREFIX_SHORT'			=> 'Short name',
 	'PREFIX_SHORT_EXPLAIN'	=> 'This is a unique identifier to help you differentiate between prefixes.',
-	'PREFIX_STYLE'			=> 'CSS Style',
-	'PREFIX_STYLE_EXPLAIN'	=> 'This is the style that will be applied to your prefix. Raw CSS is allowed.',
 	'PREFIX_FORUMS'			=> 'Forums',
 	'PREFIX_FORUMS_EXPLAIN'	=> 'Specify which forums can contain this prefix.',
 	'PREFIX_GROUPS'			=> 'Groups',

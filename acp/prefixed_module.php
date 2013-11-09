@@ -64,28 +64,12 @@ class prefixed_module
 							$prefix = [];
 							$prefix['title'] = $request->variable('prefix_title', '', true);
 							$prefix['short'] = $request->variable('prefix_short', '');
-							$prefix['style'] = $request->variable('prefix_style', '', true);
 							$prefix['forums'] = $request->variable('prefix_forums', '');
 							$prefix['groups'] = $request->variable('prefix_groups', '');
 							$prefix['users'] = $request->variable('prefix_users', '');
 
 							if (!sizeof($error))
 							{
-								// Get the style into JSON format by creating an
-								// array and running json_encode()
-								$css_attributes = explode(';', $prefix['style']);
-								$style = array();
-								foreach ($css_attributes as $attribute)
-								{
-									if (empty($attribute) || strpos($attribute, ':') === false)
-									{
-										continue;
-									}
-									$attr = explode(':', $attribute);
-									$style[$attr[0]] = $attr[1];
-								}
-								$prefix['style'] = json_encode($style);
-
 								// Update or insert the prefix in the database
 								if ($action === 'add')
 								{
@@ -117,18 +101,9 @@ class prefixed_module
 							]);
 						}
 
-						$style = json_decode($prefix['style']);
-						$prefix['style'] = '';
-						foreach ($style as $key => $value)
-						{
-							$value = trim($value);
-							$prefix['style'] .= "$key:$value;";
-						}
-
 						$template->assign_vars([
 							'PREFIX_TITLE' => isset($prefix['title']) ? $prefix['title'] : '',
 							'PREFIX_SHORT' => isset($prefix['short']) ? $prefix['short'] : '',
-							'PREFIX_STYLE' => isset($prefix['style']) ? $prefix['style'] : '',
 							'PREFIX_FORUMS' => isset($prefix['forums']) ? $prefix['forums'] : '',
 							'PREFIX_GROUPS' => isset($prefix['groups']) ? $prefix['groups'] : '',
 							'PREFIX_USERS' => isset($prefix['users']) ? $prefix['users'] : '',

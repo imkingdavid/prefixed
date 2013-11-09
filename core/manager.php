@@ -21,53 +21,64 @@ class manager
 {
 	/**
 	 * Database object instance
-	 * @var phpbb_db_driver
+	 * @var \phpbb\db\driver\driver
 	 */
 	protected $db;
 
 	/**
 	 * Cache object instance
-	 * @var phpbb_cache_drive_interface
+	 * @var \phpbb\cache\driver\driver_interface
 	 */
-	private $cache;
+	protected $cache;
 
 	/**
 	 * Template object
-	 * @var phpbb_template
+	 * @var \phpbb\template\template
 	 */
-	private $template;
+	protected $template;
 
 	/**
 	 * Request object
-	 * @var phpbb_request
+	 * @var \phpbb\request\request
 	 */
-	private $request;
+	protected $request;
+
+	/**
+	 * Tokens
+	 * @var array
+	 */
+	protected $tokens;
 
 	/**
 	 * Prefix instances
 	 * @var array
 	 */
-	private $prefix_instances;
+	protected $prefix_instances;
 
 	/**
 	 * Prefixes
 	 * @var array
 	 */
-	private $prefixes;
+	protected $prefixes;
 
 	/**
 	 * Constructor method
 	 *
-	 * @param phpbb_db_driver $db Database object
-	 * @param phpbb_cache_driver_base $cache Cache object
+	 * @param \phpbb\db\driver\driver $db Database object
+	 * @param \phpbb\cache\driver\driver_interface $cache Cache object
+	 * @param \phpbb\template\template $template Template object
+	 * @param \phpbb\request\request_interface $request Request object
+	 * @param array $tokens
 	 */
-	public function __construct(\phpbb\db\driver\driver $db, \phpbb\cache\driver\driver_interface $cache, \phpbb\template\template $template, \phpbb\request\request_interface $request)
+	public function __construct(\phpbb\db\driver\driver $db, \phpbb\cache\driver\driver_interface $cache, \phpbb\template\template $template, \phpbb\request\request_interface $request, $tokens)
 	{
 		global $phpbb_root_path, $phpEx;
 		$this->db = $db;
 		$this->cache = $cache;
 		$this->template = $template;
 		$this->request = $request;
+		$this->finder = $finder;
+		$this->tokens = $tokens;
 
 		$this->load_prefixes()
 			->load_prefix_instances();
@@ -87,7 +98,7 @@ class manager
 	{
 		if (($this->prefixes = $this->cache->get('_prefixes')) === false || $refresh)
 		{
-			$sql = 'SELECT id, title, short, style, users, forums
+			$sql = 'SELECT id, title, short, users, forums
 				FROM ' . PREFIXES_TABLE;
 			$result = $this->db->sql_query($sql);
 			while ($row = $this->db->sql_fetchrow($result))
@@ -96,7 +107,6 @@ class manager
 					'id'			=> $row['id'],
 					'title'			=> $row['title'],
 					'short'			=> $row['short'],
-					'style'			=> $row['style'],
 					'users'			=> $row['users'],
 					'forums'		=> $row['forums'],
 				];
@@ -261,29 +271,24 @@ class manager
 
 		$token_data = [];
 
-		/**
-		 * This is where tokens get applied to a prefix
-		 * Other extensions can add tokens using this, or can otherwise modify
-		 * the prefix title as they see fit.
-		 *
-		 * NOTE: See the get_token_data method in the prefixed_core_listener for
-		 * example syntax and usage.
-		 *
-		 * @event prefixed.modify_prefix_title
-		 * @var	string	prefix_title	Title used to check for tokens
-		 *								It is possible to modify the title
-		 *								but that is not recommended.
-		 * @var	array	token_data		Array of tokens and data:
-		 *								'TOKEN'	=> 'value'
-		 * @since 1.0.0-A1
-		 */
-		$vars = ['token_data', 'prefix_title'];
-		extract($phpbb_dispatcher->trigger_event('prefixed.modify_prefix_title', compact($vars)));
+		// Here is where we go through all of the tokens
+		foreach ($this->tokens as $token_object) {
+			if (!($token_object instanceof \imkingdavid\prefixed\core\token\token_interface)) {
+				throw new \imkingdavid\prefixed\core\token\exception($this->user->lang('Token objects must implement \imkingdavid\prefixed\core\token\token_interface'));
+			}
+			// The assignment operator here is intentional
+			// Basically, it says assign the value of the of right half to
+			// the variable on the left and then see if that evaluates as
+			// true or false
+			if ($data = $token_object->get_token_data($prefix_title, $topic_id, $prefix_id, $forum_id)) {
+				$token_data[] = $data;
+			}
+		}
 
-		$token_data = serialize($token_data);
+		$token_data = json_encode($token_data);
 
 		$sql_ary = [
-			'prefix'		=> $title,
+			'prefix'		=> $prefix_title,
 			'topic'			=> $topic_id,
 			'ordered'		=> $this->count_topic_prefixes($topic_id) + 1,
 			'token_data'	=> $token_data,
@@ -438,17 +443,10 @@ class manager
 			}
 			else
 			{
-				$style = '';
-				$style_ary = json_decode($prefix['style']);
-				foreach ($style_ary as $element => $value)
-				{
-					$style .= "$element:$value;";
-				}
 				$this->template->assign_block_vars('prefix_option', [
 					'ID'		=> $prefix['id'],
 					'SHORT'		=> $prefix['short'],
 					'TITLE'		=> $prefix['title'],
-					'STYLE'		=> $style,
 				]);
 			}
 		}
