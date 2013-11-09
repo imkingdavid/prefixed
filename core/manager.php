@@ -68,16 +68,15 @@ class manager
 	 * @param \phpbb\cache\driver\driver_interface $cache Cache object
 	 * @param \phpbb\template\template $template Template object
 	 * @param \phpbb\request\request_interface $request Request object
-	 * @param array $tokens
+	 * @param \phpbb\di\service_collection $tokens
 	 */
-	public function __construct(\phpbb\db\driver\driver $db, \phpbb\cache\driver\driver_interface $cache, \phpbb\template\template $template, \phpbb\request\request_interface $request, $tokens)
+	public function __construct(\phpbb\db\driver\driver $db, \phpbb\cache\driver\driver_interface $cache, \phpbb\template\template $template, \phpbb\request\request_interface $request, \phpbb\di\service_collection $tokens)
 	{
 		global $phpbb_root_path, $phpEx;
 		$this->db = $db;
 		$this->cache = $cache;
 		$this->template = $template;
 		$this->request = $request;
-		$this->finder = $finder;
 		$this->tokens = $tokens;
 
 		$this->load_prefixes()
@@ -510,6 +509,6 @@ class manager
 	 */
 	public function get_instance($instance_id)
 	{
-		return new instance($this->db, $this->cache, $this->template, $instance_id);
+		return new instance($this->db, $this->cache, $this->template, $this->tokens, $instance_id);
 	}
 }

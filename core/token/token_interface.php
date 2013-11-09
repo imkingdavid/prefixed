@@ -33,13 +33,33 @@ interface token_interface
 	public function get_token_description_lang();
 
 	/**
+	 * See if the token exists in the the prefix
+	 *
+	 * @param string $prefix_text
+	 * @return array|bool False if it doesn't match, otherwise the matches
+	 * array from preg_match()
+	 */
+	public function match_token($prefix_text);
+
+	/**
 	 * Provide data to prefix instance when it is added to a topic
 	 *
 	 * @param string The prefix text in which to parse the token
 	 * @param int $topic_id ID of the topic to which prefix is being applied
 	 * @param int $prefix_id ID of the prefix being applied to the topic
 	 * @param int $forum_id ID of the forum containing the topic
-	 * @return string
+	 * @return array|bool False if the pattern doesn't match, otherwise an
+	 * array of [token_service_name => data]
 	 */
 	public function get_token_data($prefix_text, $topic_id, $prefix_id, $forum_id);
+
+	/**
+	 * Perform the replacement at runtime given the prefix, the token, and the
+	 * replacement
+	 *
+	 * @param string $prefix_text The whole prefix
+	 * @param string $data The data stored with the specific instance
+	 * @return string The prefix with the token replaced with the data
+	 */
+	public function apply_token_data($prefix_text, $data);
 }

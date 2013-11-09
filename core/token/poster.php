@@ -19,6 +19,8 @@ if (!defined('IN_PHPBB'))
 
 class poster extends token
 {
+	const TOKEN_REGEX = '/{POSTER}/';
+
 	/**
 	 * @inheritdoc
 	 */
@@ -32,6 +34,11 @@ class poster extends token
 	 */
 	public function get_token_data($prefix_text, $topic_id, $prefix_id, $forum_id)
 	{
+		if ($this->match_token($prefix_text) === false)
+		{
+			return false;
+		}
+
 		// Get the poster of the topic
 		$sql = 'SELECT poster_id
 			FROM ' . $this->table_prefix . '
@@ -40,6 +47,15 @@ class poster extends token
 		$poster_username = $this->db->sql_fetchfield('poster_id');
 		$this->db->sql_freeresult();
 
-		return preg_replace('/{POSTER}/', $poster_username, $prefix_text);
+		if (!$poster_username)
+		{
+			return false;
+		}
+
+		return [
+			// We store the service name so that there's no guesswork later
+			'service' => 'prefixed.token.poster',
+			'data' => $poster_username,
+		];
 	}
 }

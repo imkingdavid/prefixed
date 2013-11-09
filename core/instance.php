@@ -42,6 +42,12 @@ class instance extends ArrayObject
 	protected $template;
 
 	/**
+	 * Tokens
+	 * @var array
+	 */
+	protected $tokens;
+
+	/**
 	 * Prefix object instance
 	 * @var instance
 	 */
@@ -55,7 +61,7 @@ class instance extends ArrayObject
 	 * @param \phpbb\template $template Template object
 	 * @param int $id Instance ID
 	 */
-	public function __construct(\phpbb\db\driver\driver $db, \phpbb\cache\driver\driver_interface $cache, \phpbb\template\template $template, $id = 0)
+	public function __construct(\phpbb\db\driver\driver $db, \phpbb\cache\driver\driver_interface $cache, \phpbb\template\template $template, \phpbb\di\service_collection $tokens, $id = 0)
 	{
 		parent::__construct();
 
@@ -103,9 +109,17 @@ class instance extends ArrayObject
 			return '';
 		}
 
-		foreach (json_decode($this['token_data'], true) as $token => $data)
+		foreach (json_decode($this['token_data'], true) as $data)
 		{
-			$this->prefix_object['title'] = str_replace($token, $data, $this->prefix_object['title']);
+			// If a token was used and is no longer available
+			// we skip parsing it. It will show up ugly in the prefix
+			// but that's not my fault.
+			if (!isset($this->tokens[$data['service']]))
+			{
+				continue;
+			}
+
+			$this->prefix_object['title'] = $this->tokens[$data['service']]->apply_token_data($this->prefix_object['title'], $data['data']);
 		}
 
 		// To clarify, the second argument here is simply replacing the prefix

@@ -38,4 +38,27 @@ abstract class token implements token_interface
 		$this->template = $template;
 		$this->db = $db;
 	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function match_token($prefix_text)
+	{
+		$matches = array();
+		preg_match(self::TOKEN_REGEX, $prefix_text, $matches);
+		return $matches ?: false;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function apply_token_data($prefix_text, $data)
+	{
+		if (($matches = $this->match_token($prefix_text)) === false)
+		{
+			return false;
+		}
+
+		return preg_replace(self::TOKEN_REGEX, $data, $prefix_text);
+	}
 }

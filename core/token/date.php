@@ -20,6 +20,7 @@ if (!defined('IN_PHPBB'))
 class date extends token
 {
 	const DEFAULT_DATE_FORMAT = 'm/d/Y';
+	const TOKEN_REGEX = '/{DATE(\|[a-zA-Z-\/\. ]+)?}/';
 	/**
 	 * @inheritdoc
 	 */
@@ -33,9 +34,31 @@ class date extends token
 	 */
 	public function get_token_data($prefix_text, $topic_id, $prefix_id, $forum_id)
 	{
+		// @TODO - figure out how to handle if they change the date format
+		// any old prefix instances will stop showing the replacement for the token
+
 		// Allow date format to be passed
 		// {DATE} is defaults to: m/d/Y
-		if (!preg_match('/{DATE(\|[a-zA-Z-\/\.]+)?}/', $prefix_text, $matches)) {
+		// Format can be 
+		if ($this->match_token($prefix_text) === false)
+		{
+			return false;
+		}
+
+		return [
+			// We store the service name so that there's no guesswork later
+			'service' => 'prefixed.token.date',
+			time(),
+		];
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function apply_token_data($prefix_text, $data)
+	{
+		if (($matches = $this->match_token($prefix_text)) === false)
+		{
 			return false;
 		}
 
@@ -43,12 +66,7 @@ class date extends token
 		// $matches[1] will contain the string '|m/d/y'
 		// We want to remove the | and use the rest in the date() function
 		$format = (sizeof($matches) > 1) ? ltrim($matches[1], '|') : self::DEFAULT_DATE_FORMAT;
-
-		$date = date($format);
-
-		return [
-			$this->user->lang[$this->get_token_description_lang()],
-			reset($matches),
-		];
+		// $data should contain the timestamp
+		return preg_replace(self::TOKEN_REGEX, date($format, $data), $prefix_text);
 	}
 }

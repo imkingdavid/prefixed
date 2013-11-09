@@ -19,6 +19,8 @@ if (!defined('IN_PHPBB'))
 
 class username extends token
 {
+	const TOKEN_REGEX = '/{USERNAME}/';
+
 	/**
 	 * @inheritdoc
 	 */
@@ -32,7 +34,16 @@ class username extends token
 	 */
 	public function get_token_data($prefix_text, $topic_id, $prefix_id, $forum_id)
 	{
-		// The current user is the one who applied the prefix
-		return preg_replace('/{USERNAME}/', $this->user->data['username'], $prefix_text);
+		if ($this->match_token($prefix_text) === false)
+		{
+			return false;
+		}
+
+		return [
+			// We store the service name so that there's no guesswork later
+			'service' => 'prefixed.token.username',
+			// The current user is the one who applied the prefix
+			'data' => $this->user->data['username'],
+		];
 	}
 }
