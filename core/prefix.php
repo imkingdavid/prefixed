@@ -84,7 +84,6 @@ class prefix extends \ArrayObject
 		}
 
 		$var_prefix = strtoupper($var_prefix);
-		
 		$this['title'] = generate_text_for_display($this['title'], $this['bbcode_uid'], $this['bbcode_bitfield'], OPTION_FLAG_BBCODE | OPTION_FLAG_SMILIES);
 		$tpl_vars = array_merge([
 			$var_prefix . 'ID'		=> $this['id'],

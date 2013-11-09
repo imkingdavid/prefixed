@@ -71,7 +71,7 @@ class prefixed_module
 							$uid = $bitfield = $options = '';
 							$allow_bbcode = true;
 							$allow_smilies = $allow_urls = false;
-							generate_text_for_storage($prefix['title'], $uid, $bifield, $options, $allow_bbcode, $allow_urls, $allow_smilies);
+							generate_text_for_storage($prefix['title'], $uid, $bitfield, $options, $allow_bbcode, $allow_urls, $allow_smilies);
 
 							$prefix['bbcode_uid'] = $uid;
 							$prefix['bbcode_bitfield'] = $bitfield;
