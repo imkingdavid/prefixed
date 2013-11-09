@@ -97,17 +97,19 @@ class manager
 	{
 		if (($this->prefixes = $this->cache->get('_prefixes')) === false || $refresh)
 		{
-			$sql = 'SELECT id, title, short, users, forums
+			$sql = 'SELECT id, title, short, users, forums, bbcode_uid, bbcode_bitfield
 				FROM ' . PREFIXES_TABLE;
 			$result = $this->db->sql_query($sql);
 			while ($row = $this->db->sql_fetchrow($result))
 			{
 				$this->prefixes[$row['id']] = [
-					'id'			=> $row['id'],
-					'title'			=> $row['title'],
-					'short'			=> $row['short'],
-					'users'			=> $row['users'],
-					'forums'		=> $row['forums'],
+					'id'				=> $row['id'],
+					'title'				=> $row['title'],
+					'short'				=> $row['short'],
+					'users'				=> $row['users'],
+					'forums'			=> $row['forums'],
+					'bbcode_uid'		=> $row['bbcode_uid'],
+					'bbcode_bitfield'	=> $row['bbcode_bitfield'],
 				];
 			}
 			$this->db->sql_freeresult($result);

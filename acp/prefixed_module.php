@@ -68,6 +68,14 @@ class prefixed_module
 							$prefix['groups'] = $request->variable('prefix_groups', '');
 							$prefix['users'] = $request->variable('prefix_users', '');
 
+							$uid = $bitfield = $options = '';
+							$allow_bbcode = true;
+							$allow_smilies = $allow_urls = false;
+							generate_text_for_storage($prefix['title'], $uid, $bifield, $options, $allow_bbcode, $allow_urls, $allow_smilies);
+
+							$prefix['bbcode_uid'] = $uid;
+							$prefix['bbcode_bitfield'] = $bitfield;
+
 							if (!sizeof($error))
 							{
 								// Update or insert the prefix in the database
@@ -99,6 +107,12 @@ class prefixed_module
 								'S_ERROR'	=> true,
 								'ERROR_MSG'	=> $error,
 							]);
+						}
+
+						// I'm using decode_message
+						if (isset($prefix['title']) && isset($prefix['bbcode_uid']))
+						{
+							generate_text_for_edit($prefix['title'], $prefix['bbcode_uid'], OPTION_FLAG_BBCODE);
 						}
 
 						$template->assign_vars([
