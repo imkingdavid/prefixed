@@ -4,6 +4,12 @@
 
 This is an extension for phpBB 3.1 that will add a topic prefix functionality to your board.
 
+##Features
+- Topics can have multiple prefixes
+- Prefixes can be limited per user, per group, and per forum (whitelist)
+- Prefixes can be styled using BBCode (in progress)
+- Prefixes may contain "tokens", which represent data that can be different per instance. For instance, {USERNAME} is replaced with the username of the user that applied the prefix. New tokens may be added via extensions.
+
 ##Requirements
 - >= phpBB 3.1-dev
 - >= PHP 5.4
