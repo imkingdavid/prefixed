@@ -437,18 +437,13 @@ class manager
 				{
 					if ($prefix['id'] == $instance_ary['prefix'])
 					{
-						$instance = $this->get_instance($instance['id']);
-						$instance->parse('prefix_used');
+						$this->get_instance($instance['id'])->parse('prefix_used');
 					}
 				}
 			}
 			else
 			{
-				$this->template->assign_block_vars('prefix_option', [
-					'ID'		=> $prefix['id'],
-					'SHORT'		=> $prefix['short'],
-					'TITLE'		=> $prefix['title'],
-				]);
+				$this->get_prefix($prefix['id'])->parse('prefix_option');
 			}
 		}
 	}
@@ -512,5 +507,16 @@ class manager
 	public function get_instance($instance_id)
 	{
 		return new instance($this->db, $this->cache, $this->template, $this->tokens, $instance_id);
+	}
+
+	/**
+	 * Create a prefix object
+	 *
+	 * @param int $prefix_id
+	 * @return imkingdavid\prefixed\core\prefix
+	 */
+	public function get_prefix($prefix_id)
+	{
+		return new prefix($this->db, $this->cache, $this->template, $prefix_id);
 	}
 }

@@ -27,43 +27,51 @@ class listener implements EventSubscriberInterface
 	 * Database object
 	 * @var \phpbb\db\driver
 	 */
-	private $db;
+	protected $db;
 
 	/**
 	 * Cache driver object
 	 * @var \phpbb\cache\driver\interface
 	 */
-	private $cache;
+	protected $cache;
 
 	/**
 	 * Template object
 	 * @var \phpbb\template
 	 */
-	private $template;
+	protected $template;
 
 	/**
 	 * Request object
 	 * @var \phpbb\request
 	 */
-	private $request;
+	protected $request;
 
 	/**
 	 * User object
 	 * @var \phpbb\user
 	 */
-	private $user;
+	protected $user;
 
 	/**
 	 * Prefix manager object
 	 * @var imkingdavid\prefixed\core\manager
 	 */
-	private $manager;
+	protected $manager;
 
 	/**
 	 * Table prefix
 	 * @var string
 	 */
-	private $table_prefix;
+	protected $table_prefix;
+
+	/**
+	 * We don't want to run the setup() method twice so we keep track of
+	 * whether or not it has been run. This is mainly for the
+	 * core.modify_posting_parameters event that is run before core.user_setup
+	 * @var bool
+	 */
+	protected $setup_has_been_run = false;
 
 	/**
 	 * Get subscribed events
@@ -78,10 +86,8 @@ class listener implements EventSubscriberInterface
 			'core.user_setup'					=> 'setup',
 			'core.viewtopic_modify_page_title'	=> 'get_viewtopic_topic_prefix',
 			'core.viewforum_modify_topicrow'	=> 'get_viewforum_topic_prefixes',
-			'core.posting_modify_template_vars'	=> [
-				['manage_prefixes_on_posting'],
-				['generate_posting_form'],
-			],
+			'core.modify_posting_parameters'	=> 'manage_prefixes_on_posting',
+			'core.posting_modify_template_vars'	=> 'generate_posting_form',
 
 			// Events added by this extension
 			'prefixed.modify_prefix_title'		=> 'get_token_data',
@@ -98,6 +104,13 @@ class listener implements EventSubscriberInterface
 	{
 		global $phpbb_container;
 
+		// Keep this from running twice
+		if($this->setup_has_been_run === true)
+		{
+			return;
+		}
+		$this->setup_has_been_run = true;
+
 		$this->container = $phpbb_container;
 
 		// Let's get our table constants out of the way
@@ -107,8 +120,8 @@ class listener implements EventSubscriberInterface
 
 		$this->user = $this->container->get('user');
 		$this->db = $this->container->get('dbal.conn');
-		$this->manager = $this->container->get('prefixed.manager');
 		$this->request = $this->container->get('request');
+		$this->manager = $this->container->get('prefixed.manager');
 	}
 
 	/**
@@ -151,6 +164,9 @@ class listener implements EventSubscriberInterface
 	 */
 	public function manage_prefixes_on_posting($event)
 	{
+		if (!defined('PREFIXES_TABLE')) {
+			$this->setup($event);
+		}
 		$action = $this->request->variable('action', '');
 		$ids = $this->request->variable('prefix_id', [0]);
 

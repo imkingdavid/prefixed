@@ -84,7 +84,7 @@ class prefix extends \ArrayObject
 		}
 
 		$var_prefix = strtoupper($var_prefix);
-		$this['title'] = generate_text_for_display($this['title'], $this['bbcode_uid'], $this['bbcode_bitfield'], OPTION_FLAG_BBCODE | OPTION_FLAG_SMILIES);
+		$this['title'] = generate_text_for_display($this['title'], $this['bbcode_uid'], $this['bbcode_bitfield'], OPTION_FLAG_BBCODE);
 		$tpl_vars = array_merge([
 			$var_prefix . 'ID'		=> $this['id'],
 			$var_prefix . 'SHORT'	=> $this['short'],
@@ -119,6 +119,7 @@ class prefix extends \ArrayObject
 			return false;
 		}
 
+		// This SQL is only run if the prefix is not cached
 		$sql = 'SELECT id, title, short, users, forums, bbcode_uid, bbcode_bitfield
 			FROM ' . PREFIXES_TABLE . '
 			WHERE id = ' . (int) $this['id'];
@@ -144,13 +145,16 @@ class prefix extends \ArrayObject
 	}
 
 	/**
-	 * Set a property or array of properties
+	 * Set array of properties
 	 *
-	 * @param array $key_val [key => value] pairs
+	 * @param array $data Array of [key => value] pairs
 	 * @return null
 	 */
-	public function set($key_val)
+	public function set_data($data)
 	{
-
+		foreach ($data as $key => $value)
+		{
+			$this[$key] = $value;
+		}
 	}
 }
