@@ -69,15 +69,19 @@ class manager
 	 * @param \phpbb\template\template $template Template object
 	 * @param \phpbb\request\request_interface $request Request object
 	 * @param \phpbb\di\service_collection $tokens
+	 * @param \phpbb\controller\helper $controller_helper
+	 * @param string $phpbb_root_path
+	 * @param string $php_ext
 	 */
-	public function __construct(\phpbb\db\driver\driver $db, \phpbb\cache\driver\driver_interface $cache, \phpbb\template\template $template, \phpbb\request\request_interface $request, \phpbb\di\service_collection $tokens)
+	public function __construct(\phpbb\db\driver\driver $db, \phpbb\cache\driver\driver_interface $cache, \phpbb\template\template $template, \phpbb\request\request_interface $request, \phpbb\di\service_collection $tokens, \phpbb\controller\helper $helper, $phpbb_root_path, $php_ext)
 	{
-		global $phpbb_root_path, $phpEx;
 		$this->db = $db;
 		$this->cache = $cache;
 		$this->template = $template;
 		$this->request = $request;
 		$this->tokens = $tokens;
+		$this->phpbb_root_path = $phpbb_root_path;
+		$this->php_ext = $php_ext;
 
 		$this->load_prefixes()
 			->load_prefix_instances();
@@ -507,6 +511,16 @@ class manager
 	public function get_instance($instance_id)
 	{
 		return new instance($this->db, $this->cache, $this->template, $this->tokens, $instance_id);
+	}
+
+	/**
+	 * 
+	 *
+	 *
+	 */
+	public function parse_new_instance($prefix_id)
+	{
+		$prefix = $this->get_prefix($prefix_id);
 	}
 
 	/**

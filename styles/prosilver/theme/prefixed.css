@@ -7,3 +7,11 @@
 	float:left;
 	list-style: none;
 }
+
+#available_prefixes li, #used_prefixes li {
+	padding:5px;
+}
+
+li.prefix_placeholder {
+	background-color:#e1ebf2;
+}

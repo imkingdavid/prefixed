@@ -7,6 +7,14 @@ services:
             - @template
             - @request
             - @prefixed.token.collection
+            - @controller.helper
+            - %core.root_path%
+            - %core.php_ext%
+
+    prefixed.listener:
+        class: imkingdavid\prefixed\event\listener
+        tags:
+            - { name: event.listener }
 
     prefixed.token.collection:
         class: phpbb\di\service_collection

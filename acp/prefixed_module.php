@@ -109,26 +109,17 @@ class prefixed_module
 							]);
 						}
 
-						// I'm using decode_message
-						if (isset($prefix['title']) && isset($prefix['bbcode_uid']))
-						{
-							generate_text_for_edit($prefix['title'], $prefix['bbcode_uid'], OPTION_FLAG_BBCODE);
-						}
-
-						$template->assign_vars([
-							'PREFIX_TITLE' => isset($prefix['title']) ? $prefix['title'] : '',
-							'PREFIX_SHORT' => isset($prefix['short']) ? $prefix['short'] : '',
-							'PREFIX_FORUMS' => isset($prefix['forums']) ? $prefix['forums'] : '',
-							'PREFIX_GROUPS' => isset($prefix['groups']) ? $prefix['groups'] : '',
-							'PREFIX_USERS' => isset($prefix['users']) ? $prefix['users'] : '',
-						]);
-						
 						if (!$submit && $action === 'edit')
 						{
-							// Set the form fields to the corresponding values
-							// from the database
-							$prefix = new \imkingdavid\prefixed\core\prefix($db, $cache, $template, $prefix_id);
-							$prefix->parse('', [], 'PREFIX_');
+							$prefix['title'] = generate_text_for_edit($prefix['title'], $prefix['bbcode_uid'], OPTION_FLAG_BBCODE)['text'];
+
+							$template->assign_vars([
+								'PREFIX_TITLE' => isset($prefix['title']) ? $prefix['title'] : '',
+								'PREFIX_SHORT' => isset($prefix['short']) ? $prefix['short'] : '',
+								'PREFIX_FORUMS' => isset($prefix['forums']) ? $prefix['forums'] : '',
+								'PREFIX_GROUPS' => isset($prefix['groups']) ? $prefix['groups'] : '',
+								'PREFIX_USERS' => isset($prefix['users']) ? $prefix['users'] : '',
+							]);
 						}
 					break;
 
