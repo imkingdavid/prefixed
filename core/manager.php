@@ -433,21 +433,29 @@ class manager
 			}
 		}
 
+		$allowed_prefixes = $this->get_allowed_prefixes($this->user->data['user_id'], $forum_id);
+
 		foreach ($this->prefixes as $prefix)
 		{
-			if (in_array($prefix['id'], $topic_prefixes_used))
-			{
-				foreach ($this->prefix_instances as $instance_ary)
+			// First, ensure this user is allowed to use the prefix
+			// in this forum
+			if (in_array($prefix['id'], $allowed_prefixes)) {
+				// Next, if the prefix has already been used, get the instance
+				if (in_array($prefix['id'], $topic_prefixes_used))
 				{
-					if ($prefix['id'] == $instance_ary['prefix'])
+					foreach ($this->prefix_instances as $instance_ary)
 					{
-						$this->get_instance($instance['id'])->parse('prefix_used');
+						if ($prefix['id'] == $instance_ary['prefix'])
+						{
+							$this->get_instance($instance['id'])->parse('prefix_used');
+						}
 					}
 				}
-			}
-			else
-			{
-				$this->get_prefix($prefix['id'])->parse('prefix_option');
+				// Otherwise, get the prefix
+				else
+				{
+					$this->get_prefix($prefix['id'])->parse('prefix_option');
+				}
 			}
 		}
 	}
