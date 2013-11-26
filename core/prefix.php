@@ -120,7 +120,7 @@ class prefix extends \ArrayObject
 		}
 
 		// This SQL is only run if the prefix is not cached
-		$sql = 'SELECT id, title, short, users, forums, bbcode_uid, bbcode_bitfield
+		$sql = 'SELECT id, title, short, users, forums, groups, bbcode_uid, bbcode_bitfield
 			FROM ' . PREFIXES_TABLE . '
 			WHERE id = ' . (int) $this['id'];
 

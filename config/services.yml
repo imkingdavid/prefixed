@@ -6,6 +6,7 @@ services:
             - @cache.driver
             - @template
             - @request
+            - @user
             - @prefixed.token.collection
             - @controller.helper
             - %core.root_path%

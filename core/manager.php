@@ -44,6 +44,12 @@ class manager
 	protected $request;
 
 	/**
+	 * User object
+	 * @var \phpbb\user
+	 */
+	protected $user;
+
+	/**
 	 * Tokens
 	 * @var array
 	 */
@@ -73,14 +79,15 @@ class manager
 	 * @param string $phpbb_root_path
 	 * @param string $php_ext
 	 */
-	public function __construct(\phpbb\db\driver\driver $db, \phpbb\cache\driver\driver_interface $cache, \phpbb\template\template $template, \phpbb\request\request_interface $request, \phpbb\di\service_collection $tokens, \phpbb\controller\helper $helper, $phpbb_root_path, $php_ext)
+	public function __construct(\phpbb\db\driver\driver $db, \phpbb\cache\driver\driver_interface $cache, \phpbb\template\template $template, \phpbb\request\request_interface $request, \phpbb\user $user, \phpbb\di\service_collection $tokens, \phpbb\controller\helper $helper, $phpbb_root_path, $php_ext)
 	{
 		$this->db = $db;
 		$this->cache = $cache;
 		$this->template = $template;
 		$this->request = $request;
+		$this->user = $user;
 		$this->tokens = $tokens;
-		$this->phpbb_root_path = $phpbb_root_path;
+		$this->root_path = $phpbb_root_path;
 		$this->php_ext = $php_ext;
 
 		$this->load_prefixes()
@@ -101,7 +108,7 @@ class manager
 	{
 		if (($this->prefixes = $this->cache->get('_prefixes')) === false || $refresh)
 		{
-			$sql = 'SELECT id, title, short, users, forums, bbcode_uid, bbcode_bitfield
+			$sql = 'SELECT id, title, short, users, forums, groups, bbcode_uid, bbcode_bitfield
 				FROM ' . PREFIXES_TABLE;
 			$result = $this->db->sql_query($sql);
 			while ($row = $this->db->sql_fetchrow($result))
@@ -112,6 +119,7 @@ class manager
 					'short'				=> $row['short'],
 					'users'				=> $row['users'],
 					'forums'			=> $row['forums'],
+					'groups'			=> $row['groups'],
 					'bbcode_uid'		=> $row['bbcode_uid'],
 					'bbcode_bitfield'	=> $row['bbcode_bitfield'],
 				];
@@ -351,7 +359,7 @@ class manager
 
 		if (!function_exists('group_memberships'))
 		{
-			include("{$phpbb_root_path}includes/functions_user.$phpEx");
+			include("{$this->root_path}includes/functions_user.{$this->php_ext}");
 		}
 
 		foreach (group_memberships(false, $user_id) as $membership)
