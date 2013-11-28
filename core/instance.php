@@ -17,7 +17,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-class instance extends ArrayObject
+class instance extends \ArrayObject
 {
 	use loadable {
 		load as _load;
@@ -69,6 +69,7 @@ class instance extends ArrayObject
 		$this->db = $db;
 		$this->cache = $cache;
 		$this->template = $template;
+		$this->tokens = $tokens;
 
 		if ($this['id'])
 		{
@@ -95,9 +96,11 @@ class instance extends ArrayObject
 	 * @param	string	$block		If given, this name will be passed to
 	 *								assign_block_vars (otherwise the variables
 	 *								are assigned to the template globally)
+	 * @param   bool    $return_parsed If true, return is the parsed prefix
+	 *								otherwise, it is the plaintext version
 	 * @return	 string				Plaintext prefix
 	 */
-	public function parse($block = '')
+	public function parse($block = '', $return_parsed = false)
 	{
 		if (!$this->prefix_object instanceof prefix)
 		{
@@ -123,8 +126,12 @@ class instance extends ArrayObject
 		}
 
 		// To clarify, the second argument here is simply replacing the prefix
-		// ID with the instance ID in the template
-		return $this->prefix_object->parse($block, ['ID' => $this['id']]);
+		// ID with the instance ID in the template, and adding the prefix ID
+		// as its own PREFIX variable
+		return $this->prefix_object->parse($block, [
+			'ID' => $this['id'],
+			'PREFIX' => $this->prefix_object['id']
+		], '', $return_parsed);
 	}
 
 	/**
@@ -156,5 +163,10 @@ class instance extends ArrayObject
 		}
 
 		return true;
+	}
+
+	public function get($property)
+	{
+		return isset($this->$property) ? $this->$property : null;
 	}
 }

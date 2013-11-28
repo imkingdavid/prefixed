@@ -108,6 +108,8 @@ class manager
 	{
 		if (($this->prefixes = $this->cache->get('_prefixes')) === false || $refresh)
 		{
+			// If we're refreshing, we have to reset the array first
+			$this->prefixes = array();
 			$sql = 'SELECT id, title, short, users, forums, groups, bbcode_uid, bbcode_bitfield
 				FROM ' . PREFIXES_TABLE;
 			$result = $this->db->sql_query($sql);
@@ -165,6 +167,8 @@ class manager
 	{
 		if (($this->prefix_instances = $this->cache->get('_prefixes_used')) === false || $refresh)
 		{
+			// If we're refreshing, we have to reset the array first
+			$this->prefix_instances = array();
 			$sql = 'SELECT id, prefix, topic, ordered, token_data
 				FROM ' . PREFIX_INSTANCES_TABLE;
 			$result = $this->db->sql_query($sql);
@@ -210,9 +214,11 @@ class manager
 	 *
 	 * @param	int		$topic_id	ID of the topic
 	 * @param	string	$block		Name of the block to send to the template
+	 * @param   bool    $return_parsed If true, return is the parsed prefix
+	 *								otherwise, it is the plaintext version
 	 * @return	string	Plaintext string of a topic's prefixes
 	 */
-	public function load_prefixes_topic($topic_id, $block = '')
+	public function load_prefixes_topic($topic_id, $block = '', $return_parsed = false)
 	{
 		// If there aren't any instantiated prefixes, the topic won't have any
 		// to load, so let's just stop right here
@@ -244,7 +250,7 @@ class manager
 		$return_string = '';
 		foreach ($topic_prefixes as $prefix)
 		{
-			$return_string .= $prefix->parse($block);
+			$return_string .= $prefix->parse($block, $return_parsed) . '&nbsp;';
 		}
 
 		return $return_string;
@@ -274,7 +280,7 @@ class manager
 	{
 		$allowed_prefixes = $this->get_allowed_prefixes($this->user->data['user_id'], $forum_id);
 
-		if (count($allowed_prefixes) === count($this->load_prefixes_topic()) || !in_array($prefix_id, $allowed_prefixes) || !in_array($prefix_id, array_keys($this->prefixes)))
+		if (count($allowed_prefixes) === count($this->load_prefixes_topic($topic_id)) || !in_array($prefix_id, $allowed_prefixes) || !in_array($prefix_id, array_keys($this->prefixes)))
 		{
 			return;
 		}
@@ -301,16 +307,106 @@ class manager
 		$token_data = json_encode($token_data);
 
 		$sql_ary = [
-			'prefix'		=> $prefix_title,
+			'prefix'		=> $prefix_id,
 			'topic'			=> $topic_id,
 			'ordered'		=> $this->count_topic_prefixes($topic_id) + 1,
 			'token_data'	=> $token_data,
 		];
 
-		$sql = 'INSERT INTO ' . PREFIX_INSTANCES_TABLE . ' ' . $db->sql_build_array('INSERT', $sql_ary);
+		$sql = 'INSERT INTO ' . PREFIX_INSTANCES_TABLE . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
 		$this->db->sql_query($sql);
 
 		$this->load_prefix_instances(true);
+	}
+
+	/**
+	 * Add, retain, or remove prefixes on a given topic based on the list
+	 * of currently applied prefixes for that topic, compared to the list
+	 * of prefixes selected on the posting form.
+	 *
+	 * @param int $topic_id
+	 * @param array $prefix_ids
+	 * @param int $forum_id
+	 * @return null
+	 */
+	public function set_topic_prefixes($topic_id, $prefix_ids, $forum_id)
+	{
+		$this->load_prefix_instances();
+		$all_used_prefixes = $this->prefix_instances;
+		$this_topics_prefixes = array();
+		if (!empty($all_used_prefixes)) {
+			foreach($all_used_prefixes as $prefix)
+			{
+				if ($prefix['topic'] == $topic_id)
+				{
+					$this_topics_prefixes[] = $prefix['prefix'];
+				}
+			}
+		}
+
+		// If the topic doesn't have prefixes and we aren't adding any
+		// there's nothing to do here
+		if (empty($prefix_ids) && empty($this_topics_prefixes))
+		{
+			return;
+		}
+		// If the topic does have prefixes and our prefix array is empty
+		// we are removing all of them
+		else if (empty($prefix_ids) && !empty($this_topics_prefixes))
+		{
+			// 0 for the second parameter means ALL
+			// Otherwise, you can give an array or a single prefix ID
+			// to remove.
+			// NOTE this is the prefix ID, not the instance ID
+			$this->remove_topic_prefixes($topic_id, 0);
+		}
+		// If the topic does not have any prefixes and our prefix array is
+		// not empty, we're adding all of them
+		else if (!empty($prefix_ids) && empty($this_topics_prefixes))
+		{
+			foreach ($prefix_ids as $prefix_id)
+			{
+				$this->add_topic_prefix($topic_id, $prefix_id, $forum_id);
+			}
+		}
+		// Otherwise, we have some more difficult logic because we need to
+		// determine which are being added, removed, and retained
+		else
+		{
+			// First we figure out all of the IDs that are present in both
+			// arrays. These we discard because they are being retained
+			// (that sentence sounds odd)
+			$retained_ids = array_intersect($prefix_ids, $this_topics_prefixes);
+
+			// Now discard those
+			if (!empty($retained_ids)) {
+				foreach ($retained_ids as $retained_id) {
+					$remove_id = array_search($retained_id, $prefix_ids);
+					if (false !== $remove_id) {
+						unset($prefix_ids[$remove_id]);
+						$prefix_ids = array_values($prefix_ids);
+					}
+					$remove_id = null;
+
+					$remove_id = array_search($retained_id, $this_topics_prefixes);
+					if (false !== $remove_id) {
+						unset($this_topics_prefixes[$remove_id]);
+						$this_topics_prefixes = array_values($this_topics_prefixes);
+					}
+				}
+			}
+
+			// We've removed the prefixes to be retained now, so the ones
+			// that are left in $prefix_ids need to be added
+			foreach ($prefix_ids as $prefix_id)
+			{
+				$this->add_topic_prefix($topic_id, $prefix_id, $forum_id);
+			}
+
+			// And the ones that are left in $this_topics_prefixes need to be
+			// removed
+			$this->remove_topic_prefixes($topic_id, $this_topics_prefixes);
+		}
 	}
 
 	/**
@@ -326,14 +422,16 @@ class manager
 	 */
 	public function remove_topic_prefixes($topic_id, $prefix_id)
 	{
+		var_dump($prefix_id);
 		if (!empty($prefix_id) && !is_array($prefix_id))
 		{
-			$prefix_id = [$prefix_id];
+			$prefix_id = [(int) $prefix_id];
 		}
 
-		$sql_and = !empty($prefix_id) ? ' AND ' . $this->db->sql_in_set('prefix_id', $prefix_id) : '';
+		$sql_and = !empty($prefix_id) ? ' AND ' . $this->db->sql_in_set('prefix', $prefix_id) : '';
 		$sql = 'DELETE FROM ' . PREFIX_INSTANCES_TABLE . '
-			WHERE topic_id = ' . (int) $topic_id . "$sql_and";
+			WHERE topic = ' . (int) $topic_id . "$sql_and";
+		var_dump($sql);
 		$this->db->sql_query($sql);
 
 		$this->load_prefix_instances(true);
@@ -455,7 +553,7 @@ class manager
 					{
 						if ($prefix['id'] == $instance_ary['prefix'])
 						{
-							$this->get_instance($instance['id'])->parse('prefix_used');
+							$this->get_instance($instance_ary['id'])->parse('prefix_used');
 						}
 					}
 				}
@@ -478,12 +576,14 @@ class manager
 	{
 		$count = 0;
 
-		array_map(function($instance) use (&$count, $topic_id) {
-			if ($instance['topic'] == $topic_id)
-			{
-				$count++;
-			}
-		}, $this->prefix_instances);
+		if ($this->prefix_instances !== false) {
+			array_map(function($instance) use (&$count, $topic_id) {
+				if ($instance['topic'] == $topic_id)
+				{
+					$count++;
+				}
+			}, $this->prefix_instances);
+		}
 
 		return $count;
 	}

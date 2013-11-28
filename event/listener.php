@@ -84,6 +84,7 @@ class listener implements EventSubscriberInterface
 		return [
 			// phpBB Core Events
 			'core.user_setup'					=> 'setup',
+			//'core.display_forums_modify_template_vars'	=> 'get_forumlist_topic_prefix',
 			'core.viewtopic_modify_page_title'	=> 'get_viewtopic_topic_prefix',
 			'core.viewforum_modify_topicrow'	=> 'get_viewforum_topic_prefixes',
 			'core.modify_posting_parameters'	=> 'manage_prefixes_on_posting',
@@ -164,19 +165,57 @@ class listener implements EventSubscriberInterface
 	 */
 	public function manage_prefixes_on_posting($event)
 	{
-		if (!defined('PREFIXES_TABLE')) {
+		if (!defined('PREFIXES_TABLE'))
+		{
 			$this->setup($event);
 		}
-		$action = $this->request->variable('action', '');
-		$ids = $this->request->variable('prefix_id', [0]);
 
-		if (!$event['submit'] || !in_array($action, ['add', 'remove', 'remove_all']))
+		// Due to jQuery .sortable('serialize') $ids will
+		// be a string like: 'prefix[]=4'
+		// I need to extract just the number
+		$ids = $this->request->variable('prefixes_used', '');
+
+		if (!$event['submit'])
 		{
 			return;
 		}
 
-		// We treat the form as refreshed so we don't lose entered information
-		$event['refresh'] = true;
+		if (!empty($ids)) {
+			// If we have no matches, get out!
+			// Note that preg_match_all() returns false on failure
+			// or the number of matches on success
+			// Either way, a 0 or false should be treated the same
+			preg_match_all('/(prefix\[\]=(\d)+&?)+/', $ids, $prefix_ids);
+
+			// Otherwise, let's keep moving.
+			// When given:
+			//
+			// string 'prefix[]=4&amp;prefix[]=3' (length=25)
+			//
+			//
+			// preg_match_all() will return an array like this:
+			//
+			// array (size=3)
+			//   0 => 
+			//     array (size=2)
+			//       0 => string 'prefix[]=4&' (length=11)
+			//       1 => string 'prefix[]=3' (length=10)
+			//   1 => 
+			//     array (size=2)
+			//       0 => string 'prefix[]=4&' (length=11)
+			//       1 => string 'prefix[]=3' (length=10)
+			//   2 => 
+			//     array (size=2)
+			//       0 => string '4' (length=1)
+			//       1 => string '3' (length=1)
+
+			// Therefore, we want to focus on array index 2
+			$ids = $prefix_ids[2];
+		}
+
+		$post_id = (int) $event['post_id'];
+		$topic_id = (int) $event['topic_id'];
+		$forum_id = (int) $event['forum_id'];
 
 		// If the mode is edit, we need to ensure to that we are working
 		// with the first post in the topic
@@ -186,28 +225,16 @@ class listener implements EventSubscriberInterface
 				FROM ' . TOPICS_TABLE . '
 				WHERE topic_id = ' . (int) $event['topic_id'];
 			$result = $this->db->sql_query($sql);
-			$first_post_id = $this->db->sql_fetchrow('topic_first_post_id');
+			$first_post_id = $this->db->sql_fetchfield('topic_first_post_id');
 			$this->db->sql_freeresult($result);
 
-			if ((int) $first_post_id !== (int) $event['post_id'])
+			if ($post_id !== (int) $first_post_id)
 			{
 				return;
 			}
 		}
 
-		switch ($action)
-		{
-			case 'add':
-				$this->manager->add_topic_prefix($event['topic_id'], $id, $event['forum_id']);
-			break;
-
-			case 'remove_all':
-				$ids = 0;
-			// NO break;
-			case 'remove':
-				$this->manager->remove_topic_prefixes($event['topic_id'], $ids);
-			break;
-		}
+		$this->manager->set_topic_prefixes($topic_id, $ids, $forum_id);
 	}
 
 	/**
@@ -230,7 +257,23 @@ class listener implements EventSubscriberInterface
 	 */
 	public function get_viewforum_topic_prefixes($event)
 	{
-		$this->load_prefixes_topic($event);
+		$topic_row = $event['topic_row'];
+		$topic_row['TOPIC_PREFIX'] = $this->load_prefixes_topic($event, 'row', '', true);
+		$event['topic_row'] = $topic_row;
+	}
+
+	/**
+	 * Get the parsed prefix for each of the last posts
+	 *
+	 * @param Event $event Event object
+	 * @return null
+	 */
+	public function get_forumlist_topic_prefix($event)
+	{
+		$forum_row = $event['forum_row'];
+		$forum_row['TOPIC_PREFIX'] = $this->load_prefixes_topic($event, 'row', '', true);
+		$event['forum_row'] = $forum_row;
+
 	}
 
 	/**
@@ -241,12 +284,42 @@ class listener implements EventSubscriberInterface
 	 * @param string $block The name of the template block
 	 * @return string Plaintext string of topic prefixes
 	 */
-	protected function load_prefixes_topic($event, $array_name = 'row', $block = 'prefix')
+	protected function load_prefixes_topic($event, $array_name = 'row', $block = 'prefix', $return_parsed = false)
 	{
-		return (isset($event[$array_name]['topic_id']) &&
+		if (isset($event[$array_name]['topic_id']))
+		{
+			$topic_id = (int) $event[$array_name]['topic_id'];
+		}
+		// The following is for if I decide to put the prefix on the last post topic title on forumlist
+		// Right now I'm not because I don't want to mess with it
+		// else if (isset($event[$array_name]['forum_last_post_id']))
+		// {
+		// 	// Get the topic ID
+		// 	// This results in a looped query, one per forum.
+		// 	// As unfortunate as it is, I'm not aware of a way around it
+		// 	// besides adding a forum_last_post_topic_id field in the database
+
+		// 	// Ultimately we only want to display the prefix on the topic title
+		// 	// Because the last post on the index can be different than the
+		// 	// topic title, we don't want to show it if that is the case
+		// 	$sql = 'SELECT topic_id
+		// 		FROM ' . TOPICS_TABLE . '
+		// 		WHERE topic_first_post_id = ' . (int) $event[$array_name]['forum_last_post_id'] . '
+		// 			AND topic_last_post_id = ' . (int) $event[$array_name]['forum_last_post_id'];
+		// 	$result = $this->db->sql_query($sql);
+		// 	$topic_id = (int) $this->db->sql_fetchfield('topic_id');
+		// 	$this->db->sql_freeresult($result);
+		// }
+
+		if (empty($topic_id))
+		{
+			return false;
+		}
+
+		return $topic_id &&
 			$this->manager->count_prefixes() &&
-			$this->manager->count_prefix_instances())
-		? $this->manager->load_prefixes_topic($event[$array_name]['topic_id'], $block) . '&nbsp;'
+			$this->manager->count_prefix_instances()
+		? $this->manager->load_prefixes_topic($topic_id, $block, $return_parsed)
 		: '';
 	}
 }

@@ -74,9 +74,11 @@ class prefix extends \ArrayObject
 	 * @param	string  $var_prefix Optional prefix for template variables
 	 *								This only applies to the four vars that
 	 *								are assigned in this method
+	 * @param   bool    $return_parsed If true, return is the parsed prefix
+	 *								otherwise, it is the plaintext version
 	 * @return	string	Plaintext prefix
 	 */
-	public function parse($block = '', array $vars = [], $var_prefix = '')
+	public function parse($block = '', array $vars = [], $var_prefix = '', $return_parsed = false)
 	{
 		if (!$this->loaded() && !$this->load())
 		{
@@ -99,7 +101,7 @@ class prefix extends \ArrayObject
 			$block ? [$block, $tpl_vars] : [$tpl_vars]
 		);
 
-		return $this['title'];
+		return $return_parsed === true ? $this['title'] : strip_tags($this['title']);
 	}
 
 	/**

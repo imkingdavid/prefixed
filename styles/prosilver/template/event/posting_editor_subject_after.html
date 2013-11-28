@@ -2,11 +2,11 @@
 	<dt><label>{L_POSTING_PREFIXES}:</label></dt>
 	<dl>
 		<ul id="available_prefixes" class="prefixed_sortable">
-			<!-- BEGIN prefix_option --><li>{prefix_option.TITLE}</li><!-- END prefix_option -->
+			<!-- BEGIN prefix_option --><li id="prefix_{prefix_option.ID}" data-id="{prefix_option.ID}">{prefix_option.TITLE}</li><!-- END prefix_option -->
 		</ul>
 
 		<ul id="used_prefixes" class="prefixed_sortable">
-			<!-- BEGIN prefix_used --><li>{prefix_used.TITLE}</li><!-- END prefix_used -->
+			<!-- BEGIN prefix_used --><li id="prefix_{prefix_used.PREFIX}" data-id="{used.PREFIX}">{prefix_used.TITLE}</li><!-- END prefix_used -->
 		</ul>
 	</dl>
 </dl>

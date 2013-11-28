@@ -45,7 +45,7 @@ abstract class token implements token_interface
 	public function match_token($prefix_text)
 	{
 		$matches = array();
-		preg_match(self::TOKEN_REGEX, $prefix_text, $matches);
+		preg_match(constant(get_class($this) . '::TOKEN_REGEX'), $prefix_text, $matches);
 		return $matches ?: false;
 	}
 
@@ -59,6 +59,6 @@ abstract class token implements token_interface
 			return false;
 		}
 
-		return preg_replace(self::TOKEN_REGEX, $data, $prefix_text);
+		return preg_replace(constant(get_class($this) . '::TOKEN_REGEX'), $data, $prefix_text);
 	}
 }
