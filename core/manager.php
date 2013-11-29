@@ -257,6 +257,34 @@ class manager
 	}
 
 	/**
+	 * Get the IDs of prefix instances applied to the topic
+	 *
+	 * @param int $topic_id
+	 * @return array
+	 */
+	public function load_prefix_ids_topic($topic_id)
+	{
+		if (!$this->count_prefix_instances())
+		{
+			return [];
+		}
+
+		$topic_prefixes = [];
+		if (!empty($this->prefix_instances))
+		{
+			foreach ($this->prefix_instances as $instance)
+			{
+				if ((int) $instance['topic'] === (int) $topic_id)
+				{
+					$topic_prefixes[] = $instance['id'];
+				}
+			}
+		}
+
+		return $topic_prefixes;
+	}
+
+	/**
 	 * Custom sort function used by usort() to order a topic's prefixes by their "ordered" property
 	 *
 	 * @param instance $a First comparison argument
@@ -280,7 +308,7 @@ class manager
 	{
 		$allowed_prefixes = $this->get_allowed_prefixes($this->user->data['user_id'], $forum_id);
 
-		if (count($allowed_prefixes) === count($this->load_prefixes_topic($topic_id)) || !in_array($prefix_id, $allowed_prefixes) || !in_array($prefix_id, array_keys($this->prefixes)))
+		if (count($allowed_prefixes) === count($this->load_prefix_ids_topic($topic_id)) || !in_array($prefix_id, $allowed_prefixes) || !in_array($prefix_id, array_keys($this->prefixes)))
 		{
 			return;
 		}
@@ -422,7 +450,6 @@ class manager
 	 */
 	public function remove_topic_prefixes($topic_id, $prefix_id)
 	{
-		var_dump($prefix_id);
 		if (!empty($prefix_id) && !is_array($prefix_id))
 		{
 			$prefix_id = [(int) $prefix_id];
@@ -431,7 +458,6 @@ class manager
 		$sql_and = !empty($prefix_id) ? ' AND ' . $this->db->sql_in_set('prefix', $prefix_id) : '';
 		$sql = 'DELETE FROM ' . PREFIX_INSTANCES_TABLE . '
 			WHERE topic = ' . (int) $topic_id . "$sql_and";
-		var_dump($sql);
 		$this->db->sql_query($sql);
 
 		$this->load_prefix_instances(true);

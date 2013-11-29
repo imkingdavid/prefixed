@@ -212,6 +212,10 @@ class listener implements EventSubscriberInterface
 			// Therefore, we want to focus on array index 2
 			$ids = $prefix_ids[2];
 		}
+		else
+		{
+			$ids = [];
+		}
 
 		$post_id = (int) $event['post_id'];
 		$topic_id = (int) $event['topic_id'];
