@@ -130,7 +130,8 @@ class instance extends \ArrayObject
 		// as its own PREFIX variable
 		return $this->prefix_object->parse($block, [
 			'ID' => $this['id'],
-			'PREFIX' => $this->prefix_object['id']
+			'PREFIX' => $this->prefix_object['id'],
+			'ORDER' => $this['ordered'],
 		], '', $return_parsed);
 	}
 
@@ -167,6 +168,6 @@ class instance extends \ArrayObject
 
 	public function get($property)
 	{
-		return isset($this->$property) ? $this->$property : null;
+		return isset($this[$property]) ? $this[$property] : null;
 	}
 }

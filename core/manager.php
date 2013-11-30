@@ -287,13 +287,20 @@ class manager
 	/**
 	 * Custom sort function used by usort() to order a topic's prefixes by their "ordered" property
 	 *
-	 * @param instance $a First comparison argument
-	 * @param instance $b Second comparison argument
+	 * @param instance|array $a First comparison argument
+	 * @param instance|array $b Second comparison argument
 	 * @return int 0 for equal, 1 for a greater than b, -1 for b greater than a
 	 */
-	static public function sort_topic_prefixes(instance $a, instance $b)
+	static public function sort_topic_prefixes($a, $b)
 	{
-		return $a->get('ordered') == $b->get('ordered') ? 0 : ($a->get('ordered') > $b->get('ordered') ? 1 : -1);
+		if ((!is_array($a) && !($a instanceof instance)) || (!is_array($b) && !($b instanceof instance)))
+		{
+			return 0;
+		}
+
+		$a_ordered = (int) is_array($a) ? $a['ordered'] : $a->get('ordered');
+		$b_ordered = (int) is_array($b) ? $b['ordered'] : $b->get('ordered');
+		return $a_ordered === $b_ordered ? 0 : ($a_ordered > $b_ordered ? 1 : -1);
 	}
 
 	/**
@@ -302,9 +309,10 @@ class manager
 	 * @param int $topic_id Topic ID
 	 * @param int $prefix_id Prefix ID
 	 * @param int $forum_id Forum ID
+	 * @param int $order The order of the prefix
 	 * @return null
 	 */
-	public function add_topic_prefix($topic_id, $prefix_id, $forum_id)
+	public function add_topic_prefix($topic_id, $prefix_id, $forum_id, $order = 0)
 	{
 		$allowed_prefixes = $this->get_allowed_prefixes($this->user->data['user_id'], $forum_id);
 
@@ -337,7 +345,7 @@ class manager
 		$sql_ary = [
 			'prefix'		=> $prefix_id,
 			'topic'			=> $topic_id,
-			'ordered'		=> $this->count_topic_prefixes($topic_id) + 1,
+			'ordered'		=> $order ?: $this->count_topic_prefixes($topic_id) + 1,
 			'token_data'	=> $token_data,
 		];
 
@@ -401,6 +409,10 @@ class manager
 		// determine which are being added, removed, and retained
 		else
 		{
+			// We're going to be removing $retained_ids from $prefix_ids
+			// But we need to $prefix_ids array later for ordering
+			$original_ids = $prefix_ids;
+
 			// First we figure out all of the IDs that are present in both
 			// arrays. These we discard because they are being retained
 			// (that sentence sounds odd)
@@ -421,19 +433,32 @@ class manager
 						unset($this_topics_prefixes[$remove_id]);
 						$this_topics_prefixes = array_values($this_topics_prefixes);
 					}
+
+					// Set the new order for the prefix instance
+					$sql = 'UPDATE '. PREFIX_INSTANCES_TABLE . '
+						SET ordered = ' . (array_search($retained_id, $original_ids) + 1) . '
+						WHERE prefix = ' . (int) $retained_id;
+					$this->db->sql_query($sql);
+				}
+				$this->load_prefix_instances(true);
+			}
+
+			if (!empty($prefix_ids))
+			{
+				// We've removed the prefixes to be retained now, so the ones
+				// that are left in $prefix_ids need to be added
+				foreach ($prefix_ids as $prefix_id)
+				{
+					$this->add_topic_prefix($topic_id, $prefix_id, $forum_id, array_search($prefix_id, $original_ids) + 1);
 				}
 			}
 
-			// We've removed the prefixes to be retained now, so the ones
-			// that are left in $prefix_ids need to be added
-			foreach ($prefix_ids as $prefix_id)
+			if (!empty($this_topics_prefixes))
 			{
-				$this->add_topic_prefix($topic_id, $prefix_id, $forum_id);
+				// And the ones that are left in $this_topics_prefixes need to be
+				// removed
+				$this->remove_topic_prefixes($topic_id, $this_topics_prefixes);
 			}
-
-			// And the ones that are left in $this_topics_prefixes need to be
-			// removed
-			$this->remove_topic_prefixes($topic_id, $this_topics_prefixes);
 		}
 	}
 
@@ -554,6 +579,9 @@ class manager
 		$forum_id = $row['forum_id'];
 
 		$topic_prefixes_used = [];
+
+		// We want to sort the prefixes by the 'ordered' property, and we can do that with our custom sort function
+		usort($this->prefix_instances, [$this, 'sort_topic_prefixes']);
 		if ($this->prefix_instances)
 		{
 			foreach ($this->prefix_instances as $instance)
@@ -567,27 +595,30 @@ class manager
 
 		$allowed_prefixes = $this->get_allowed_prefixes($this->user->data['user_id'], $forum_id);
 
+		// We have to go by instance instead of prefix so we are going in
+		// the right order
+		foreach ($this->prefix_instances as $instance_ary)
+		{
+			foreach ($this->prefixes as $prefix)
+			{
+				if ($prefix['id'] == $instance_ary['prefix'])
+				{
+					break;
+				}
+				$prefix = null;
+			}
+			if ($prefix !== null && in_array($prefix['id'], $allowed_prefixes) && in_array($prefix['id'], $topic_prefixes_used))
+			{
+				$this->get_instance($instance_ary['id'])->parse('prefix_used');
+			}
+		}
+
+		// Now we get all prefixes that are allowed but haven't been used
 		foreach ($this->prefixes as $prefix)
 		{
-			// First, ensure this user is allowed to use the prefix
-			// in this forum
-			if (in_array($prefix['id'], $allowed_prefixes)) {
-				// Next, if the prefix has already been used, get the instance
-				if (in_array($prefix['id'], $topic_prefixes_used))
-				{
-					foreach ($this->prefix_instances as $instance_ary)
-					{
-						if ($prefix['id'] == $instance_ary['prefix'])
-						{
-							$this->get_instance($instance_ary['id'])->parse('prefix_used');
-						}
-					}
-				}
-				// Otherwise, get the prefix
-				else
-				{
-					$this->get_prefix($prefix['id'])->parse('prefix_option');
-				}
+			if (in_array($prefix['id'], $allowed_prefixes) && !in_array($prefix['id'], $topic_prefixes_used))
+			{
+				$this->get_prefix($prefix['id'])->parse('prefix_option');
 			}
 		}
 	}
