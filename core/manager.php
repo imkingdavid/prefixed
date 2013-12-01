@@ -687,16 +687,6 @@ class manager
 	}
 
 	/**
-	 * 
-	 *
-	 *
-	 */
-	public function parse_new_instance($prefix_id)
-	{
-		$prefix = $this->get_prefix($prefix_id);
-	}
-
-	/**
 	 * Create a prefix object
 	 *
 	 * @param int $prefix_id
