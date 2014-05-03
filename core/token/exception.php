@@ -10,6 +10,14 @@
 namespace imkingdavid\prefixed\core\token;
 
 /**
+ * @ignore
+ */
+if (!defined('IN_PHPBB'))
+{
+	exit;
+}
+
+/**
 * Prefixed token exception
 *
 * @package prefixed
