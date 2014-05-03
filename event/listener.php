@@ -180,7 +180,8 @@ class listener implements EventSubscriberInterface
 			return;
 		}
 
-		if (!empty($ids)) {
+		if (!empty($ids))
+		{
 			// If we have no matches, get out!
 			// Note that preg_match_all() returns false on failure
 			// or the number of matches on success
