@@ -103,13 +103,14 @@ class listener implements EventSubscriberInterface
 	 */
 	public function setup($event)
 	{
-		global $phpbb_container;
-
 		// Keep this from running twice
-		if($this->setup_has_been_run === true)
+		if(true === $this->setup_has_been_run)
 		{
 			return;
 		}
+
+		global $phpbb_container;
+		
 		$this->setup_has_been_run = true;
 
 		$this->container = $phpbb_container;
@@ -135,12 +136,12 @@ class listener implements EventSubscriberInterface
 	{
 		$tokens =& $event['token_data'];
 
-		if (strpos($event['title'], '{DATE}') !== false)
+		if (false !== strpos($event['title'], '{DATE}'))
 		{
 			$tokens['DATE'] = $this->container->get('user')->format_date(microtime(true));
 		}
 
-		if (strpos($event['title'], '{USERNAME}') !== false)
+		if (false !== strpos($event['title'], '{USERNAME}'))
 		{
 			$tokens['USERNAME'] = $this->container->get('user')->data['username'];
 		}

@@ -101,7 +101,7 @@ class prefix extends \ArrayObject
 			$block ? [$block, $tpl_vars] : [$tpl_vars]
 		);
 
-		return $return_parsed === true ? $this['title'] : strip_tags($this['title']);
+		return true === $return_parsed ? $this['title'] : strip_tags($this['title']);
 	}
 
 	/**

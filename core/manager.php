@@ -106,7 +106,7 @@ class manager
 	 */
 	public function load_prefixes($refresh = false)
 	{
-		if (($this->prefixes = $this->cache->get('_prefixes')) === false || $refresh)
+		if (false === ($this->prefixes = $this->cache->get('_prefixes')) || $refresh)
 		{
 			// If we're refreshing, we have to reset the array first
 			$this->prefixes = array();
@@ -165,7 +165,7 @@ class manager
 	 */
 	public function load_prefix_instances($refresh = false)
 	{
-		if (($this->prefix_instances = $this->cache->get('_prefixes_used')) === false || $refresh)
+		if (false === ($this->prefix_instances = $this->cache->get('_prefixes_used')) || $refresh)
 		{
 			// If we're refreshing, we have to reset the array first
 			$this->prefix_instances = array();
@@ -633,7 +633,7 @@ class manager
 	{
 		$count = 0;
 
-		if ($this->prefix_instances !== false) {
+		if (false !== $this->prefix_instances) {
 			array_map(function($instance) use (&$count, $topic_id) {
 				if ($instance['topic'] == $topic_id)
 				{

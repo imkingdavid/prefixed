@@ -62,11 +62,10 @@ class prefixed_module
 						{
 							$error = [];
 							$prefix = [];
-							$prefix['title'] = $request->variable('prefix_title', '', true);
-							$prefix['short'] = $request->variable('prefix_short', '');
-							$prefix['forums'] = $request->variable('prefix_forums', '');
-							$prefix['groups'] = $request->variable('prefix_groups', '');
-							$prefix['users'] = $request->variable('prefix_users', '');
+							foreach (['title', 'short', 'forums', 'groups', 'users'] as $prefix_key)
+							{
+								$prefix[$prefix_key] = $request->variable('prefix_' . $prefix_key, '', in_array($prefix_key, ['title', 'short']));
+							}
 
 							$uid = $bitfield = $options = '';
 							$allow_bbcode = true;
@@ -109,6 +108,7 @@ class prefixed_module
 							]);
 						}
 
+						// If the form has not been submitted, and we're editing a prefix, prefill the form with current data
 						if (!$submit && $action === 'edit')
 						{
 							$prefix['title'] = generate_text_for_edit($prefix['title'], $prefix['bbcode_uid'], OPTION_FLAG_BBCODE)['text'];
@@ -170,7 +170,7 @@ class prefixed_module
 						]);
 						$prefixes = $manager->get_prefixes();
 
-						if ($prefixes !== false)
+						if (false !== $prefixes)
 						{
 							foreach ($prefixes as $prefix)
 							{
