@@ -593,7 +593,11 @@ class manager
 			}
 		}
 
-		$allowed_prefixes = $this->get_allowed_prefixes($this->user->data['user_id'], $forum_id);
+		// If there are no allowed prefixes for the current user in the current forum, let's stop wasting time.
+		if (!($allowed_prefixes = $this->get_allowed_prefixes($this->user->data['user_id'], $forum_id)))
+		{
+			return;
+		}
 
 		// We have to go by instance instead of prefix so we are going in
 		// the right order
