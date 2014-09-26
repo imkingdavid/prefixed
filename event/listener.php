@@ -128,6 +128,9 @@ class listener implements EventSubscriberInterface
 
 	/**
 	 * Get the actual data to store in the DB for given tokens
+	 * This handles the tokens available by default in this extension
+	 * Other tokens can add their own methods to listen for the
+	 * prefixed.modify_prefix_title event
 	 *
 	 * @param Event $event Event object
 	 * @return null
@@ -166,63 +169,12 @@ class listener implements EventSubscriberInterface
 	 */
 	public function manage_prefixes_on_posting($event)
 	{
-		if (!defined('PREFIXES_TABLE'))
-		{
-			$this->setup($event);
-		}
-
-		// Due to jQuery .sortable('serialize') $ids will
-		// be a string like: 'prefix[]=4'
-		// I need to extract just the number
-		$ids = $this->request->variable('prefixes_used', '');
-
+		// If the form hasn't been submitted, nothing to do here.
 		if (!$event['submit'])
 		{
 			return;
 		}
-
-		if (!empty($ids))
-		{
-			// If we have no matches, get out!
-			// Note that preg_match_all() returns false on failure
-			// or the number of matches on success
-			// Either way, a 0 or false should be treated the same
-			preg_match_all('/(prefix\[\]=(\d)+&?)+/', $ids, $prefix_ids);
-
-			// Otherwise, let's keep moving.
-			// When given:
-			//
-			// string 'prefix[]=4&amp;prefix[]=3' (length=25)
-			//
-			//
-			// preg_match_all() will return an array like this:
-			//
-			// array (size=3)
-			//   0 => 
-			//     array (size=2)
-			//       0 => string 'prefix[]=4&' (length=11)
-			//       1 => string 'prefix[]=3' (length=10)
-			//   1 => 
-			//     array (size=2)
-			//       0 => string 'prefix[]=4&' (length=11)
-			//       1 => string 'prefix[]=3' (length=10)
-			//   2 => 
-			//     array (size=2)
-			//       0 => string '4' (length=1)
-			//       1 => string '3' (length=1)
-
-			// Therefore, we want to focus on array index 2
-			$ids = $prefix_ids[2];
-		}
-		else
-		{
-			$ids = [];
-		}
-
-		$post_id = (int) $event['post_id'];
-		$topic_id = (int) $event['topic_id'];
-		$forum_id = (int) $event['forum_id'];
-
+		
 		// If the mode is edit, we need to ensure to that we are working
 		// with the first post in the topic
 		if ($event['mode'] == 'edit')
@@ -234,13 +186,21 @@ class listener implements EventSubscriberInterface
 			$first_post_id = $this->db->sql_fetchfield('topic_first_post_id');
 			$this->db->sql_freeresult($result);
 
-			if ($post_id !== (int) $first_post_id)
+			if ((int) $event['post_id'] !== (int) $first_post_id)
 			{
 				return;
 			}
 		}
 
-		$this->manager->set_topic_prefixes($topic_id, $ids, $forum_id);
+		// Due to .sortable('serialize') $ids will be a string like: 'prefix[]=4'
+		// I need the number. That's in index two of $prefix_ids
+		$used_ids = $this->request->variable('prefixes_used', '') ?: [];
+		if ($used_ids && preg_match_all('/(prefix\[\]=(\d)+&?)+/', $used_ids, $prefix_ids) && isset($prefix_ids[2]))
+		{
+			$used_ids = $prefix_ids[2];
+		}
+
+		$this->manager->set_topic_prefixes((int) $event['topic_id'], $used_ids, (int) $event['forum_id']);
 	}
 
 	/**
@@ -316,11 +276,6 @@ class listener implements EventSubscriberInterface
 		// 	$topic_id = (int) $this->db->sql_fetchfield('topic_id');
 		// 	$this->db->sql_freeresult($result);
 		// }
-
-		if (empty($topic_id))
-		{
-			return false;
-		}
 
 		return $topic_id &&
 			$this->manager->count_prefixes() &&
