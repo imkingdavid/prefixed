@@ -48,7 +48,7 @@ class date extends token
 		return [
 			// We store the service name so that there's no guesswork later
 			'service' => 'prefixed.token.date',
-			time(),
+			'data' => time(),
 		];
 	}
 
@@ -57,7 +57,7 @@ class date extends token
 	 */
 	public function apply_token_data($prefix_text, $data)
 	{
-		if (($matches = $this->match_token($prefix_text)) === false)
+		if (false === ($matches = $this->match_token($prefix_text)))
 		{
 			return false;
 		}

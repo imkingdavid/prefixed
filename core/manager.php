@@ -332,9 +332,6 @@ class manager
 				throw new \imkingdavid\prefixed\core\token\exception($this->user->lang('Token objects must implement \imkingdavid\prefixed\core\token\token_interface'));
 			}
 			// The assignment operator here is intentional
-			// Basically, it says assign the value of the of right half to
-			// the variable on the left and then see if that evaluates as
-			// true or false
 			if ($data = $token_object->get_token_data($prefix_title, $topic_id, $prefix_id, $forum_id)) {
 				$token_data[] = $data;
 			}
@@ -578,6 +575,11 @@ class manager
 		$topic_id = $row['topic_id'];
 		$forum_id = $row['forum_id'];
 
+		// If there are no allowed prefixes for the current user in the current forum, let's stop wasting time.
+		if (!($allowed_prefixes = $this->get_allowed_prefixes($this->user->data['user_id'], $forum_id)))
+		{
+			return;
+		}
 		$topic_prefixes_used = [];
 
 		// We want to sort the prefixes by the 'ordered' property, and we can do that with our custom sort function
@@ -593,12 +595,6 @@ class manager
 			}
 		}
 
-		// If there are no allowed prefixes for the current user in the current forum, let's stop wasting time.
-		if (!($allowed_prefixes = $this->get_allowed_prefixes($this->user->data['user_id'], $forum_id)))
-		{
-			return;
-		}
-
 		// We have to go by instance instead of prefix so we are going in
 		// the right order
 		foreach ($this->prefix_instances as $instance_ary)
@@ -611,6 +607,7 @@ class manager
 				}
 				$prefix = null;
 			}
+
 			if ($prefix !== null && in_array($prefix['id'], $allowed_prefixes) && in_array($prefix['id'], $topic_prefixes_used))
 			{
 				$this->get_instance($instance_ary['id'])->parse('prefix_used');
@@ -639,7 +636,7 @@ class manager
 
 		if (false !== $this->prefix_instances) {
 			array_map(function($instance) use (&$count, $topic_id) {
-				if ($instance['topic'] == $topic_id)
+				if ((int) $instance['topic'] === (int) $topic_id)
 				{
 					$count++;
 				}
