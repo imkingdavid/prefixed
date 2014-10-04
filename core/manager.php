@@ -21,7 +21,7 @@ class manager
 {
 	/**
 	 * Database object instance
-	 * @var \phpbb\db\driver\driver
+	 * @var \phpbb\db\driver\factory
 	 */
 	protected $db;
 

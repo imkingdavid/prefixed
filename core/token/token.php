@@ -26,11 +26,11 @@ abstract class token implements token_interface
 	 * @param \phpbb\auth\auth			$auth
 	 * @param \phpbb\config\config		$config
 	 * @param \phpbb\template\template	$template
-	 * @param \phpbb\db\driver\driver	$db
+	 * @param \phpbb\db\driver\factory	$db
 	 * @param string					$table_prefix
 	 * @return null
 	 */
-	public function __construct(\phpbb\user $user, \phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\template\template $template, \phpbb\db\driver\driver $db, $table_prefix)
+	public function __construct(\phpbb\user $user, \phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\template\template $template, \phpbb\db\driver\factory $db, $table_prefix)
 	{
 		$this->user = $user;
 		$this->auth = $auth;

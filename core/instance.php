@@ -56,12 +56,12 @@ class instance extends \ArrayObject
 	/**
 	 * Constructor method
 	 *
-	 * @param \phpbb\db\driver $db DBAL object
+	 * @param \phpbb\db\driver\factory $db DBAL object
 	 * @param \phpbb\cache\driver_interface $cache Cache driver object
 	 * @param \phpbb\template $template Template object
 	 * @param int $id Instance ID
 	 */
-	public function __construct(\phpbb\db\driver\driver $db, \phpbb\cache\driver\driver_interface $cache, \phpbb\template\template $template, \phpbb\di\service_collection $tokens, $id = 0)
+	public function __construct(\phpbb\db\driver\factory $db, \phpbb\cache\driver\driver_interface $cache, \phpbb\template\template $template, \phpbb\di\service_collection $tokens, $id = 0)
 	{
 		parent::__construct();
 

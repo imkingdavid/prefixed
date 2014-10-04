@@ -44,11 +44,11 @@ class prefix extends \ArrayObject
 	/**
 	 * Constructor method
 	 *
-	 * @param phpbb_db_driver $db Database object
+	 * @param \phpbb\db\driver\factory $db Database object
 	 * @param phpbb_cache_service $cache Cache object
 	 * @param int $id Prefix ID
 	 */
-	public function __construct(\phpbb\db\driver\driver $db, \phpbb\cache\driver\driver_interface $cache, \phpbb\template\template $template, $id = 0)
+	public function __construct(\phpbb\db\driver\factory $db, \phpbb\cache\driver\driver_interface $cache, \phpbb\template\template $template, $id = 0)
 	{
 		parent::__construct();
 
