@@ -70,7 +70,7 @@ class manager
 	/**
 	 * Constructor method
 	 *
-	 * @param \phpbb\db\driver\driver $db Database object
+	 * @param \phpbb\db\driver\factory $db Database object
 	 * @param \phpbb\cache\driver\driver_interface $cache Cache object
 	 * @param \phpbb\template\template $template Template object
 	 * @param \phpbb\request\request_interface $request Request object
@@ -79,7 +79,7 @@ class manager
 	 * @param string $phpbb_root_path
 	 * @param string $php_ext
 	 */
-	public function __construct(\phpbb\db\driver\driver $db, \phpbb\cache\driver\driver_interface $cache, \phpbb\template\template $template, \phpbb\request\request_interface $request, \phpbb\user $user, \phpbb\di\service_collection $tokens, \phpbb\controller\helper $helper, $phpbb_root_path, $php_ext)
+	public function __construct(\phpbb\db\driver\factory $db, \phpbb\cache\driver\driver_interface $cache, \phpbb\template\template $template, \phpbb\request\request_interface $request, \phpbb\user $user, \phpbb\di\service_collection $tokens, \phpbb\controller\helper $helper, $phpbb_root_path, $php_ext)
 	{
 		$this->db = $db;
 		$this->cache = $cache;
