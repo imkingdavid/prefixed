@@ -143,12 +143,10 @@ class manager
 	 */
 	public function get_prefixes($refresh = false)
 	{
-		if (!$refresh && !empty($this->prefixes))
+		if ($refresh || empty($this->prefixes))
 		{
-			return $this->prefixes;
+			$this->load_prefixes($refresh);
 		}
-
-		$this->load_prefixes($refresh);
 
 		return $this->prefixes;
 	}
@@ -199,12 +197,10 @@ class manager
 	 */
 	public function get_prefix_instances($refresh = false)
 	{
-		if (!$refresh && !empty($this->prefix_instances))
+		if ($refresh && empty($this->prefix_instances))
 		{
-			return $this->prefix_instances;
+			$this->load_prefix_instaces($refresh);
 		}
-
-		$this->load_prefix_instaces();
 
 		return $this->prefix_instances;
 	}

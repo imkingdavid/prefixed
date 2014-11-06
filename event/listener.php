@@ -25,7 +25,7 @@ class listener implements EventSubscriberInterface
 {
 	/**
 	 * Database object
-	 * @var \phpbb\db\driver
+	 * @var \phpbb\db\driver\factory
 	 */
 	protected $db;
 
