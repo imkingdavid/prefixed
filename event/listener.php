@@ -87,7 +87,7 @@ class listener implements EventSubscriberInterface
 			//'core.display_forums_modify_template_vars'	=> 'get_forumlist_topic_prefix',
 			'core.viewtopic_modify_page_title'	=> 'get_viewtopic_topic_prefix',
 			'core.viewforum_modify_topicrow'	=> 'get_viewforum_topic_prefixes',
-			'core.modify_posting_parameters'	=> 'manage_prefixes_on_posting',
+			'core.posting_modify_submit_post_after'	=> 'manage_prefixes_on_posting',
 			'core.posting_modify_template_vars'	=> 'generate_posting_form',
 
 			// Events added by this extension
@@ -110,7 +110,7 @@ class listener implements EventSubscriberInterface
 		}
 
 		global $phpbb_container;
-		
+
 		$this->setup_has_been_run = true;
 
 		$this->container = $phpbb_container;
@@ -169,12 +169,8 @@ class listener implements EventSubscriberInterface
 	 */
 	public function manage_prefixes_on_posting($event)
 	{
-		// If the form hasn't been submitted, nothing to do here.
-		if (!$event['submit'])
-		{
-			return;
-		}
-		
+		// This event is only called when a post has been submitted.
+
 		// If the mode is edit, we need to ensure to that we are working
 		// with the first post in the topic
 		if ($event['mode'] == 'edit')
