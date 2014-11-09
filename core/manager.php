@@ -571,6 +571,14 @@ class manager
 			return;
 		}
 
+		// If we're editing, we may not have a topic_id or forum_id
+		// from the URL so we can grab that from the $post_data array
+		// that we got from the event listener. Thank you event listener! <3
+		if ('edit' === $mode) {
+			$topic_id = $post_data['topic_id'];
+			$forum_id = $post_data['forum_id'];
+		}
+
 		// If there are no allowed prefixes for the current user in the current forum, let's stop wasting time.
 		if (!($allowed_prefixes = $this->get_allowed_prefixes($this->user->data['user_id'], $forum_id)))
 		{
