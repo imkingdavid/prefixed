@@ -549,27 +549,33 @@ class manager
 	 */
 	public function generate_posting_form($post_id = 0)
 	{
-		if (!$post_id)
-		{
-			return;
-		}
+		// When no $post_id is given, we assume we are making a new topic
+		// so we don't prevent the function from running.
 
-		// Get some information from the database
-		$sql = 'SELECT t.topic_first_post_id, t.forum_id, t.topic_id
-			FROM ' . TOPICS_TABLE . ' t, ' . POSTS_TABLE . ' p
-			WHERE p.post_id = ' . (int) $post_id . '
-				AND t.topic_id = p.topic_id';
-		$result = $this->db->sql_query($sql);
-		$row = $this->db->sql_fetchrow($result);
-		$this->db->sql_freeresult($result);
-
-		// Only edit the first post of the topic
-		if ((int) $row['topic_first_post_id'] !==  (int) $post_id)
+		if ($post_id)
 		{
-			return;
+			// When we do get a $post_id, we need to make sure that it is the
+			// first post of the topic so that we can restrict prefix management
+			// to editing the first post
+			$sql = 'SELECT t.topic_first_post_id, t.forum_id, t.topic_id
+				FROM ' . TOPICS_TABLE . ' t, ' . POSTS_TABLE . ' p
+				WHERE p.post_id = ' . (int) $post_id . '
+					AND t.topic_id = p.topic_id';
+			$result = $this->db->sql_query($sql);
+			$row = $this->db->sql_fetchrow($result);
+			$this->db->sql_freeresult($result);
+
+			// Only edit the first post of the topic
+			if ((int) $row['topic_first_post_id'] !==  (int) $post_id)
+			{
+				return;
+			}
+			$topic_id = $row['topic_id'];
+			$forum_id = $row['forum_id'];
+		} else {
+			$topic_id = 0;
+			$forum_id = $this->request->variable('f', 0);
 		}
-		$topic_id = $row['topic_id'];
-		$forum_id = $row['forum_id'];
 
 		// If there are no allowed prefixes for the current user in the current forum, let's stop wasting time.
 		if (!($allowed_prefixes = $this->get_allowed_prefixes($this->user->data['user_id'], $forum_id)))
