@@ -171,8 +171,9 @@ class listener implements EventSubscriberInterface
 	{
 		// This event is only called when a post has been submitted.
 
-		// If the mode is edit, we need to ensure to that we are working
-		// with the first post in the topic
+		// We only want to do things when we're editing the first post
+		// or posting a new topic, so those are the only cases in which
+		// this function can continue.
 		if ($event['mode'] == 'edit')
 		{
 			$sql = 'SELECT topic_first_post_id
@@ -186,6 +187,8 @@ class listener implements EventSubscriberInterface
 			{
 				return;
 			}
+		} elseif ($event['mode'] != 'post') {
+			return;
 		}
 
 		// Due to .sortable('serialize') $ids will be a string like: 'prefix[]=4'
