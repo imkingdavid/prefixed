@@ -543,38 +543,27 @@ class manager
 	/**
 	 * Generate template for the posting form
 	 *
-	 * @var int		$forum_id		ID of the forum
-	 * @var int		$topic_id		ID of the topic
+	 * @var array	$event	Event array directly from the listener
 	 * @return null
 	 */
-	public function generate_posting_form($post_id = 0)
+	public function generate_posting_form($event)
 	{
-		// When no $post_id is given, we assume we are making a new topic
-		// so we don't prevent the function from running.
+		// First, let's see what we can get from the URL
+		$post_id = $this->request->variable('p', 0);
+		$topic_id = $this->request->variable('t', 0);
+		$forum_id = $this->request->variable('f', 0);
 
-		if ($post_id)
+		// We only show the prefix manager thing during new topic creation
+		// and when we're editing the first post of a topic
+		// So if we're not 'post'-ing or 'edit'-ing, get out!
+		if (!in_array($event['mode'], ['post', 'edit']))
 		{
-			// When we do get a $post_id, we need to make sure that it is the
-			// first post of the topic so that we can restrict prefix management
-			// to editing the first post
-			$sql = 'SELECT t.topic_first_post_id, t.forum_id, t.topic_id
-				FROM ' . TOPICS_TABLE . ' t, ' . POSTS_TABLE . ' p
-				WHERE p.post_id = ' . (int) $post_id . '
-					AND t.topic_id = p.topic_id';
-			$result = $this->db->sql_query($sql);
-			$row = $this->db->sql_fetchrow($result);
-			$this->db->sql_freeresult($result);
+			return;
+		}
 
-			// Only edit the first post of the topic
-			if ((int) $row['topic_first_post_id'] !==  (int) $post_id)
-			{
-				return;
-			}
-			$topic_id = $row['topic_id'];
-			$forum_id = $row['forum_id'];
-		} else {
-			$topic_id = 0;
-			$forum_id = $this->request->variable('f', 0);
+		if ('edit' === $mode && (int) $post_id !== (int) $event['post_data']['topic_first_post_id'])
+		{
+			return;
 		}
 
 		// If there are no allowed prefixes for the current user in the current forum, let's stop wasting time.
