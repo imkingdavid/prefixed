@@ -553,15 +553,20 @@ class manager
 		$topic_id = $this->request->variable('t', 0);
 		$forum_id = $this->request->variable('f', 0);
 
+		// And we can define a few variables we'll be using from the event data
+		// Since we're not changing anything, we can just assign by value, not reference
+		$mode = $event['mode'];
+		$post_data = $event['post_data'];
+
 		// We only show the prefix manager thing during new topic creation
 		// and when we're editing the first post of a topic
 		// So if we're not 'post'-ing or 'edit'-ing, get out!
-		if (!in_array($event['mode'], ['post', 'edit']))
+		if (!in_array($mode, ['post', 'edit']))
 		{
 			return;
 		}
 
-		if ('edit' === $mode && (int) $post_id !== (int) $event['post_data']['topic_first_post_id'])
+		if ('edit' === $mode && (int) $post_id !== (int) $post_data['topic_first_post_id'])
 		{
 			return;
 		}
