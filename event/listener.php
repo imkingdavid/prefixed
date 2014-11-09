@@ -158,7 +158,7 @@ class listener implements EventSubscriberInterface
 	public function generate_posting_form($event)
 	{
 		$this->user->add_lang_ext('imkingdavid/prefixed', 'prefixed');
-		$this->manager->generate_posting_form($event['mode']);
+		$this->manager->generate_posting_form($event);
 	}
 
 	/**
