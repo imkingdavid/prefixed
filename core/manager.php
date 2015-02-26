@@ -197,7 +197,7 @@ class manager
 	 */
 	public function get_prefix_instances($refresh = false)
 	{
-		if ($refresh && empty($this->prefix_instances))
+		if ($refresh || empty($this->prefix_instances))
 		{
 			$this->load_prefix_instaces($refresh);
 		}
