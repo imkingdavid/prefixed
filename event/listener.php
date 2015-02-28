@@ -174,7 +174,7 @@ class listener implements EventSubscriberInterface
 		// We only want to do things when we're editing the first post
 		// or posting a new topic, so those are the only cases in which
 		// this function can continue.
-		if ($event['mode'] == 'edit')
+		if ('edit' === $event['mode'])
 		{
 			$sql = 'SELECT topic_first_post_id
 				FROM ' . TOPICS_TABLE . '
@@ -187,7 +187,7 @@ class listener implements EventSubscriberInterface
 			{
 				return;
 			}
-		} elseif ($event['mode'] != 'post') {
+		} elseif ('post' !== $event['mode']) {
 			return;
 		}
 
@@ -238,7 +238,6 @@ class listener implements EventSubscriberInterface
 		$forum_row = $event['forum_row'];
 		$forum_row['TOPIC_PREFIX'] = $this->load_prefixes_topic($event, 'row', '', true);
 		$event['forum_row'] = $forum_row;
-
 	}
 
 	/**
