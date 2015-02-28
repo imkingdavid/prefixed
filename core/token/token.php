@@ -42,6 +42,14 @@ abstract class token implements token_interface
 	/**
 	 * @inheritdoc
 	 */
+	public function get_token_description_lang()
+	{
+		return 'PREFIXED_TOKEN_' . strtoupper(basename(get_class()));
+	}
+
+	/**
+	 * @inheritdoc
+	 */
 	public function match_token($prefix_text)
 	{
 		$matches = array();

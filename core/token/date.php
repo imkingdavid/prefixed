@@ -21,13 +21,6 @@ class date extends token
 {
 	const DEFAULT_DATE_FORMAT = 'm/d/Y';
 	const TOKEN_REGEX = '/{DATE(\|[a-zA-Z-\/\. ]+)?}/';
-	/**
-	 * @inheritdoc
-	 */
-	public function get_token_description_lang()
-	{
-		return 'PREFIXED_TOKEN_DATE';
-	}
 
 	/**
 	 * @inheritdoc
@@ -39,8 +32,8 @@ class date extends token
 
 		// Allow date format to be passed
 		// {DATE} is defaults to: m/d/Y
-		// Format can be 
-		if ($this->match_token($prefix_text) === false)
+		// Format can be
+		if (false === $this->match_token($prefix_text))
 		{
 			return false;
 		}

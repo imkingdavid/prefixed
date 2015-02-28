@@ -24,17 +24,9 @@ class username extends token
 	/**
 	 * @inheritdoc
 	 */
-	public function get_token_description_lang()
-	{
-		return 'PREFIXED_TOKEN_USERNAME';
-	}
-
-	/**
-	 * @inheritdoc
-	 */
 	public function get_token_data($prefix_text, $topic_id, $prefix_id, $forum_id)
 	{
-		if ($this->match_token($prefix_text) === false)
+		if (false === $this->match_token($prefix_text))
 		{
 			return false;
 		}
