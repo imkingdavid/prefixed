@@ -1,3 +1,3 @@
 prefixed.handle_posting:
-    pattern: /prefixed/{prefix_id}
+    path: /prefixed/{prefix_id}
     defaults: { _controller: prefixed.manager:parse_instance }
