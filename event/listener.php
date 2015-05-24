@@ -86,9 +86,10 @@ class listener implements EventSubscriberInterface
 			'core.user_setup'					=> 'setup',
 			//'core.display_forums_modify_template_vars'	=> 'get_forumlist_topic_prefix',
 			'core.viewtopic_modify_page_title'	=> 'get_viewtopic_topic_prefix',
-			'core.viewforum_modify_topicrow'	=> 'get_viewforum_topic_prefixes',
+			'core.viewforum_modify_topicrow'	=> 'get_topiclist_topic_prefixes',
 			'core.posting_modify_submit_post_after'	=> 'manage_prefixes_on_posting',
 			'core.posting_modify_template_vars'	=> 'generate_posting_form',
+			'core.mcp_view_forum_modify_topicrow' => 'get_topiclist_topic_prefixes',
 
 			// Events added by this extension
 			'prefixed.modify_prefix_title'		=> 'get_token_data',
@@ -220,7 +221,7 @@ class listener implements EventSubscriberInterface
 	 * @param Event $event Event object
 	 * @return null
 	 */
-	public function get_viewforum_topic_prefixes($event)
+	public function get_topiclist_topic_prefixes($event)
 	{
 		$topic_row = $event['topic_row'];
 		$topic_row['TOPIC_PREFIX'] = $this->load_prefixes_topic($event, 'row', '', true);
