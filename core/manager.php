@@ -580,7 +580,7 @@ class manager
 		}
 
 		// If there are no allowed prefixes for the current user in the current forum, let's stop wasting time.
-		if (!($allowed_prefixes = $this->get_allowed_prefixes($this->user->data['user_id'], $forum_id)))
+		if (!$this->prefix_instances || !($allowed_prefixes = $this->get_allowed_prefixes($this->user->data['user_id'], $forum_id)))
 		{
 			return;
 		}
@@ -588,40 +588,37 @@ class manager
 
 		// We want to sort the prefixes by the 'ordered' property, and we can do that with our custom sort function
 		usort($this->prefix_instances, [$this, 'sort_topic_prefixes']);
-		if ($this->prefix_instances)
+		foreach ($this->prefix_instances as $instance)
 		{
-			foreach ($this->prefix_instances as $instance)
+			if ((int) $instance['topic'] === (int) $topic_id)
 			{
-				if ((int) $instance['topic'] === (int) $topic_id)
-				{
-					$topic_prefixes_used[] = $instance['prefix'];
-				}
+				$topic_prefixes_used[$instance['prefix']] = $instance;
 			}
 		}
 
 		// We have to go by instance instead of prefix so we are going in
 		// the right order
-		foreach ($this->prefix_instances as $instance_ary)
+		foreach ($topic_prefixes_used as $instance_ary)
 		{
+			$current_prefix = null;
 			foreach ($this->prefixes as $prefix)
 			{
-				if ($prefix['id'] == $instance_ary['prefix'])
+				if ((int) $prefix['id'] === (int) $instance_ary['prefix'])
 				{
+					$current_prefix = $prefix;
 					break;
 				}
-				$prefix = null;
 			}
 
-			if ($prefix !== null && in_array($prefix['id'], $allowed_prefixes) && in_array($prefix['id'], $topic_prefixes_used))
+			if ($current_prefix !== null && in_array($current_prefix['id'], $allowed_prefixes) && isset($topic_prefixes_used[$current_prefix['id']]))
 			{
 				$this->get_instance($instance_ary['id'])->parse('prefix_used');
 			}
 		}
-
 		// Now we get all prefixes that are allowed but haven't been used
 		foreach ($this->prefixes as $prefix)
 		{
-			if (in_array($prefix['id'], $allowed_prefixes) && !in_array($prefix['id'], $topic_prefixes_used))
+			if (in_array($prefix['id'], $allowed_prefixes) && !isset($topic_prefixes_used[$prefix['id']]))
 			{
 				$this->get_prefix($prefix['id'])->parse('prefix_option');
 			}
