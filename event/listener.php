@@ -255,31 +255,10 @@ class listener implements EventSubscriberInterface
 		{
 			$topic_id = (int) $event[$array_name]['topic_id'];
 		}
-		// The following is for if I decide to put the prefix on the last post topic title on forumlist
-		// Right now I'm not because I don't want to mess with it
-		// else if (isset($event[$array_name]['forum_last_post_id']))
-		// {
-		// 	// Get the topic ID
-		// 	// This results in a looped query, one per forum.
-		// 	// As unfortunate as it is, I'm not aware of a way around it
-		// 	// besides adding a forum_last_post_topic_id field in the database
 
-		// 	// Ultimately we only want to display the prefix on the topic title
-		// 	// Because the last post on the index can be different than the
-		// 	// topic title, we don't want to show it if that is the case
-		// 	$sql = 'SELECT topic_id
-		// 		FROM ' . TOPICS_TABLE . '
-		// 		WHERE topic_first_post_id = ' . (int) $event[$array_name]['forum_last_post_id'] . '
-		// 			AND topic_last_post_id = ' . (int) $event[$array_name]['forum_last_post_id'];
-		// 	$result = $this->db->sql_query($sql);
-		// 	$topic_id = (int) $this->db->sql_fetchfield('topic_id');
-		// 	$this->db->sql_freeresult($result);
-		// }
-
-		return $topic_id &&
-			$this->manager->count_prefixes() &&
-			$this->manager->count_prefix_instances()
-		? $this->manager->load_prefixes_topic($topic_id, $block, $return_parsed)
-		: '';
+		return $topic_id && $this->manager->count_prefixes() && $this->manager->count_prefix_instances()
+			? $this->manager->load_prefixes_topic($topic_id, $block, $return_parsed)
+			: ''
+		;
 	}
 }

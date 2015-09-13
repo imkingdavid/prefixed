@@ -258,7 +258,7 @@ class manager
 	 * @param int $topic_id
 	 * @return array
 	 */
-	public function load_prefix_ids_topic($topic_id)
+	public function load_instance_ids_topic($topic_id)
 	{
 		if (!$this->count_prefix_instances())
 		{
@@ -312,7 +312,7 @@ class manager
 	{
 		$allowed_prefixes = $this->get_allowed_prefixes($this->user->data['user_id'], $forum_id);
 
-		if (count($allowed_prefixes) === count($this->load_prefix_ids_topic($topic_id)) || !in_array($prefix_id, $allowed_prefixes) || !in_array($prefix_id, array_keys($this->prefixes)))
+		if (count($allowed_prefixes) === count($this->load_instance_ids_topic($topic_id)) || !in_array($prefix_id, $allowed_prefixes) || !in_array($prefix_id, array_keys($this->prefixes)))
 		{
 			return;
 		}
@@ -580,10 +580,11 @@ class manager
 		}
 
 		// If there are no allowed prefixes for the current user in the current forum, let's stop wasting time.
-		if (!$this->prefix_instances || !($allowed_prefixes = $this->get_allowed_prefixes($this->user->data['user_id'], $forum_id)))
+		if ((!$this->prefixes && !$this->prefix_instances) || !($allowed_prefixes = $this->get_allowed_prefixes($this->user->data['user_id'], $forum_id)))
 		{
 			return;
 		}
+
 		$topic_prefixes_used = [];
 
 		// We want to sort the prefixes by the 'ordered' property, and we can do that with our custom sort function
