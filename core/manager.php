@@ -560,7 +560,7 @@ class manager
 
 		// We only show the prefix manager thing during new topic creation
 		// and when we're editing the first post of a topic
-		// So if we're not 'post'-ing or 'edit'-ing, get out!
+		// So if we're not 'post'-ing or 'edit'-ing, gtfo!
 		if (!in_array($mode, ['post', 'edit']))
 		{
 			return;
@@ -591,7 +591,7 @@ class manager
 		usort($this->prefix_instances, [$this, 'sort_topic_prefixes']);
 		foreach ($this->prefix_instances as $instance)
 		{
-			if ((int) $instance['topic'] === (int) $topic_id)
+			if (0 !== $topic_id && (int) $instance['topic'] === (int) $topic_id)
 			{
 				$topic_prefixes_used[$instance['prefix']] = $instance;
 			}

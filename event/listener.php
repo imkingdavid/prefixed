@@ -83,16 +83,16 @@ class listener implements EventSubscriberInterface
 	{
 		return [
 			// phpBB Core Events
-			'core.user_setup'					=> 'setup',
+			'core.user_setup'						=> 'setup',
 			//'core.display_forums_modify_template_vars'	=> 'get_forumlist_topic_prefix',
-			'core.viewtopic_modify_page_title'	=> 'get_viewtopic_topic_prefix',
-			'core.viewforum_modify_topicrow'	=> 'get_topiclist_topic_prefixes',
-			'core.posting_modify_submit_post_after'	=> 'manage_prefixes_on_posting',
-			'core.posting_modify_template_vars'	=> 'generate_posting_form',
-			'core.mcp_view_forum_modify_topicrow' => 'get_topiclist_topic_prefixes',
+			'core.viewtopic_modify_page_title'		=> 'get_viewtopic_topic_prefix',
+			'core.viewforum_modify_topicrow'		=> 'get_topiclist_topic_prefixes',
+			'core.submit_post_end'					=> 'manage_prefixes_on_posting',
+			'core.posting_modify_template_vars'		=> 'generate_posting_form',
+			'core.mcp_view_forum_modify_topicrow'	=> 'get_topiclist_topic_prefixes',
 
 			// Events added by this extension
-			'prefixed.modify_prefix_title'		=> 'get_token_data',
+			'prefixed.modify_prefix_title'			=> 'get_token_data',
 		];
 	}
 
@@ -179,7 +179,7 @@ class listener implements EventSubscriberInterface
 		{
 			$sql = 'SELECT topic_first_post_id
 				FROM ' . TOPICS_TABLE . '
-				WHERE topic_id = ' . (int) $event['topic_id'];
+				WHERE topic_id = ' . (int) $event['data']['topic_id'];
 			$result = $this->db->sql_query($sql);
 			$first_post_id = $this->db->sql_fetchfield('topic_first_post_id');
 			$this->db->sql_freeresult($result);
@@ -200,7 +200,7 @@ class listener implements EventSubscriberInterface
 			$used_ids = $prefix_ids[2];
 		}
 
-		$this->manager->set_topic_prefixes((int) $event['topic_id'], $used_ids, (int) $event['forum_id']);
+		$this->manager->set_topic_prefixes((int) $event['data']['topic_id'], $used_ids, (int) $event['data']['forum_id']);
 	}
 
 	/**
