@@ -19,7 +19,7 @@ if (!defined('IN_PHPBB'))
 
 class instance extends \ArrayObject
 {
-	use loadable {
+	use \imkingdavid\prefixed\core\loadable {
 		load as _load;
 	}
 
@@ -78,19 +78,6 @@ class instance extends \ArrayObject
 	}
 
 	/**
-	 * Set the prefix object for this instance
-	 *
-	 * @param prefix $prefix
-	 * @return $this
-	 */
-	public function set_prefix_object(prefix $prefix)
-	{
-		$this->prefix_object = $prefix;
-
-		return $this;
-	}
-
-	/**
 	 * Parse a prefix instance
 	 *
 	 * @param	string	$block		If given, this name will be passed to
@@ -102,12 +89,12 @@ class instance extends \ArrayObject
 	 */
 	public function parse($block = '', $return_parsed = false)
 	{
-		if (!$this->prefix_object instanceof prefix)
+		if (!$this->prefix_object instanceof \imkingdavid\prefixed\core\prefix)
 		{
-			$this->set_prefix_object(new prefix($this->db, $this->cache, $this->template, $this['prefix']));
+			$this->setPrefixObject(new \imkingdavid\prefixed\core\prefix($this->db, $this->cache, $this->template, $this['prefix']));
 		}
 
-		if (!$this->prefix_object->loaded() && !$this->prefix_object->load())
+		if (!$this['prefix_object']->loaded() && !$this['prefix_object']->load())
 		{
 			return '';
 		}
@@ -122,15 +109,15 @@ class instance extends \ArrayObject
 				continue;
 			}
 
-			$this->prefix_object['title'] = $this->tokens[$data['service']]->apply_token_data($this->prefix_object['title'], $data['data']);
+			$this['prefix_object']['title'] = $this->tokens[$data['service']]->apply_token_data($this['prefix_object']['title'], $data['data']);
 		}
 
 		// To clarify, the second argument here is simply replacing the prefix
 		// ID with the instance ID in the template, and adding the prefix ID
 		// as its own PREFIX variable
-		return $this->prefix_object->parse($block, [
+		return $this['prefix_object']->parse($block, [
 			'ID' => $this['id'],
-			'PREFIX' => $this->prefix_object['id'],
+			'PREFIX' => $this['prefix_object']['id'],
 			'ORDER' => $this['ordered'],
 		], '', $return_parsed);
 	}
@@ -166,8 +153,117 @@ class instance extends \ArrayObject
 		return true;
 	}
 
-	public function get($property)
+	/**
+	 * Set the prefix ID for this instance
+	 *
+	 * @param int $id
+	 */
+	public function setId($id) {
+		$this['id'] = (int) $id;
+	}
+
+	/**
+	 * Set the prefix object for this instance
+	 *
+	 * @param prefix $prefix
+	 * @return null
+	 */
+	public function setPrefix($prefix) {
+		$this['prefix'] = (int) $prefix;
+	}
+
+	/**
+	 * Set the prefix object for this instance
+	 *
+	 * @param \imkingdavid\prefixed\core\prefix $prefix
+	 * @return null
+	 */
+	public function setPrefixObject(\imkingdavid\prefixed\core\prefix $prefix)
 	{
-		return isset($this[$property]) ? $this[$property] : null;
+		$this['prefix_object'] = $prefix;
+	}
+
+	/**
+	 * Set the prefix topic ID for this instance
+	 *
+	 * @param int $topic
+	 * @return null
+	 */
+	public function setTopic($topic) {
+		$this['topic'] = (int) $topic;
+	}
+
+	/**
+	 * Set the prefix object for this instance
+	 *
+	 * @param prefix $prefix
+	 * @return null
+	 */
+	public function setTokenData($token_data) {
+		$this['token_data'] = $token_data;
+	}
+
+	/**
+	 * Set the prefix object for this instance
+	 *
+	 * @param prefix $prefix
+	 * @return null
+	 */
+	public function setOrdered($ordered) {
+		$this['ordered'] = $ordered;
+	}
+
+	/**
+	 * Get the instance ID
+	 *
+	 * @return int
+	 */
+	public function getId() {
+		return isset($this['id']) ? $this['id'] : 0;
+	}
+
+	/**
+	 * Get the prefix ID
+	 *
+	 * @return int
+	 */
+	public function getPrefix() {
+		return isset($this['prefix']) ? $this['prefix'] : 0;
+	}
+
+	/**
+	 * Get the prefix object
+	 *
+	 * @return \imkingdavid\prefixed\core\prefix
+	 */
+	public function getPrefixObject() {
+		return isset($this['prefix_object']) ? $this['prefix_object'] : null;
+	}
+
+	/**
+	 * Get the topic ID
+	 *
+	 * @return int
+	 */
+	public function getTopic() {
+		return isset($this['topic']) ? $this['topic'] : 0;
+	}
+
+	/**
+	 * Get the token data
+	 *
+	 * @return string
+	 */
+	public function getTokenData() {
+		return isset($this['token_data']) ? $this['token_data'] : '';
+	}
+
+	/**
+	 * Get the order
+	 *
+	 * @return int
+	 */
+	public function getOrdered() {
+		return isset($this['ordered']) ? $this['ordered'] : 0;
 	}
 }

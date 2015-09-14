@@ -281,6 +281,24 @@ class manager
 	}
 
 	/**
+	 * Get the IDs of the prefixes that were submitted with a topic posted/edited/previewed
+	 *
+	 * @return array Array of prefix IDs
+	 */
+	public function get_submitted_prefixes()
+	{
+		// Due to .sortable('serialize') $ids will be a string like: 'prefix[]=4'
+		// I need the number. That's in index two of $prefix_ids
+		$used_ids = $this->request->variable('prefixes_used', '') ?: [];
+		if ($used_ids && preg_match_all('/(prefix\[\]=(\d)+&?)+/', $used_ids, $prefix_ids) && isset($prefix_ids[2]))
+		{
+			$used_ids = $prefix_ids[2];
+		}
+
+		return $used_ids;
+	}
+
+	/**
 	 * Custom sort function used by usort() to order a topic's prefixes by their "ordered" property
 	 *
 	 * @param instance|array $a First comparison argument
@@ -294,8 +312,8 @@ class manager
 			return 0;
 		}
 
-		$a_ordered = (int) is_array($a) ? $a['ordered'] : $a->get('ordered');
-		$b_ordered = (int) is_array($b) ? $b['ordered'] : $b->get('ordered');
+		$a_ordered = (int) is_array($a) ? $a['ordered'] : $a->getOrdered();
+		$b_ordered = (int) is_array($b) ? $b['ordered'] : $b->getOrdered();
 		return $a_ordered === $b_ordered ? 0 : ($a_ordered > $b_ordered ? 1 : -1);
 	}
 
@@ -320,6 +338,30 @@ class manager
 		$prefix_data = $this->prefixes[$prefix_id];
 		$prefix_title = $prefix_data['title'];
 
+		$sql_ary = [
+			'prefix'		=> $prefix_id,
+			'topic'			=> $topic_id,
+			'ordered'		=> $order ?: $this->count_topic_prefixes($topic_id) + 1,
+			'token_data'	=> $this->calculateTokenDataForInstance($prefix_title, $topic_id, $prefix_id, $forum_id),
+		];
+
+		$sql = 'INSERT INTO ' . PREFIX_INSTANCES_TABLE . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
+		$this->db->sql_query($sql);
+
+		$this->load_prefix_instances(true);
+	}
+
+	/**
+	 * Go through each available token and determine the token data that should
+	 * be stored for the given prefix info
+	 *
+	 * @param string $prefix_title
+	 * @param int $topic_id
+	 * @param int $prefix_id
+	 * @param int $forum_id
+	 */
+	public function calculateTokenDataForInstance($prefix_title, $topic_id, $prefix_id, $forum_id)
+	{
 		$token_data = [];
 
 		// Here is where we go through all of the tokens
@@ -333,19 +375,7 @@ class manager
 			}
 		}
 
-		$token_data = json_encode($token_data);
-
-		$sql_ary = [
-			'prefix'		=> $prefix_id,
-			'topic'			=> $topic_id,
-			'ordered'		=> $order ?: $this->count_topic_prefixes($topic_id) + 1,
-			'token_data'	=> $token_data,
-		];
-
-		$sql = 'INSERT INTO ' . PREFIX_INSTANCES_TABLE . ' ' . $this->db->sql_build_array('INSERT', $sql_ary);
-		$this->db->sql_query($sql);
-
-		$this->load_prefix_instances(true);
+		return json_encode($token_data);
 	}
 
 	/**
@@ -587,13 +617,34 @@ class manager
 
 		$topic_prefixes_used = [];
 
-		// We want to sort the prefixes by the 'ordered' property, and we can do that with our custom sort function
-		usort($this->prefix_instances, [$this, 'sort_topic_prefixes']);
-		foreach ($this->prefix_instances as $instance)
+		// code borrowed from listener.php's manage_prefixes_on_posting()
+		// so that we can handle prefix changes during Preview
+		$submitted_prefixes = $this->get_submitted_prefixes();
+
+		if ($submitted_prefixes)
 		{
-			if (0 !== $topic_id && (int) $instance['topic'] === (int) $topic_id)
+			foreach ($submitted_prefixes as $ordered => $prefix_id)
 			{
-				$topic_prefixes_used[$instance['prefix']] = $instance;
+				$prefix = $this->get_prefix($prefix_id);
+				$instance_object = new \imkingdavid\prefixed\core\instance($this->db, $this->cache, $this->template, $this->tokens);
+				$instance_object->setTokenData($this->calculateTokenDataForInstance($prefix['title'], $topic_id, $prefix_id, $forum_id));
+				$instance_object->setTopic($topic_id);
+				$instance_object->setOrdered($ordered);
+				$instance_object->setPrefix($prefix_id);
+				$instance_object->setPrefixObject($prefix);
+				$topic_prefixes_used[$prefix_id] = $instance_object;
+			}
+		}
+		else
+		{
+			// We want to sort the prefixes by the 'ordered' property, and we can do that with our custom sort function
+			usort($this->prefix_instances, [$this, 'sort_topic_prefixes']);
+			foreach ($this->prefix_instances as $instance)
+			{
+				if (0 !== $topic_id && (int) $instance['topic'] === (int) $topic_id)
+				{
+					$topic_prefixes_used[$instance['prefix']] = $instance;
+				}
 			}
 		}
 
@@ -613,7 +664,10 @@ class manager
 
 			if ($current_prefix !== null && in_array($current_prefix['id'], $allowed_prefixes) && isset($topic_prefixes_used[$current_prefix['id']]))
 			{
-				$this->get_instance($instance_ary['id'])->parse('prefix_used');
+				if (!($instance_ary instanceof \imkingdavid\prefixed\core\instance)) {
+					$instance_ary = $this->get_instance($instance_ary['id']);
+				}
+				$instance_ary->parse('prefix_used');
 			}
 		}
 		// Now we get all prefixes that are allowed but haven't been used

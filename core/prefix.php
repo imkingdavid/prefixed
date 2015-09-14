@@ -137,16 +137,6 @@ class prefix extends \ArrayObject
 	}
 
 	/**
-	 * Update/Insert an entry in the database
-	 *
-	 * If $this->id === 0 Then: INSERT; Else: UPDATE; Endif;
-	 */
-	public function update()
-	{
-
-	}
-
-	/**
 	 * Set array of properties
 	 *
 	 * @param array $data Array of [key => value] pairs

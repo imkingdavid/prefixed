@@ -192,13 +192,7 @@ class listener implements EventSubscriberInterface
 			return;
 		}
 
-		// Due to .sortable('serialize') $ids will be a string like: 'prefix[]=4'
-		// I need the number. That's in index two of $prefix_ids
-		$used_ids = $this->request->variable('prefixes_used', '') ?: [];
-		if ($used_ids && preg_match_all('/(prefix\[\]=(\d)+&?)+/', $used_ids, $prefix_ids) && isset($prefix_ids[2]))
-		{
-			$used_ids = $prefix_ids[2];
-		}
+		$used_ids = $this->manager->get_submitted_prefixes();
 
 		$this->manager->set_topic_prefixes((int) $event['data']['topic_id'], $used_ids, (int) $event['data']['forum_id']);
 	}
