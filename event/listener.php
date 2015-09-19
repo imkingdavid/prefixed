@@ -83,17 +83,18 @@ class listener implements EventSubscriberInterface
 	{
 		return [
 			// phpBB Core Events
-			'core.user_setup'						=> 'setup',
-			//'core.display_forums_modify_template_vars'	=> 'get_forumlist_topic_prefix',
-			'core.viewtopic_modify_page_title'		=> 'get_viewtopic_topic_prefix',
-			'core.viewforum_modify_topicrow'		=> 'get_topiclist_topic_prefixes',
-			'core.submit_post_end'					=> 'manage_prefixes_on_posting',
-			'core.posting_modify_template_vars'		=> 'generate_posting_form',
-			'core.mcp_view_forum_modify_topicrow'	=> 'get_topiclist_topic_prefixes',
-			'core.viewforum_get_topic_ids_data'		=> 'filter_viewforum_by_prefix',
+			'core.user_setup'							=> 'setup',
+			'core.viewtopic_modify_page_title'			=> 'get_viewtopic_topic_prefix',
+			'core.viewforum_modify_topicrow'			=> 'get_topiclist_topic_prefixes',
+			'core.submit_post_end'						=> 'manage_prefixes_on_posting',
+			'core.posting_modify_template_vars'			=> 'generate_posting_form',
+			'core.mcp_view_forum_modify_topicrow'		=> 'get_topiclist_topic_prefixes',
+			'core.viewforum_get_topic_ids_data'			=> 'filter_viewforum_by_prefix',
+			'core.display_forums_modify_sql'			=> 'modify_forumlist_sql',
+			'core.display_forums_modify_template_vars'	=> 'get_forumlist_topic_prefixes',
 
 			// Events added by this extension
-			'prefixed.modify_prefix_title'			=> 'get_token_data',
+			'prefixed.modify_prefix_title'				=> 'get_token_data',
 		];
 	}
 
@@ -227,13 +228,18 @@ class listener implements EventSubscriberInterface
 	 * @param Event $event Event object
 	 * @return null
 	 */
-	public function get_forumlist_topic_prefix($event)
+	public function get_forumlist_topic_prefixes($event)
 	{
 		$forum_row = $event['forum_row'];
 		$forum_row['TOPIC_PREFIX'] = $this->load_prefixes_topic($event, 'row', '', true);
 		$event['forum_row'] = $forum_row;
 	}
 
+	/**
+	 * Allow showing only topics with the given prefix in viewforum
+	 *
+	 * @var Event $event
+	 */
 	public function filter_viewforum_by_prefix($event)
 	{
 		if ($prefix = $this->request->variable('prefix', 0)) {
@@ -245,6 +251,28 @@ class listener implements EventSubscriberInterface
 			$sql_ary['WHERE'] .= 'AND pr.prefix = ' . (int) $prefix . ' ';
 			$event['sql_ary'] = $sql_ary;
 		}
+	}
+
+	/**
+	 * Alter the SQL performed when forums are loaded
+	 *
+	 * @param Event $event
+	 * @return null
+	 */
+	public function modify_forumlist_sql($event)
+	{
+		$sql = $event['sql_ary'];
+		$sql['SELECT'] .= ', t.topic_id AS forum_last_post_topic_id';
+		$sql['LEFT_JOIN'][] = [
+			'FROM' => [POSTS_TABLE => 'p'],
+			'ON' => 'f.forum_last_post_id = p.post_id',
+		];
+		$sql['LEFT_JOIN'][] = [
+			'FROM' => [TOPICS_TABLE => 't'],
+			'ON' => 't.topic_id = p.topic_id',
+		];
+
+		$event['sql_ary'] = $sql;
 	}
 
 	/**
@@ -260,6 +288,10 @@ class listener implements EventSubscriberInterface
 		if (isset($event[$array_name]['topic_id']))
 		{
 			$topic_id = (int) $event[$array_name]['topic_id'];
+		}
+		else if (isset($event[$array_name]['forum_last_post_id']))
+		{
+			$topic_id = (int) $event[$array_name]['forum_last_post_topic_id'];
 		}
 
 		return $topic_id && $this->manager->count_prefixes() && $this->manager->count_prefix_instances()
