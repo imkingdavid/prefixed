@@ -246,10 +246,12 @@ class manager
 		$return_string = '';
 		foreach ($topic_prefixes as $instance)
 		{
-			$vars = [
-				// A URL to a viewforum view filtered by the prefix
-				'URL' => append_sid($this->root_path . 'viewforum.php', ['prefix' => $instance['prefix'], 'f' => $this->request->variable('f', 0)]),
-			];
+			$vars = [];
+			// A URL to a viewforum view filtered by the prefix
+			if ($this->request->variable('f', 0))
+			{
+				$vars['URL'] = append_sid($this->root_path . 'viewforum.php', ['f' => $this->request->variable('f', 0), 'prefix' => $instance['prefix']]);
+			}
 			$return_string .= $instance->parse($block, $vars, $return_parsed) . '&nbsp;';
 		}
 
