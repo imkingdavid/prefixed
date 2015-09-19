@@ -28,7 +28,7 @@ class m4_remove_style_field_add_bbcode extends \phpbb\db\migration\migration
 	 */
 	static public function depends_on()
 	{
-		return array('\imkingdavid\prefixed\migrations\v10x\m3_remove_settings_module');
+		return ['\imkingdavid\prefixed\migrations\v10x\m3_remove_settings_module'];
 	}
 
 	/**

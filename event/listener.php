@@ -184,7 +184,7 @@ class listener implements EventSubscriberInterface
 			$first_post_id = $this->db->sql_fetchfield('topic_first_post_id');
 			$this->db->sql_freeresult($result);
 
-			if ((int) $event['post_id'] !== (int) $first_post_id)
+			if ((int) $event['data']['post_id'] !== (int) $first_post_id)
 			{
 				return;
 			}
@@ -192,9 +192,7 @@ class listener implements EventSubscriberInterface
 			return;
 		}
 
-		$used_ids = $this->manager->get_submitted_prefixes();
-
-		$this->manager->set_topic_prefixes((int) $event['data']['topic_id'], $used_ids, (int) $event['data']['forum_id']);
+		$this->manager->set_topic_prefixes((int) $event['data']['topic_id'], $this->manager->get_submitted_prefixes(), (int) $event['data']['forum_id']);
 	}
 
 	/**

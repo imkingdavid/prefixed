@@ -89,7 +89,7 @@ class instance extends \ArrayObject
 	 */
 	public function parse($block = '', $return_parsed = false)
 	{
-		if (!$this->prefix_object instanceof \imkingdavid\prefixed\core\prefix)
+		if (!isset($this['prefix_object']) || !$this['prefix_object'] instanceof \imkingdavid\prefixed\core\prefix)
 		{
 			$this->setPrefixObject(new \imkingdavid\prefixed\core\prefix($this->db, $this->cache, $this->template, $this['prefix']));
 		}

@@ -109,7 +109,7 @@ class manager
 		if (false === ($this->prefixes = $this->cache->get('_prefixes')) || $refresh)
 		{
 			// If we're refreshing, we have to reset the array first
-			$this->prefixes = array();
+			$this->prefixes = [];
 			$sql = 'SELECT id, title, short, users, forums, groups, bbcode_uid, bbcode_bitfield
 				FROM ' . PREFIXES_TABLE;
 			$result = $this->db->sql_query($sql);
@@ -166,7 +166,7 @@ class manager
 		if (false === ($this->prefix_instances = $this->cache->get('_prefixes_used')) || $refresh)
 		{
 			// If we're refreshing, we have to reset the array first
-			$this->prefix_instances = array();
+			$this->prefix_instances = [];
 			$sql = 'SELECT id, prefix, topic, ordered, token_data
 				FROM ' . PREFIX_INSTANCES_TABLE;
 			$result = $this->db->sql_query($sql);
@@ -392,7 +392,7 @@ class manager
 	{
 		$this->load_prefix_instances();
 		$all_used_prefixes = $this->prefix_instances;
-		$this_topics_prefixes = array();
+		$this_topics_prefixes = [];
 		if (!empty($all_used_prefixes)) {
 			foreach($all_used_prefixes as $prefix)
 			{

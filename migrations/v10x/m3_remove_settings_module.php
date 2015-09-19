@@ -28,7 +28,7 @@ class m3_remove_settings_module extends \phpbb\db\migration\migration
 	 */
 	static public function depends_on()
 	{
-		return array('\imkingdavid\prefixed\migrations\v10x\m2_initial_data');
+		return ['\imkingdavid\prefixed\migrations\v10x\m2_initial_data'];
 	}
 
 	/**

@@ -32,11 +32,13 @@ class poster extends token
 		}
 
 		// Get the poster of the topic
-		$sql = 'SELECT poster_id
-			FROM ' . $this->table_prefix . '
-			WHERE topic_id = ' . (int) $topic_id;
+		$sql = 'SELECT u.username
+			FROM ' . $this->table_prefix . 'users u
+			LEFT JOIN ' . $this->table_prefix . 'topics t
+				ON t.poster_id = u.user_id
+			WHERE t.topic_id = ' . (int) $topic_id;
 		$result = $this->db->sql_query($sql);
-		$poster_username = $this->db->sql_fetchfield('poster_id');
+		$poster_username = $this->db->sql_fetchfield('username');
 		$this->db->sql_freeresult();
 
 		if (!$poster_username)

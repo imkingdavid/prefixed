@@ -35,7 +35,7 @@ class m2_initial_data extends \phpbb\db\migration\migration
 	 */
 	static public function depends_on()
 	{
-		return array('\imkingdavid\prefixed\migrations\v10x\m1_initial_schema');
+		return ['\imkingdavid\prefixed\migrations\v10x\m1_initial_schema'];
 	}
 
 	/**

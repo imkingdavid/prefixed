@@ -52,7 +52,7 @@ class prefixed_module
 				// @todo Do this
 				$action	= $request->variable('action', 'list');
 				$prefix_id = $request->variable('prefix_id', 0);
-				$prefix = $prefix_id ? new \imkingdavid\prefixed\core\prefix($db, $cache, $template, $prefix_id) : array();
+				$prefix = $prefix_id ? new \imkingdavid\prefixed\core\prefix($db, $cache, $template, $prefix_id) : [];
 
 				switch ($action)
 				{

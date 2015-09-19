@@ -19,6 +19,43 @@ if (!defined('IN_PHPBB'))
 
 abstract class token implements token_interface
 {
+
+	/**
+	 * phpBB User Object
+	 * @var \phpbb\user
+	 */
+	protected $user;
+
+	/**
+	 * phpBB Auth Object
+	 * @var \phpbb\auth\auth
+	 */
+	protected $auth;
+
+	/**
+	 * phpBB Config Object
+	 * @var \phpbb\config\config
+	 */
+	protected $config;
+
+	/**
+	 * phpBB Template Object
+	 * @var \phpbb\template\template
+	 */
+	protected $template;
+
+	/**
+	 * phpBB DBAL Driver Factory Object
+	 * @var \phpbb\db\driver\factory
+	 */
+	protected $db;
+
+	/**
+	 * phpBB Table Prefix
+	 * @var string
+	 */
+	protected $table_prefix;
+
 	/**
 	 * Constructor to provide dependencies to the tokens
 	 *
@@ -37,6 +74,7 @@ abstract class token implements token_interface
 		$this->config = $config;
 		$this->template = $template;
 		$this->db = $db;
+		$this->table_prefix;
 	}
 
 	/**
@@ -52,7 +90,7 @@ abstract class token implements token_interface
 	 */
 	public function match_token($prefix_text)
 	{
-		$matches = array();
+		$matches = [];
 		preg_match(constant(get_class($this) . '::TOKEN_REGEX'), $prefix_text, $matches);
 		return $matches ?: false;
 	}
@@ -62,11 +100,6 @@ abstract class token implements token_interface
 	 */
 	public function apply_token_data($prefix_text, $data)
 	{
-		if (($matches = $this->match_token($prefix_text)) === false)
-		{
-			return false;
-		}
-
-		return preg_replace(constant(get_class($this) . '::TOKEN_REGEX'), $data, $prefix_text);
+		return false !== $this->match_token($prefix_text) ? preg_replace(constant(get_class($this) . '::TOKEN_REGEX'), $data, $prefix_text) : false;
 	}
 }
