@@ -83,11 +83,12 @@ class instance extends \ArrayObject
 	 * @param	string	$block		If given, this name will be passed to
 	 *								assign_block_vars (otherwise the variables
 	 *								are assigned to the template globally)
-	 * @param   bool    $return_parsed If true, return is the parsed prefix
+	 * @param	array	$vars		Additional template variables
+	 * @param	bool	$return_parsed If true, return is the parsed prefix
 	 *								otherwise, it is the plaintext version
 	 * @return	 string				Plaintext prefix
 	 */
-	public function parse($block = '', $return_parsed = false)
+	public function parse($block = '', $vars = [], $return_parsed = false)
 	{
 		if (!isset($this['prefix_object']) || !$this['prefix_object'] instanceof \imkingdavid\prefixed\core\prefix)
 		{
@@ -115,11 +116,12 @@ class instance extends \ArrayObject
 		// To clarify, the second argument here is simply replacing the prefix
 		// ID with the instance ID in the template, and adding the prefix ID
 		// as its own PREFIX variable
-		return $this['prefix_object']->parse($block, [
+		$vars = array_merge([
 			'ID' => $this['id'],
 			'PREFIX' => $this['prefix_object']['id'],
 			'ORDER' => $this['ordered'],
-		], '', $return_parsed);
+		], $vars);
+		return $this['prefix_object']->parse($block, $vars, '', $return_parsed);
 	}
 
 	/**

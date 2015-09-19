@@ -87,6 +87,11 @@ class prefix extends \ArrayObject
 
 		$var_prefix = strtoupper($var_prefix);
 		$this['title'] = generate_text_for_display($this['title'], $this['bbcode_uid'], $this['bbcode_bitfield'], OPTION_FLAG_BBCODE);
+		// Now that the processing is all done, if there is a URL
+		// template variable, let's add <a> tags around the title.
+		if (!empty($vars['URL'])) {
+			$this['title'] = '<a href="' . $vars['URL'] . '">' . $this['title'] . '</a>';
+		}
 		$tpl_vars = array_merge([
 			$var_prefix . 'ID'		=> $this['id'],
 			$var_prefix . 'SHORT'	=> $this['short'],

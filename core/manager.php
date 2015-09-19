@@ -244,9 +244,13 @@ class manager
 		usort($topic_prefixes, [$this, 'sort_topic_prefixes']);
 
 		$return_string = '';
-		foreach ($topic_prefixes as $prefix)
+		foreach ($topic_prefixes as $instance)
 		{
-			$return_string .= $prefix->parse($block, $return_parsed) . '&nbsp;';
+			$vars = [
+				// A URL to a viewforum view filtered by the prefix
+				'URL' => append_sid($this->root_path . 'viewforum.php', ['prefix' => $instance['prefix'], 'f' => $this->request->variable('f', 0)]),
+			];
+			$return_string .= $instance->parse($block, $vars, $return_parsed) . '&nbsp;';
 		}
 
 		return $return_string;

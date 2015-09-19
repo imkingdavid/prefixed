@@ -90,6 +90,7 @@ class listener implements EventSubscriberInterface
 			'core.submit_post_end'					=> 'manage_prefixes_on_posting',
 			'core.posting_modify_template_vars'		=> 'generate_posting_form',
 			'core.mcp_view_forum_modify_topicrow'	=> 'get_topiclist_topic_prefixes',
+			'core.viewforum_get_topic_ids_data'		=> 'filter_viewforum_by_prefix',
 
 			// Events added by this extension
 			'prefixed.modify_prefix_title'			=> 'get_token_data',
@@ -231,6 +232,19 @@ class listener implements EventSubscriberInterface
 		$forum_row = $event['forum_row'];
 		$forum_row['TOPIC_PREFIX'] = $this->load_prefixes_topic($event, 'row', '', true);
 		$event['forum_row'] = $forum_row;
+	}
+
+	public function filter_viewforum_by_prefix($event)
+	{
+		if ($prefix = $this->request->variable('prefix', 0)) {
+			$sql_ary = $event['sql_ary'];
+			$sql_ary['LEFT_JOIN'] = [[
+				'FROM'  => array(PREFIX_INSTANCES_TABLE => 'pr'),
+				'ON'    => 'pr.topic = t.topic_id',
+			]];
+			$sql_ary['WHERE'] .= 'AND pr.prefix = ' . (int) $prefix . ' ';
+			$event['sql_ary'] = $sql_ary;
+		}
 	}
 
 	/**
