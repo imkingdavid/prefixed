@@ -92,6 +92,7 @@ class listener implements EventSubscriberInterface
 			'core.viewforum_get_topic_ids_data'			=> 'filter_viewforum_by_prefix',
 			'core.display_forums_modify_sql'			=> 'modify_forumlist_sql',
 			'core.display_forums_modify_template_vars'	=> 'get_forumlist_topic_prefixes',
+			'core.search_modify_tpl_ary'				=> 'get_searchlist_topic_prefixes', 
 
 			// Events added by this extension
 			'prefixed.modify_prefix_title'				=> 'get_token_data',
@@ -220,6 +221,34 @@ class listener implements EventSubscriberInterface
 		$topic_row = $event['topic_row'];
 		$topic_row['TOPIC_PREFIX'] = $this->load_prefixes_topic($event, 'row', '', true);
 		$event['topic_row'] = $topic_row;
+	}
+
+
+	/**
+	 * Show the prefixes in search pages
+	 *
+	 * Credit to user Goztow:
+	 * https://www.phpbb.com/community/viewtopic.php?p=14306876#p14306876
+	 *
+	 * @param Event #event Event object
+	 * @return null
+	 */
+	public function get_searchlist_topic_prefixes($event)
+	{
+		$tpl_ary = $event['tpl_ary']; // Template variables
+		$prefixes = $this->load_prefixes_topic($event, 'row', '', true);
+		$tpl_ary['TOPIC_TITLE'] = $prefixes . $tpl_ary['TOPIC_TITLE'];
+		/*
+		Because it is a topic prefix, rather than a post prefix,
+		I have made the decision not to include the following in the official extension
+		I may make an ACP setting to let you choose if the post subject should show the
+		prefix as well, but for now I am not including it.
+
+		if (!empty($tpl_ary['POST_SUBJECT']))
+		{
+			$tpl_ary['POST_SUBJECT'] = $prefixes . $tpl_ary['POST_SUBJECT'];
+		}*/
+		$event['tpl_ary'] = $tpl_ary;
 	}
 
 	/**
