@@ -24,4 +24,11 @@ $(document).ready(function() {
 		console.log($('#used_prefixes').sortable('serialize'));
 		$('#postform').append($(input));
 	});
+
+	$('#prefix_dropdown_toggle').click(function(e) {
+		e.preventDefault();
+		$('#prefix_dropdown').toggle();
+		$('#prefix_dropdown_toggle i.fa-arrow-down').toggle();
+		$('#prefix_dropdown_toggle i.fa-arrow-up').toggle();
+	});
 });

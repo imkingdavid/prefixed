@@ -1,10 +1,14 @@
+#posting_prefixes dl {
+	float:left;
+}
+
 #available_prefixes, #used_prefixes {
 	min-width:100px;
 	min-height:100px;
 	padding:10px;
 	margin:5px;
-	background-color:#cadceb;
 	float:left;
+	background-color:#ecf1f3;
 	list-style: none;
 }
 
@@ -14,4 +18,29 @@
 
 li.prefix_placeholder {
 	background-color:#e1ebf2;
+}
+
+.prefix-dropdown {
+	background-color:#cadceb;
+	top:25px;
+	color:#ffffff;
+}
+
+.prefix-dropdown-container {
+	display:inline-block;
+}
+
+.prefix-dropdown-toggle:after {
+	content: '\f0dd';
+	display: inline-block;
+	font: normal normal normal 14px/1 FontAwesome;
+	padding-left: 6px;
+}
+
+/** In order for the prefix dropdown to actually show up
+    next to the topic title field on the posting page
+    instead of being hidden as if behind the posting buttons
+**/
+fieldset.fields1 dl {
+	overflow: visible;
 }
