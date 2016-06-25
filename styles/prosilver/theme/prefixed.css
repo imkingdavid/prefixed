@@ -26,15 +26,25 @@ li.prefix_placeholder {
 	color:#ffffff;
 }
 
+.prefix-dropdown .pointer {
+	margin-top:-9px;
+	border-color:transparent;
+}
+
+.prefix-dropdown .pointer .pointer-inner {
+	border-color: #cadceb transparent;
+}
 .prefix-dropdown-container {
 	display:inline-block;
 }
 
 .prefix-dropdown-toggle:after {
-	content: '\f0dd';
+	content: '\25BC';
 	display: inline-block;
-	font: normal normal normal 14px/1 FontAwesome;
-	padding-left: 6px;
+	font-size: 9px;
+	float: right;
+	padding-left: 2px;
+	opacity: 0.7;
 }
 
 /** In order for the prefix dropdown to actually show up
