@@ -6,10 +6,6 @@
 	background-color:#ecf1f3;
 }
 
-.no-prefix-text {
-	display:none;
-}
-
 #available_prefixes span, #used_prefixes span {
 	padding:5px;
 }
@@ -36,7 +32,7 @@
 .prefix-dropdown-toggle {
 	border: #cadceb 1px solid;
 	padding:2px;
-	min-width:50px;
+	min-width:100px;
 	min-height:15px;
 }
 

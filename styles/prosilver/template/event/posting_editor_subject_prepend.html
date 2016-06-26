@@ -1,6 +1,6 @@
 <!-- IF .prefix_option or .prefix_used -->
 <div class="prefix-dropdown-container dropdown-container dropdown-right dropdown-down">
-	<a href="#" class="dropdown-trigger dropdown-toggle"><div class="prefix-dropdown-toggle prefixed_sortable" id="used_prefixes"><!-- IF .prefix_used --><!-- BEGIN prefix_used --><span id="prefix_{prefix_used.PREFIX}" data-id="{prefix_used.ID}">{prefix_used.TITLE}</span><!-- END prefix_used --><!-- ENDIF --><span class="no-prefix-text">(no prefix)</span></div></a>
+	<a href="#" class="dropdown-trigger dropdown-toggle"><div class="prefix-dropdown-toggle prefixed_sortable" id="used_prefixes"><!-- IF .prefix_used --><!-- BEGIN prefix_used --><span id="prefix_{prefix_used.PREFIX}" data-id="{prefix_used.ID}">{prefix_used.TITLE}</span><!-- END prefix_used --><!-- ENDIF --><span class="no-prefix-text <!-- IF .prefix_used -->hidden<!-- ENDIF -->">(no prefix)</span></div></a>
 	<div class="dropdown hidden prefix-dropdown">
 		<div class="pointer"><div class="pointer-inner"></div></div>
 		<div id="available_prefixes" class="prefixed_sortable dropdown_contents">
