@@ -1,23 +1,21 @@
-#posting_prefixes dl {
-	float:left;
-}
-
-#available_prefixes, #used_prefixes {
+#available_prefixes {
 	min-width:100px;
 	min-height:100px;
 	padding:10px;
 	margin:5px;
-	float:left;
 	background-color:#ecf1f3;
-	list-style: none;
 }
 
-#available_prefixes li, #used_prefixes li {
+.no-prefix-text {
+	display:none;
+}
+
+#available_prefixes span, #used_prefixes span {
 	padding:5px;
 }
 
-li.prefix_placeholder {
-	background-color:#e1ebf2;
+.prefix_placeholder {
+	background-color:#cadceb;
 }
 
 .prefix-dropdown {
@@ -34,9 +32,14 @@ li.prefix_placeholder {
 .prefix-dropdown .pointer .pointer-inner {
 	border-color: #cadceb transparent;
 }
-.prefix-dropdown-container {
-	display:inline-block;
+
+.prefix-dropdown-toggle {
+	border: #cadceb 1px solid;
+	padding:2px;
+	min-width:50px;
+	min-height:15px;
 }
+
 
 .prefix-dropdown-toggle:after {
 	content: '\25BC';
@@ -45,6 +48,10 @@ li.prefix_placeholder {
 	float: right;
 	padding-left: 2px;
 	opacity: 0.7;
+}
+
+.prefix-dropdown-container {
+	float:left;
 }
 
 /** In order for the prefix dropdown to actually show up

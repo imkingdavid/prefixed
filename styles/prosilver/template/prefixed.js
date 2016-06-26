@@ -1,22 +1,23 @@
 $(document).ready(function() {
-	$('#posting_prefixes').show();
-	$('#available_prefixes, #used_prefixes').sortable({
+
+	$('#used_prefixes').sortable({
 		connectWith: '.prefixed_sortable',
 		placeholder: 'prefix_placeholder',
-		receive: function(event, ui) {
-			// Handle filling in the tokens
-			var ul = $(this).closest('ul.prefixed_sortable');
-			if (ul.attr('id') == 'used_prefixes') {
-			} else if (ul.attr('id') == 'available_prefixes') {
-				// $.get(
-				// 	"{U_PREFIXED_PARSE}/" + $(ui).attr('id'), function(data) {
-				// 		console.log(data);
-				// 	}
-				// );
+		cancel: 'no-prefix-text',
+		over: function(event, ui) {
+			$('.no-prefix-text:visible').hide();
+		}
+	}).disableSelection();
+
+	$('#available_prefixes').sortable({
+		connectWith: '.prefixed_sortable',
+		placeholder: 'prefix_placeholder',
+		over: function(event, ui) {
+			if ($('#used_prefixes').children().size() < 2) {
+				$('.no-prefix-text:hidden').show();
 			}
 		}
 	}).disableSelection();
-	$('ul.prefixed_sortable li').css('cursor', 'pointer');
 
 	// Add data to the form on submission
 	$(this).on('submit', '#postform', function(event) {
