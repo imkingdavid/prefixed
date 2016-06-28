@@ -296,7 +296,7 @@ class manager
 		// Due to .sortable('serialize') $ids will be a string like: 'prefix[]=4'
 		// I need the number. That's in index two of $prefix_ids
 		$used_ids = $this->request->variable('prefixes_used', '') ?: [];
-		if ($used_ids && preg_match_all('/(prefix\[\]=(\d)+&?)+/', $used_ids, $prefix_ids) && isset($prefix_ids[2]))
+		if ($used_ids && preg_match_all('/(prefix\[\]=(\d+)&?)+/', $used_ids, $prefix_ids) && isset($prefix_ids[2]))
 		{
 			$used_ids = $prefix_ids[2];
 		}
