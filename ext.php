@@ -9,17 +9,14 @@
 
 namespace imkingdavid\prefixed;
 
-/**
- * @ignore
- */
-if (!defined('IN_PHPBB'))
-{
-	exit;
-}
-
-/**
- * Main extension class for Prefixed extension.
- */
+ /**
+* Extension class for custom enable/disable/purge actions
+*/
 class ext extends \phpbb\extension\base
 {
+	public function is_enableable()
+	{
+		$config = $this->container->get('config');
+		return version_compare($config['version'], '3.1.4', '>=') && version_compare(PHP_VERSION, '5.4.*', '>'));
+	}
 }
