@@ -2,15 +2,15 @@ services:
     prefixed.manager:
         class: imkingdavid\prefixed\core\manager
         arguments:
-            - @dbal.conn
-            - @cache.driver
-            - @template
-            - @request
-            - @user
-            - @prefixed.token.collection
-            - @controller.helper
-            - %core.root_path%
-            - %core.php_ext%
+            - '@dbal.conn'
+            - '@cache.driver'
+            - '@template'
+            - '@request'
+            - '@user'
+            - '@prefixed.token.collection'
+            - '@controller.helper'
+            - '%core.root_path%'
+            - '%core.php_ext%'
 
     prefixed.listener:
         class: imkingdavid\prefixed\event\listener
@@ -20,42 +20,42 @@ services:
     prefixed.token.collection:
         class: phpbb\di\service_collection
         arguments:
-            - @service_container
+            - '@service_container'
         tags:
             - { name: service_collection, tag: prefixed.token }
 
     prefixed.token.username:
         class: imkingdavid\prefixed\core\token\username
         arguments:
-            - @user
-            - @auth
-            - @config
-            - @template
-            - @dbal.conn
-            - %core.table_prefix%
+            - '@user'
+            - '@auth'
+            - '@config'
+            - '@template'
+            - '@dbal.conn'
+            - '%core.table_prefix%'
         tags:
             - { name: prefixed.token }
 
     prefixed.token.poster:
         class: imkingdavid\prefixed\core\token\poster
         arguments:
-            - @user
-            - @auth
-            - @config
-            - @template
-            - @dbal.conn
-            - %core.table_prefix%
+            - '@user'
+            - '@auth'
+            - '@config'
+            - '@template'
+            - '@dbal.conn'
+            - '%core.table_prefix%'
         tags:
             - { name: prefixed.token }
 
     prefixed.token.date:
         class: imkingdavid\prefixed\core\token\date
         arguments:
-            - @user
-            - @auth
-            - @config
-            - @template
-            - @dbal.conn
-            - %core.table_prefix%
+            - '@user'
+            - '@auth'
+            - '@config'
+            - '@template'
+            - '@dbal.conn'
+            - '%core.table_prefix%'
         tags:
             - { name: prefixed.token }
