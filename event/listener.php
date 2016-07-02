@@ -83,7 +83,7 @@ class listener implements EventSubscriberInterface
 	{
 		return [
 			// phpBB Core Events
-			'core.user_setup'							=> 'setup',
+			'core.user_setup'							=> ['setup', 1],
 			'core.viewtopic_modify_page_title'			=> 'get_viewtopic_topic_prefix',
 			'core.viewforum_modify_topicrow'			=> 'get_topiclist_topic_prefixes',
 			'core.submit_post_end'						=> 'manage_prefixes_on_posting',
