@@ -1,35 +1,35 @@
 {
-    "name": "imkingdavid/prefixed",
-    "type": "phpbb-extension",
-    "description": "An extension for phpBB 3.1 that will add a topic prefix functionality to your board.",
-    "homepage": "http://www.github.com/imkingdavid/prefixed",
-    "version": "1.0.0",
-    "time": "2014-10-04",
+	"name": "imkingdavid/prefixed",
+	"type": "phpbb-extension",
+	"description": "An extension for phpBB 3.1 that will add a topic prefix functionality to your board.",
+	"homepage": "http://www.github.com/imkingdavid/prefixed",
+	"version": "1.0.0",
+	"time": "2014-10-04",
 	"keywords": ["phpbb", "prefix", "extension", "prefixed"],
-    "license": "GPL-2.0",
-    "authors": [
-        {
-            "name": "David King (imkingdavid)",
-            "email": "imkingdavid@gmail.com",
-            "homepage": "http://www.thedavidking.com",
-            "role": "Developer"
-        }
-    ],
-    "require": {
-        "php": ">=5.4"
-    },
+	"license": "GPL-2.0",
+	"authors": [
+		{
+			"name": "David King (imkingdavid)",
+			"email": "imkingdavid@gmail.com",
+			"homepage": "http://www.thedavidking.com",
+			"role": "Developer"
+		}
+	],
+	"require": {
+		"php": ">=5.4"
+	},
 	"require-dev": {
 		"phpbb/epv": "dev-master"
 	},
-    "extra": {
-        "display-name": "[pre]fixed - phpBB Topic Prefixes - v1.0.0",
+	"extra": {
+		"display-name": "[pre]fixed - phpBB Topic Prefixes - v1.0.0",
 		"soft-require": {
-            "phpbb/phpbb": "3.1.*@dev"
+			"phpbb/phpbb": "3.1.*@dev"
 		},
 		"version-check": {
 			"host": "phpbb.expert",
-            "directory": "/ext/",
+			"directory": "/ext/",
 			"filename": "prefix.json"
 		}
-    }
+	}
 }
