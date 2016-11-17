@@ -207,7 +207,8 @@ class listener implements EventSubscriberInterface
 	 */
 	public function get_viewtopic_topic_prefix($event)
 	{
-		$event['page_title'] = $this->load_prefixes_topic($event, 'topic_data') . $event['page_title'];
+		$topic_prefixes = $this->load_prefixes_topic($event, 'topic_data');
+		$event['page_title'] = ($topic_prefixes ? $topic_prefixes . ' ' : '') .  $event['page_title'];
 	}
 
 	/**
