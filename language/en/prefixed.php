@@ -41,6 +41,7 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, [
 	'POSTING_PREFIXES'	=> 'Topic prefixes',
 	'POSTING_PREFIXES_USED' => 'Topic prefixes applied',
+	'NO_PREFIX' => 'no prefix',
 
 	'PREFIXED_TOKEN_USERNAME'			=> '{USERNAME}',
 	'PREFIXED_TOKEN_USERNAME_EXPLAIN'	=> 'This token is replaced with the username of the user who applies the prefix to the topic.',
