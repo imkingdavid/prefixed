@@ -46,7 +46,6 @@ class prefixed_module
 
 		switch ($mode)
 		{
-			default:
 			case 'prefixes':
 				$page_title = 'ACP_PREFIXED_MANAGE';
 				// @todo Do this
